@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const rootDir = process.cwd();
+const rootDir = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
 const brainDir = path.join(rootDir, 'brain4agent');
 const hotDir = path.join(brainDir, 'memory', 'hot');
 const planningDir = path.join(rootDir, 'planning');

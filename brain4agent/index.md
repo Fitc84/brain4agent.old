@@ -10,6 +10,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 | Lĩnh vực / Nhiệm vụ | Tài liệu chuyên trách | Nội dung chính |
 | :--- | :--- | :--- |
+| **Chỉ dẫn Agent từ A-Z (Zero-Config)** | [`docs/UNIVERSAL_AGENT_GUIDE.md`](file:///docs/UNIVERSAL_AGENT_GUIDE.md) | Cẩm nang trọn gói từ A-Z hướng dẫn mọi AI Agent tự động xử lý và vận hành. |
 | **Ký ức nóng phiên gần nhất** | [`memory/hot/today.md`](file:///brain4agent/memory/hot/today.md) & [`state.json`](file:///brain4agent/memory/hot/state.json) | Trạng thái máy (JSON), nhật ký làm việc theo phiên và kết quả benchmark gần nhất. |
 | **Khởi động / Quy tắc chung** | [`memory-distill.txt`](file:///brain4agent/memory-distill.txt) | Kernel hiện trạng, Startup Protocol, Tech stack cốt lõi. |
 | **Hiến pháp Quản trị V5.2** | [`CORE_GOVERNANCE_RULES.md`](file:///CORE_GOVERNANCE_RULES.md) | Bộ luật bất biến toàn diện: Startup Protocol, Spec-First, Model Tiering, Sync Cascade. |
@@ -29,17 +30,18 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 | :---: | :--- | :--- | :--- | :--- |
 | **1** | `.xay-dung-nao-bo` | [`.agents/skills/.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo) | [`SKILL.md`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo/SKILL.md) | Universal Brain Engine V5.2: Tự chẩn đoán, khởi tạo hoặc migration não bộ 1-click. |
 | **2** | `.compact` | [`.agents/skills/.compact/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.compact) | [`SKILL.md`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.compact/SKILL.md) | Thu gọn ngữ cảnh vào Hot Memory (`today.md` & `state.json`), bảo đảm Root Clean 100%. |
-| **3** | `deploy_skills.ps1` | [`scripts/deploy_skills.ps1`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/scripts/deploy_skills.ps1) | - | Script tự động kiểm tra an toàn và deploy sang Global AI Skills. |
+| **3** | `deploy_skills.ps1` | [`scripts/deploy_skills.ps1`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/scripts/deploy_skills.ps1) | - | Script tự động kiểm tra an toàn và deploy sang Global AI Skills & Claude Code Commands. |
 
 ---
 
 ## 🗺️ 2. BẢN ĐỒ CẤU TRÚC MÃ NGUỒN (Codebase Directory Map)
 
 ```text
-brain4agent.old/
+brain4agent/
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.0.1
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nạp tự động khi khởi động phiên
 ├── README.md                         # [TỔNG QUAN] Bản đồ trung tâm quản lý và hướng dẫn vận hành
-├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện V5.2
+├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện
 ├── brain4agent/                      # [BỘ NHỚ WORKSPACE] Single Source of Truth của Hub
 │   ├── memory/hot/                   # [HOT MEMORY] Ký ức nóng phiên (today.md, state.json)
 │   ├── memory-distill.txt            # [KERNEL] Bản cô đọng tối thượng (< 100 dòng)
@@ -52,14 +54,15 @@ brain4agent.old/
 ├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
 │   └── 01_2026-08-28_modernize-hub-v52/
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
-│   ├── .xay-dung-nao-bo/             # Universal Brain Engine V5.2
+│   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
 │   │   └── scripts/init_brain.js
-│   └── .compact/                     # Skill nén ngữ cảnh đa tầng V5.2
+│   └── .compact/                     # Skill nén ngữ cảnh đa tầng
 │       └── SKILL.md
 ├── archive/                          # [LƯU TRỮ LỊCH SỬ] Các phiên bản cũ để tra cứu
 │   └── legacy-skills/                # (.brain-build, .update-brain)
 ├── docs/                             # [MODULE DOCS] Tài liệu kỹ thuật chi tiết
+│   ├── UNIVERSAL_AGENT_GUIDE.md      # [A-Z GUIDE] Cẩm nang vận hành toàn diện cho AI Agent
 │   ├── BRAIN_ARCHITECTURE_GUIDE.md
 │   └── MODULE_DOCUMENTATION_SPEC.md
 └── scripts/
