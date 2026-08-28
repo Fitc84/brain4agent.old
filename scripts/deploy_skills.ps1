@@ -1,20 +1,19 @@
 # ==============================================================================
-# Script Triển Khai Đồng Bộ Kỹ Năng Từ Brain Hub Sang Global AI Skills
+# Script Triển Khai Đồng Bộ Kỹ Năng Đa Trình Agent (Multi-Agent Ecosystem)
+# Hỗ trợ: Antigravity IDE, Gemini CLI, Claude Code, Codex, Cursor & Windsurf
 # ==============================================================================
 
 $hubRoot = Split-Path -Parent $PSScriptRoot
 $sourceSkill = Join-Path $hubRoot ".agents\skills\.xay-dung-nao-bo"
 $sourceCompact = Join-Path $hubRoot ".agents\skills\.compact"
 
-$destGlobalRoot = "C:\Users\hoang\.gemini\config\skills"
-$destSkill = Join-Path $destGlobalRoot ".xay-dung-nao-bo"
-$destCompact = Join-Path $destGlobalRoot ".compact"
+$geminiSkillsRoot = "C:\Users\hoang\.gemini\config\skills"
+$claudeCommandsRoot = "C:\Users\hoang\.claude\commands"
 
 Write-Host "`n===========================================================" -ForegroundColor Cyan
-Write-Host "🚀 ĐANG TRIỂN KHAI (DEPLOY) SKILLS TỪ BRAIN HUB SANG GLOBAL CONFIG..." -ForegroundColor Cyan
+Write-Host "🚀 ĐANG TRIỂN KHAI SKILLS SANG TOÀN BỘ HỆ SINH THÁI AI AGENT..." -ForegroundColor Cyan
 Write-Host "===========================================================" -ForegroundColor Cyan
-Write-Host "📁 Hub Source: $hubRoot\.agents\skills\" -ForegroundColor DarkGray
-Write-Host "🌐 Global Target: $destGlobalRoot`n" -ForegroundColor DarkGray
+Write-Host "📁 Source: $hubRoot\.agents\skills\" -ForegroundColor DarkGray
 
 # 1. Kiểm tra an toàn trước khi deploy (Safety Validation Gate)
 if (-not (Test-Path $sourceSkill)) {
@@ -26,24 +25,71 @@ if (-not (Test-Path $sourceCompact)) {
     exit 1
 }
 
-# 2. Thực hiện copy an toàn
 try {
-    # Deploy .xay-dung-nao-bo
-    if (-not (Test-Path $destSkill)) {
-        New-Item -Path $destSkill -ItemType Directory -Force | Out-Null
-    }
-    Copy-Item -Path "$sourceSkill\*" -Destination $destSkill -Recurse -Force
-    Write-Host "✅ [1/2] Đã deploy thành công: .xay-dung-nao-bo -> $destSkill" -ForegroundColor Green
+    # -------------------------------------------------------------------------
+    # Target 1: Google Antigravity & Gemini CLI (Global Skills)
+    # -------------------------------------------------------------------------
+    $destSkillGemini = Join-Path $geminiSkillsRoot ".xay-dung-nao-bo"
+    $destCompactGemini = Join-Path $geminiSkillsRoot ".compact"
 
-    # Deploy .compact
-    if (-not (Test-Path $destCompact)) {
-        New-Item -Path $destCompact -ItemType Directory -Force | Out-Null
+    if (-not (Test-Path $destSkillGemini)) {
+        New-Item -Path $destSkillGemini -ItemType Directory -Force | Out-Null
     }
-    Copy-Item -Path "$sourceCompact\*" -Destination $destCompact -Recurse -Force
-    Write-Host "✅ [2/2] Đã deploy thành công: .compact -> $destCompact" -ForegroundColor Green
+    Copy-Item -Path "$sourceSkill\*" -Destination $destSkillGemini -Recurse -Force
+
+    if (-not (Test-Path $destCompactGemini)) {
+        New-Item -Path $destCompactGemini -ItemType Directory -Force | Out-Null
+    }
+    Copy-Item -Path "$sourceCompact\*" -Destination $destCompactGemini -Recurse -Force
+
+    Write-Host "✅ [1/2] Đã deploy Global Skills cho Antigravity / Gemini CLI -> $geminiSkillsRoot" -ForegroundColor Green
+
+    # -------------------------------------------------------------------------
+    # Target 2: Anthropic Claude Code (Global Commands: /xay-dung-nao-bo, /compact)
+    # -------------------------------------------------------------------------
+    if (Test-Path $claudeCommandsRoot) {
+        $claudeInitBrainCommand = Join-Path $claudeCommandsRoot "xay-dung-nao-bo.md"
+        $claudeCompactCommand = Join-Path $claudeCommandsRoot "compact.md"
+
+        $claudeInitBrainContent = @"
+# Lệnh Tự Động Khởi Tạo / Nâng Cấp Não Bộ (Universal Brain Engine V5.2)
+
+Khởi tạo mới hoặc Tự động Chẩn đoán & Tái cấu trúc bộ nhớ \`brain4agent\` Đa Tầng cho dự án hiện tại.
+
+## Hướng dẫn thực thi:
+1. Đảm bảo đang đứng ở thư mục gốc của dự án hiện tại.
+2. Chạy lệnh chẩn đoán & build não bộ:
+   \`\`\`bash
+   node "C:/Users/hoang/.gemini/config/skills/.xay-dung-nao-bo/scripts/init_brain.js"
+   \`\`\`
+3. Đọc kết quả:
+   - Nếu báo "NÃO ĐÃ OK": Thông báo cho user bộ não đã đạt chuẩn hoàn hảo.
+   - Nếu tạo mới hoặc nâng cấp: Đọc bối cảnh repo và cập nhật thông tin thực tế vào \`project-intro.md\`, \`memory-distill.txt\`, \`index.md\`.
+"@
+
+        $claudeCompactContent = @"
+# Lệnh Nén Ngữ Cảnh & Đóng Phiên (.compact)
+
+Nén và đúc kết toàn bộ bối cảnh cuộc hội thoại, quyết định quan trọng và trạng thái máy vào \`brain4agent/memory/hot/\`.
+
+## Hướng dẫn thực thi:
+1. Xác định root dự án hiện tại (chứa \`brain4agent/\`).
+2. Ghi nhật ký làm việc của phiên vào \`brain4agent/memory/hot/today.md\`.
+3. Cập nhật snapshot máy trạng thái vào \`brain4agent/memory/hot/state.json\`.
+4. Cập nhật \`roadmap.md\` (nếu có task hoàn thành) và \`-known-gotchas.md\` (nếu có bug mới).
+5. Xóa bỏ hoặc không bao giờ tạo file \`latest_memory.md\` ngoài root để giữ chuẩn Root Clean 100%.
+"@
+
+        Set-Content -Path $claudeInitBrainCommand -Value $claudeInitBrainContent -Encoding UTF8
+        Set-Content -Path $claudeCompactCommand -Value $claudeCompactContent -Encoding UTF8
+
+        Write-Host "✅ [2/2] Đã deploy Global Commands cho Claude Code (/xay-dung-nao-bo, /compact) -> $claudeCommandsRoot" -ForegroundColor Green
+    } else {
+        Write-Host "ℹ️ Không tìm thấy thư mục Claude Code ($claudeCommandsRoot), bỏ qua target này." -ForegroundColor Gray
+    }
 
     Write-Host "`n===========================================================" -ForegroundColor Yellow
-    Write-Host "🎉 HOÀN TẤT ĐỒNG BỘ TOÀN HỆ THỐNG GLOBAL AI SKILLS THÀNH CÔNG!" -ForegroundColor Yellow
+    Write-Host "🎉 HOÀN TẤT ĐỒNG BỘ TOÀN BỘ CÁC TRÌNH AI AGENT THÀNH CÔNG!" -ForegroundColor Yellow
     Write-Host "===========================================================`n" -ForegroundColor Yellow
 } catch {
     Write-Error "❌ Lỗi trong quá trình deploy: $_"
