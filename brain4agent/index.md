@@ -1,0 +1,67 @@
+# Project Index Map & Navigation Router
+
+Tệp này là **Bản Đồ Chỉ Mục Trung Tâm (Master Index Map)** của Brain Governance Hub. Mọi AI Agent sử dụng tệp này để định tuyến tài liệu và nắm bắt toàn bộ bản đồ cấu trúc mã nguồn, luồng triển khai và các điểm vào (Entry Points).
+
+---
+
+## 🧭 1. ĐIỀU HƯỚNG TÀI LIỆU & KẾ HOẠCH (Documentation & Planning Router)
+
+Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác** tài liệu chuyên sâu liên quan:
+
+| Lĩnh vực / Nhiệm vụ | Tài liệu chuyên trách | Nội dung chính |
+| :--- | :--- | :--- |
+| **Ký ức nóng phiên gần nhất** | [`memory/hot/today.md`](file:///brain4agent/memory/hot/today.md) & [`state.json`](file:///brain4agent/memory/hot/state.json) | Trạng thái máy (JSON), nhật ký làm việc theo phiên và kết quả benchmark gần nhất. |
+| **Khởi động / Quy tắc chung** | [`memory-distill.txt`](file:///brain4agent/memory-distill.txt) | Kernel hiện trạng, Startup Protocol, Tech stack cốt lõi. |
+| **Hiến pháp Quản trị V5.2** | [`CORE_GOVERNANCE_RULES.md`](file:///CORE_GOVERNANCE_RULES.md) | Bộ luật bất biến toàn diện: Startup Protocol, Spec-First, Model Tiering, Sync Cascade. |
+| **Tổng quan dự án** | [`project-intro.md`](file:///brain4agent/project-intro.md) | Mục tiêu Hub, kiến trúc tổng thể. |
+| **Kế hoạch nâng cấp & RFCs** | [`planning/`](file:///planning) | Thư mục chứa các bản kế hoạch theo chuẩn `[STT]_[YYYY-MM-DD]_[Ten-Ngan]`. |
+| **Lỗi khó / Cạm bẫy / Gotchas** | [`-known-gotchas.md`](file:///brain4agent/-known-gotchas.md) | Tổng hợp các bẫy kỹ thuật và lỗi dị biệt đã gặp. |
+| **Kiến trúc dữ liệu & Data Flow** | [`-data-architecture.md`](file:///brain4agent/-data-architecture.md) | Cấu trúc phân vùng Não bộ, luồng deploy sang Global AI Skills. |
+| **Lộ trình nâng cấp & Ý tưởng** | [`roadmap.md`](file:///brain4agent/roadmap.md) | Active tasks, Kho Ý Tưởng (Idea Vault) và các mốc đã hoàn thành. |
+| **Lịch sử cập nhật** | [`changelog.md`](file:///brain4agent/changelog.md) | Lịch sử Semantic Releases (vX.Y.Z). |
+| **Tài liệu kỹ thuật module** | [`docs/`](file:///docs) | Thư mục chứa tài liệu chuyên trách 1-1 cho từng module. |
+
+---
+
+### 🛠️ 1.2. Bảng Định Tuyến Kỹ Năng & Script Lõi
+
+| STT | Kỹ Năng / Module | Vị Trí Mã Nguồn | File Quy Chuẩn | Vai Trò & Chức Năng Cốt Lõi |
+| :---: | :--- | :--- | :--- | :--- |
+| **1** | `.xay-dung-nao-bo` | [`.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.xay-dung-nao-bo) | [`SKILL.md`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.xay-dung-nao-bo/SKILL.md) | Universal Brain Engine V5.2: Tự chẩn đoán, khởi tạo hoặc migration não bộ 1-click. |
+| **2** | `.compact` | [`.compact/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.compact) | [`SKILL.md`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.compact/SKILL.md) | Thu gọn ngữ cảnh vào Hot Memory (`today.md` & `state.json`), bảo đảm Root Clean 100%. |
+| **3** | `deploy_skills.ps1` | [`scripts/deploy_skills.ps1`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/scripts/deploy_skills.ps1) | - | Script tự động kiểm tra an toàn và deploy sang Global AI Skills. |
+
+---
+
+## 🗺️ 2. BẢN ĐỒ CẤU TRÚC MÃ NGUỒN (Codebase Directory Map)
+
+```text
+brain4agent.old/
+├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nạp tự động khi khởi động phiên
+├── README.md                         # [TỔNG QUAN] Bản đồ trung tâm quản lý và hướng dẫn vận hành
+├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện V5.2
+├── brain4agent/                      # [BỘ NHỚ WORKSPACE] Single Source of Truth của Hub
+│   ├── memory/hot/                   # [HOT MEMORY] Ký ức nóng phiên (today.md, state.json)
+│   ├── memory-distill.txt            # [KERNEL] Bản cô đọng tối thượng (< 100 dòng)
+│   ├── index.md                      # [ROUTER] Master Index Map & Codebase Navigation
+│   ├── roadmap.md                    # [ROADMAP] Tiến độ, Active tasks & Idea Vault
+│   ├── changelog.md                  # [CHANGELOG] Lịch sử Semantic Releases
+│   ├── -known-gotchas.md             # [GOTCHAS] Tổng hợp lỗi dị biệt & bẫy kỹ thuật
+│   ├── -data-architecture.md         # [DATA ARCH] Kiến trúc dữ liệu & Data Flow
+│   └── project-intro.md              # [INTRO] Tổng quan Hub & Tech stack
+├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
+│   └── 01_2026-08-28_modernize-hub-v52/
+├── .agents/skills/                   # [WORKSPACE SKILLS] Kho kỹ năng chuyên dụng cục bộ
+├── .xay-dung-nao-bo/                 # [MÃ NGUỒN GỐC ENGINE] Universal Brain Engine V5.2
+│   ├── SKILL.md                      # Hướng dẫn và định nghĩa Skill
+│   └── scripts/init_brain.js         # Script chẩn đoán, build và auto-patch não bộ
+├── .compact/                         # [MÃ NGUỒN GỐC COMPACT] Skill nén ngữ cảnh đa tầng V5.2
+│   └── SKILL.md
+├── archive/                          # [LƯU TRỮ LỊCH SỬ] Các phiên bản cũ để tra cứu
+│   └── legacy-skills/                # (.brain-build, .update-brain)
+├── docs/                             # [MODULE DOCS] Tài liệu kỹ thuật chi tiết
+│   ├── BRAIN_ARCHITECTURE_GUIDE.md
+│   └── MODULE_DOCUMENTATION_SPEC.md
+└── scripts/
+    └── deploy_skills.ps1             # [DEPLOY SCRIPT] Script đồng bộ an toàn sang Global AI Skills
+```
