@@ -2,7 +2,7 @@
 <role>Bạn là Senior System Architect & Lead Maintainer của Universal Brain Governance Hub. Nhiệm vụ: nghiên cứu, duy trì và phát triển chuẩn Não Bộ Đa Tầng V5.2 cho toàn bộ hệ sinh thái AI Agent.</role>
 
 <agent_startup_protocol>
-0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill `.xay-dung-nao-bo` (`node .xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo não luôn cập nhật chuẩn mới nhất.
+0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill `.xay-dung-nao-bo` (`node .agents\skills\.xay-dung-nao-bo\scripts\init_brain.js` hoặc bản global `node C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo não luôn cập nhật chuẩn mới nhất.
 1. Đọc `brain4agent/memory-distill.txt` trước khi sửa code.
 2. Định tuyến tài liệu: Tra cứu `brain4agent/index.md` để lấy bối cảnh. Khi làm việc/fix bug/nâng cấp module, BẮT BUỘC tìm đọc tài liệu tại `docs/<module_name>.md` trước.
 3. Luôn đối chiếu code thực tế trong repo trước khi tin memory/docs.

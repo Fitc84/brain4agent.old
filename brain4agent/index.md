@@ -23,12 +23,12 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 ---
 
-### 🛠️ 1.2. Bảng Định Tuyến Kỹ Năng & Script Lõi
+### 🛠️ 1.2. Bảng Định Tuyến Kỹ Năng Chuẩn Hóa ([`.agents/skills/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills))
 
 | STT | Kỹ Năng / Module | Vị Trí Mã Nguồn | File Quy Chuẩn | Vai Trò & Chức Năng Cốt Lõi |
 | :---: | :--- | :--- | :--- | :--- |
-| **1** | `.xay-dung-nao-bo` | [`.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.xay-dung-nao-bo) | [`SKILL.md`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.xay-dung-nao-bo/SKILL.md) | Universal Brain Engine V5.2: Tự chẩn đoán, khởi tạo hoặc migration não bộ 1-click. |
-| **2** | `.compact` | [`.compact/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.compact) | [`SKILL.md`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.compact/SKILL.md) | Thu gọn ngữ cảnh vào Hot Memory (`today.md` & `state.json`), bảo đảm Root Clean 100%. |
+| **1** | `.xay-dung-nao-bo` | [`.agents/skills/.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo) | [`SKILL.md`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo/SKILL.md) | Universal Brain Engine V5.2: Tự chẩn đoán, khởi tạo hoặc migration não bộ 1-click. |
+| **2** | `.compact` | [`.agents/skills/.compact/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.compact) | [`SKILL.md`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.compact/SKILL.md) | Thu gọn ngữ cảnh vào Hot Memory (`today.md` & `state.json`), bảo đảm Root Clean 100%. |
 | **3** | `deploy_skills.ps1` | [`scripts/deploy_skills.ps1`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/scripts/deploy_skills.ps1) | - | Script tự động kiểm tra an toàn và deploy sang Global AI Skills. |
 
 ---
@@ -51,12 +51,12 @@ brain4agent.old/
 │   └── project-intro.md              # [INTRO] Tổng quan Hub & Tech stack
 ├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
 │   └── 01_2026-08-28_modernize-hub-v52/
-├── .agents/skills/                   # [WORKSPACE SKILLS] Kho kỹ năng chuyên dụng cục bộ
-├── .xay-dung-nao-bo/                 # [MÃ NGUỒN GỐC ENGINE] Universal Brain Engine V5.2
-│   ├── SKILL.md                      # Hướng dẫn và định nghĩa Skill
-│   └── scripts/init_brain.js         # Script chẩn đoán, build và auto-patch não bộ
-├── .compact/                         # [MÃ NGUỒN GỐC COMPACT] Skill nén ngữ cảnh đa tầng V5.2
-│   └── SKILL.md
+├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
+│   ├── .xay-dung-nao-bo/             # Universal Brain Engine V5.2
+│   │   ├── SKILL.md
+│   │   └── scripts/init_brain.js
+│   └── .compact/                     # Skill nén ngữ cảnh đa tầng V5.2
+│       └── SKILL.md
 ├── archive/                          # [LƯU TRỮ LỊCH SỬ] Các phiên bản cũ để tra cứu
 │   └── legacy-skills/                # (.brain-build, .update-brain)
 ├── docs/                             # [MODULE DOCS] Tài liệu kỹ thuật chi tiết

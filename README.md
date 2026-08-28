@@ -1,6 +1,6 @@
 # 🧠 TRUNG TÂM NGHIÊN CỨU, PHÁT TRIỂN & BUILD NÃO BỘ (BRAIN GOVERNANCE HUB V5.2)
 
-Thư mục này (`D:\Data\Repositories\.My-Repositories\brain4agent.old`) là **Tổng Hành Dinh Quản Lý & Nâng Cấp Não Bộ (Single Source of Truth for Brain Development & AI Governance)**. Mọi nghiên cứu, tối ưu thuật toán, nâng cấp luật vận hành và phát triển bộ skill lõi (`.xay-dung-nao-bo`, `.compact`) sẽ được hoàn thiện tập trung tại đây trước khi deploy ra toàn bộ hệ sinh thái.
+Thư mục này (`D:\Data\Repositories\.My-Repositories\brain4agent.old`) là **Tổng Hành Dinh Quản Lý & Nâng Cấp Não Bộ (Single Source of Truth for Brain Development & AI Governance)**. Mọi nghiên cứu, tối ưu thuật toán, nâng cấp luật vận hành và phát triển bộ skill lõi (`.xay-dung-nao-bo`, `.compact`) sẽ được hoàn thiện tập trung tại kho chuẩn `.agents/skills/` trước khi deploy ra toàn bộ hệ sinh thái.
 
 ---
 
@@ -11,11 +11,11 @@ Thư mục này (`D:\Data\Repositories\.My-Repositories\brain4agent.old`) là **
    - Tối ưu hóa dung lượng token và tốc độ phục hồi ngữ cảnh của Agent qua Hot Memory (`today.md` & `state.json`).
 2. **Quản Lý & Phát Triển Bộ Hiến Pháp Vận Hành (`CORE_GOVERNANCE_RULES.md`):**
    - Nơi lưu trữ, cập nhật và tinh chỉnh các quy tắc quản trị bất biến (Startup Protocol Bước 0, Spec-First Planning, Model Tiering 🔴/🟠/🟢, Ma trận Đồng bộ 6 điểm, Single Skill Vault, Root Clean 100%...).
-3. **Mã Nguồn Gốc Của Bộ Kỹ Năng Não Bộ Chuẩn Toàn Cầu:**
-   - Thư mục [`.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.xay-dung-nao-bo) là source code gốc của Universal Brain Engine V5.2 (tự chẩn đoán, khởi tạo hoặc migration 1-click).
-   - Thư mục [`.compact/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.compact) là source code gốc của Skill nén ngữ cảnh đa tầng bảo đảm Root Clean 100%.
+3. **Mã Nguồn Gốc Của Bộ Kỹ Năng Não Bộ Chuẩn Toàn Cầu ([`.agents/skills/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills)):**
+   - Thư mục [`.agents/skills/.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo) là source code gốc của Universal Brain Engine V5.2 (tự chẩn đoán, khởi tạo hoặc migration 1-click).
+   - Thư mục [`.agents/skills/.compact/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.compact) là source code gốc của Skill nén ngữ cảnh đa tầng bảo đảm Root Clean 100%.
 4. **Triển Khai Đồng Bộ Ra Toàn Bộ Hệ Thống (Auto-Deployment):**
-   - Cung cấp script tự động deploy mã nguồn skill mới nhất từ đây sang thư mục Global Config của AI (`C:\Users\hoang\.gemini\config\skills\`).
+   - Cung cấp script tự động deploy mã nguồn skill mới nhất từ `.agents/skills/` sang thư mục Global Config của AI (`C:\Users\hoang\.gemini\config\skills\`).
 
 ---
 
@@ -23,7 +23,7 @@ Thư mục này (`D:\Data\Repositories\.My-Repositories\brain4agent.old`) là **
 
 ```mermaid
 flowchart TD
-    Idea[💡 Ý tưởng / Nâng cấp Não mới] --> EditHub[🛠️ Chỉnh sửa mã nguồn trong Brain Hub]
+    Idea[💡 Ý tưởng / Nâng cấp Não mới] --> EditHub[🛠️ Chỉnh sửa mã nguồn trong .agents/skills/]
     EditHub --> UpdateRules[📜 Cập nhật CORE_GOVERNANCE_RULES.md & init_brain.js]
     UpdateRules --> TestLocal[🧪 Chẩn đoán & Kiểm thử cục bộ]
     TestLocal --> Deploy[🚀 Chạy deploy_skills.ps1]
@@ -58,15 +58,17 @@ brain4agent.old/
 │   └── project-intro.md              # [INTRO] Tổng quan Hub & Tech stack
 ├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
 │   └── 01_2026-08-28_modernize-hub-v52/
-├── .agents/skills/                   # [WORKSPACE SKILLS] Kho kỹ năng chuyên dụng cục bộ
-├── .xay-dung-nao-bo/                 # [MÃ NGUỒN GỐC ENGINE] Universal Brain Engine V5.2
-│   ├── SKILL.md                      # Hướng dẫn và định nghĩa Skill
-│   └── scripts/init_brain.js         # Script chẩn đoán, build và auto-patch não bộ
-├── .compact/                         # [MÃ NGUỒN GỐC COMPACT] Skill nén ngữ cảnh đa tầng V5.2
-│   └── SKILL.md
+├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
+│   ├── .xay-dung-nao-bo/             # Universal Brain Engine V5.2
+│   │   ├── SKILL.md
+│   │   └── scripts/init_brain.js
+│   └── .compact/                     # Skill nén ngữ cảnh đa tầng V5.2
+│       └── SKILL.md
 ├── archive/                          # [LƯU TRỮ LỊCH SỬ] Các phiên bản cũ để tra cứu
 │   └── legacy-skills/                # (.brain-build, .update-brain)
 ├── docs/                             # [MODULE DOCS] Tài liệu kỹ thuật chi tiết
+│   ├── BRAIN_ARCHITECTURE_GUIDE.md
+│   └── MODULE_DOCUMENTATION_SPEC.md
 └── scripts/
     └── deploy_skills.ps1             # [DEPLOY SCRIPT] Script đồng bộ an toàn sang Global AI Skills
 ```

@@ -8,7 +8,7 @@ Tệp này là kim chỉ nam tối thượng của dự án Brain Governance Hub
 
 Khi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:
 
-1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill `.xay-dung-nao-bo` (`node .xay-dung-nao-bo\scripts\init_brain.js` hoặc bản global `node C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.
+1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill `.xay-dung-nao-bo` (`node .agents\skills\.xay-dung-nao-bo\scripts\init_brain.js` hoặc bản global `node C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.
 2. **Bước 1 (Đọc Kernel Hiện Trạng):** Mở và đọc tệp [`brain4agent/memory-distill.txt`](file:///brain4agent/memory-distill.txt) để nắm bắt kernel hiện trạng, vai trò Hub và quy tắc bất biến.
 3. **Bước 2 (Định tuyến thông minh & Đọc Codebase Map):** Đọc [`brain4agent/index.md`](file:///brain4agent/index.md) để:
    - Nắm toàn bộ **Bản đồ cấu trúc mã nguồn (Codebase Map)**, khu vực kế hoạch [`planning/`](file:///planning) và các Entry Points.

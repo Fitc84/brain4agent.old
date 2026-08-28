@@ -3,8 +3,8 @@
 # ==============================================================================
 
 $hubRoot = Split-Path -Parent $PSScriptRoot
-$sourceSkill = Join-Path $hubRoot ".xay-dung-nao-bo"
-$sourceCompact = Join-Path $hubRoot ".compact"
+$sourceSkill = Join-Path $hubRoot ".agents\skills\.xay-dung-nao-bo"
+$sourceCompact = Join-Path $hubRoot ".agents\skills\.compact"
 
 $destGlobalRoot = "C:\Users\hoang\.gemini\config\skills"
 $destSkill = Join-Path $destGlobalRoot ".xay-dung-nao-bo"
@@ -13,7 +13,7 @@ $destCompact = Join-Path $destGlobalRoot ".compact"
 Write-Host "`n===========================================================" -ForegroundColor Cyan
 Write-Host "🚀 ĐANG TRIỂN KHAI (DEPLOY) SKILLS TỪ BRAIN HUB SANG GLOBAL CONFIG..." -ForegroundColor Cyan
 Write-Host "===========================================================" -ForegroundColor Cyan
-Write-Host "📁 Hub Source: $hubRoot" -ForegroundColor DarkGray
+Write-Host "📁 Hub Source: $hubRoot\.agents\skills\" -ForegroundColor DarkGray
 Write-Host "🌐 Global Target: $destGlobalRoot`n" -ForegroundColor DarkGray
 
 # 1. Kiểm tra an toàn trước khi deploy (Safety Validation Gate)
@@ -23,16 +23,6 @@ if (-not (Test-Path $sourceSkill)) {
 }
 if (-not (Test-Path $sourceCompact)) {
     Write-Error "❌ Không tìm thấy thư mục nguồn: $sourceCompact"
-    exit 1
-}
-
-# Kiểm tra chống thư mục lồng nhau rác
-if (Test-Path (Join-Path $sourceSkill ".xay-dung-nao-bo")) {
-    Write-Error "❌ Phát hiện thư mục lồng nhau bất thường trong $sourceSkill. Hãy dọn dẹp trước khi deploy!"
-    exit 1
-}
-if (Test-Path (Join-Path $sourceCompact ".compact")) {
-    Write-Error "❌ Phát hiện thư mục lồng nhau bất thường trong $sourceCompact. Hãy dọn dẹp trước khi deploy!"
     exit 1
 }
 
