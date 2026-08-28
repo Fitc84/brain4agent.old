@@ -1,36 +1,33 @@
 # 📅 Nhật Ký Làm Việc Ngày 28/08/2026 (Session Memory Log)
 
-> Cập nhật lúc: `2026-08-28T13:51:00+07:00` | Phiên bản: `v5.2.0` (Grade A Runtime Verified)
+> Cập nhật lúc: `2026-08-28T14:00:00+07:00` | Phiên bản: `v1.0.1` (Grade A Runtime Verified)
 
 ---
 
 ## 🎯 Thành Tựu Cốt Lõi Đạt Được Trong Phiên:
-1. **Nâng cấp & Chuẩn hóa Toàn diện Brain Governance Hub (V5.2):**
-   - Dọn dẹp các thư mục con rác lồng nhau (`.compact/.compact`, `.xay-dung-nao-bo/.xay-dung-nao-bo`).
-   - Lưu trữ các skill cũ đã khai tử (`.brain-build`, `.update-brain`) vào `archive/legacy-skills/`.
-   - Chuyển toàn bộ kỹ năng nguồn gốc (`.xay-dung-nao-bo`, `.compact`) vào đúng chuẩn **Single Skill Vault** tại [`.agents/skills/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills) để giữ root sạch sẽ 100%.
-   - Cập nhật `.compact/SKILL.md` và `.xay-dung-nao-bo/scripts/init_brain.js`.
-   - Nâng cấp `CORE_GOVERNANCE_RULES.md`, `README.md`, và các tài liệu kiến trúc.
-   - Trang bị bộ não `brain4agent/`, `AGENTS.md`, `planning/`, `.agents/skills/` cho chính Hub workspace.
-   - Nâng cấp `scripts/deploy_skills.ps1` linh hoạt lấy nguồn từ `.agents/skills/`.
-   - Khởi tạo Git repo và push lên GitHub public repo `Fitc84/brain4agent.old`.
+1. **Phát hành & Chuẩn Hóa brain4agent v1.0.1:**
+   - Định danh chính thức dự án là **brain4agent (v1.0.1)**.
+   - Thiết lập `package.json` làm Single Source of Version Truth (`v1.0.1`).
+   - Cung cấp các lệnh npm tiện ích: `npm run init-brain`, `npm run deploy`.
+   - Di dời 100% skills vào `.agents/skills/` theo chuẩn Single Skill Vault.
+   - Cập nhật đồng bộ toàn bộ tài liệu dự án, `AGENTS.md`, `README.md`, `planning/`, `changelog.md`.
 
 ---
 
 ## 🧪 Kết Quả Benchmark / Kiểm Thử Thực Chiến:
-- **Root Clean Invariant:** 100% đạt chuẩn (Toàn bộ skills đã nằm trong `.agents/skills/`, không rải rác ngoài root).
-- **Brain Partitions:** Đầy đủ 7 phân vùng cố định + 1 phân khu Hot Memory.
-- **Skill Deploy Integrity:** Script deploy kiểm tra an toàn và đồng bộ thành công sang Global Config.
+- **Version Truth Alignment:** `package.json` (`1.0.1`), `state.json` (`1.0.1`), `today.md` (`v1.0.1`), `changelog.md` (`[v1.0.1]`).
+- **Root Clean Invariant:** 100% đạt chuẩn (Không có file rác ngoài root, toàn bộ skills nằm trong `.agents/skills/`).
+- **Brain Partitions:** 7 phân vùng cố định + 1 phân khu Hot Memory hoạt động hoàn hảo.
 
 ---
 
 ## 📁 Danh Sách File Đã Tạo / Sửa:
-- **Kỹ Năng Single Skill Vault:**
-  - [`.agents/skills/.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo)
-  - [`.agents/skills/.compact/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.compact)
-- **Tài liệu & Quản trị:**
-  - [`AGENTS.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/AGENTS.md)
-  - [`CORE_GOVERNANCE_RULES.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/CORE_GOVERNANCE_RULES.md)
+- **Tạo mới:** [`package.json`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/package.json)
+- **Chỉnh sửa:**
   - [`README.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/README.md)
-  - [`brain4agent/`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent)
-  - [`scripts/deploy_skills.ps1`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/scripts/deploy_skills.ps1)
+  - [`brain4agent/memory-distill.txt`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/memory-distill.txt)
+  - [`brain4agent/project-intro.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/project-intro.md)
+  - [`brain4agent/roadmap.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/roadmap.md)
+  - [`brain4agent/changelog.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/changelog.md)
+  - [`brain4agent/memory/hot/state.json`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/memory/hot/state.json)
+  - [`brain4agent/memory/hot/today.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/memory/hot/today.md)

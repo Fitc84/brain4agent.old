@@ -1,14 +1,16 @@
 {
-  "current_version": "5.2.0",
+  "project_name": "brain4agent",
+  "current_version": "1.0.1",
   "system_status": "healthy_and_runtime_verified",
   "last_verification": {
-    "timestamp": "2026-08-28T13:43:00+07:00",
+    "timestamp": "2026-08-28T14:00:00+07:00",
     "scenarios_passed": [
       "Zero Root Clutter verified",
+      "Single Skill Vault (.agents/skills/) verified",
       "7 brain partitions verified",
       "Hot Memory active",
-      "Legacy skills archived",
-      "Safe deploy script verified"
+      "Safe deploy script verified",
+      "Single Source of Version Truth (package.json v1.0.1) aligned"
     ],
     "benchmark_accuracy": "100%",
     "grade": "Grade A Runtime Verified"

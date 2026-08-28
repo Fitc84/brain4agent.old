@@ -1,18 +1,18 @@
-# 🧠 TRUNG TÂM NGHIÊN CỨU, PHÁT TRIỂN & BUILD NÃO BỘ (BRAIN GOVERNANCE HUB V5.2)
+# 🧠 BRAIN4AGENT (v1.0.1) — TRUNG TÂM QUẢN TRỊ & NÂNG CẤP NÃO BỘ (BRAIN GOVERNANCE HUB)
 
-Thư mục này (`D:\Data\Repositories\.My-Repositories\brain4agent.old`) là **Tổng Hành Dinh Quản Lý & Nâng Cấp Não Bộ (Single Source of Truth for Brain Development & AI Governance)**. Mọi nghiên cứu, tối ưu thuật toán, nâng cấp luật vận hành và phát triển bộ skill lõi (`.xay-dung-nao-bo`, `.compact`) sẽ được hoàn thiện tập trung tại kho chuẩn `.agents/skills/` trước khi deploy ra toàn bộ hệ sinh thái.
+Dự án này (**brain4agent v1.0.1**) là **Tổng Hành Dinh Quản Lý & Nâng Cấp Não Bộ (Single Source of Truth for Brain Development & AI Governance)**. Mọi nghiên cứu, tối ưu thuật toán, nâng cấp luật vận hành và phát triển bộ skill lõi (`.xay-dung-nao-bo`, `.compact`) được hoàn thiện tập trung tại kho chuẩn `.agents/skills/` trước khi deploy ra toàn bộ hệ sinh thái.
 
 ---
 
-## 🎯 1. VAI TRÒ VÀ TRÁCH NHIỆM CỦA TRUNG TÂM NÀY
+## 🎯 1. VAI TRÒ VÀ TRÁCH NHIỆM CỦA BRAIN4AGENT
 
 1. **Vườn Ươm Kiến Trúc Não Bộ (Architecture Incubator):**
-   - Nghiên cứu và hoàn thiện mô hình bộ nhớ AI Đa Tầng (Multi-Tier Hot/Cold Memory Architecture V5.2).
+   - Nghiên cứu và hoàn thiện mô hình bộ nhớ AI Đa Tầng (Multi-Tier Hot/Cold Memory Architecture).
    - Tối ưu hóa dung lượng token và tốc độ phục hồi ngữ cảnh của Agent qua Hot Memory (`today.md` & `state.json`).
 2. **Quản Lý & Phát Triển Bộ Hiến Pháp Vận Hành (`CORE_GOVERNANCE_RULES.md`):**
    - Nơi lưu trữ, cập nhật và tinh chỉnh các quy tắc quản trị bất biến (Startup Protocol Bước 0, Spec-First Planning, Model Tiering 🔴/🟠/🟢, Ma trận Đồng bộ 6 điểm, Single Skill Vault, Root Clean 100%...).
 3. **Mã Nguồn Gốc Của Bộ Kỹ Năng Não Bộ Chuẩn Toàn Cầu ([`.agents/skills/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills)):**
-   - Thư mục [`.agents/skills/.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo) là source code gốc của Universal Brain Engine V5.2 (tự chẩn đoán, khởi tạo hoặc migration 1-click).
+   - Thư mục [`.agents/skills/.xay-dung-nao-bo/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo) là source code gốc của Universal Brain Engine (tự chẩn đoán, khởi tạo hoặc migration 1-click).
    - Thư mục [`.agents/skills/.compact/`](file:///D:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.compact) là source code gốc của Skill nén ngữ cảnh đa tầng bảo đảm Root Clean 100%.
 4. **Triển Khai Đồng Bộ Ra Toàn Bộ Hệ Thống (Auto-Deployment):**
    - Cung cấp script tự động deploy mã nguồn skill mới nhất từ `.agents/skills/` sang thư mục Global Config của AI (`C:\Users\hoang\.gemini\config\skills\`).
@@ -31,22 +31,25 @@ flowchart TD
     GlobalConfig --> AllProjects[🎯 Áp dụng tự động cho MỌI DỰ ÁN qua lệnh /.xay-dung-nao-bo]
 ```
 
-### Lệnh Triển Khai Nhanh:
-Mỗi khi bạn sửa đổi hoặc nâng cấp code trong thư mục này, chỉ cần chạy:
+### Lệnh Vận Hành & Triển Khai Nhanh:
 ```powershell
-powershell -ExecutionPolicy Bypass -File "scripts\deploy_skills.ps1"
+# Chạy chẩn đoán bộ não
+npm run init-brain
+
+# Triển khai sang Global AI Skills
+npm run deploy
 ```
-Toàn bộ thay đổi sẽ được kiểm tra an toàn và deploy ngay lập tức sang Global AI Config!
 
 ---
 
-## 📁 3. CẤU TRÚC THƯ MỤC TRUNG TÂM
+## 📁 3. CẤU TRÚC THƯ MỤC DỰ ÁN
 
 ```text
-brain4agent.old/
+brain4agent/
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.0.1
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nạp tự động khi khởi động phiên
 ├── README.md                         # [TỔNG QUAN] Bản đồ trung tâm quản lý và hướng dẫn vận hành
-├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện V5.2
+├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện
 ├── brain4agent/                      # [BỘ NHỚ WORKSPACE] Single Source of Truth của Hub
 │   ├── memory/hot/                   # [HOT MEMORY] Ký ức nóng phiên (today.md, state.json)
 │   ├── memory-distill.txt            # [KERNEL] Bản cô đọng tối thượng (< 100 dòng)
@@ -59,10 +62,10 @@ brain4agent.old/
 ├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
 │   └── 01_2026-08-28_modernize-hub-v52/
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
-│   ├── .xay-dung-nao-bo/             # Universal Brain Engine V5.2
+│   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
 │   │   └── scripts/init_brain.js
-│   └── .compact/                     # Skill nén ngữ cảnh đa tầng V5.2
+│   └── .compact/                     # Skill nén ngữ cảnh đa tầng
 │       └── SKILL.md
 ├── archive/                          # [LƯU TRỮ LỊCH SỬ] Các phiên bản cũ để tra cứu
 │   └── legacy-skills/                # (.brain-build, .update-brain)
