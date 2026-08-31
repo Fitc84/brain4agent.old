@@ -79,11 +79,13 @@ Trong đó **21 đã chuẩn não đầy đủ** (A+C+M+B): `Agent to Product`, 
 5. **KHÔNG PUSH** bất kỳ repo nào. `aiedu4vn` và `brain4agent` (mới) không bị chạm nếu user chưa quyết.
 6. Bảng đối chiếu kiểm kê TRƯỚC/SAU in vào plan này khi đóng.
 
-## ❓ 5. Câu Hỏi Mở Chờ User Quyết
+## ✅ 5. Ba Quyết Định Đã Chốt Mặc Định (hiệu lực khi user phát lệnh thực thi; user đổi được trước khi chạy)
 
-1. **`brain4agent` (không `.old`):** đây là dự án Python đang phát triển dở (38 file modified, commit gần nhất "test: add safe local model smoke automation", có đủ AGENTS/CLAUDE/GEMINI + `Plan/` hoa + `.env`). Nghi là **hub thế hệ mới** kế nhiệm `brain4agent.old`. Đề xuất: CÁCH LY hoàn toàn khỏi #06 (không dọn, không não hóa lại, không đổi `Plan/`) — chờ anh xác nhận quan hệ giữa 2 hub. Đúng không?
-2. **15 repo Nhóm G3 (dirty):** agent được phép xử lý theo bậc thang của SPEC-P03 (soi diff → repo bẩn ≤4 file mà thay đổi rõ ràng lành tính thì commit as-is bằng message mô tả thật; repo bẩn nhiều/khó hiểu thì chỉ báo cáo) — hay TẤT CẢ để anh tự dọn?
-3. **Não hóa đại trà 32 repo "chưa có gì"** (gồm cả tool nhỏ như `Create-Restore-point`, `docker`, `CV`): làm HẾT theo một tiêu chuẩn (đề xuất — đúng yêu cầu "đồng bộ theo 1 tiêu chuẩn", engine idempotent nên rẻ), hay anh khoanh danh sách loại trừ?
+User uỷ quyền tự quyết theo hướng an toàn nhất (tiền lệ #05). Chốt:
+
+1. **`brain4agent` (không `.old`) → CÁCH LY TUYỆT ĐỐI** khỏi #06: không dọn, không commit hộ 38 file, không não hóa, không đổi `Plan/`. Nghi là hub thế hệ mới — mọi quyết định về nó chờ user riêng. Kiểm cuối chiến dịch: `git status` của nó TRƯỚC = SAU.
+2. **15 repo Nhóm G3 (dirty) → BẬC THANG SPEC-P03:** bẩn ≤4 file và lành tính rõ ràng → commit as-is với message mô tả thật; nhiều/khó hiểu → chỉ báo cáo, không commit hộ; `ViDiaNorm`(294)/`control-gpm`(59) → chỉ chẩn đoán.
+3. **32 repo trắng → NÃO HÓA HẾT theo một tiêu chuẩn v1.2.0** (đúng đề bài "đồng bộ theo 1 tiêu chuẩn"; engine idempotent). Repo nào lộ dấu hiệu đặc thù lúc thực thi (governance riêng, file lạ) thì rơi về quy tắc "DỪNG repo đó, báo cáo".
 
 ## 📌 Ghi Chú Phạm Vi
 

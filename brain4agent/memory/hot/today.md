@@ -4,6 +4,14 @@
 
 ---
 
+## 🗺️ Phiên Lập Kế Hoạch #06 — Đồng Bộ 67 Repo (DRAFT, chưa thực thi)
+
+1. **Kiểm kê 67/67 repo** bằng script read-only: trục GIT (9 không có `.git` riêng / 13 unborn / 15 dirty / 30 clean) × trục NÃO (21 chuẩn / 13 nửa vời / 32 trắng / 2 ca đặc biệt). Hồ sơ: `planning/06_2026-08-31_dong-bo-67-repo/` (plan + 7 specs), commit `6fa15f5`.
+2. **Xương sống: GIT TRƯỚC — NÃO SAU** (P01 git-init → P02 first-commit → P03 xử bẩn bậc thang → P04 não hóa 4 lô → P06 nghiệm thu toàn kho bằng script kiểm kê tái chạy).
+3. **Phát hiện quan trọng:** (a) `brain4agent` (không `.old`) là dự án Python đang dở 38 file, nghi HUB THẾ HỆ MỚI → cách ly; (b) 15 repo có secret `.env*` ở root → Giao Thức Chống Lộ Key 4 lớp bắt buộc (01-CONTRACTS §3); (c) `control-chatgpt-web` bẩn lại 1 file sau commit #04 — soi ở P03.
+4. **3 quyết định chốt mặc định** (user uỷ quyền, đổi được trước khi chạy): cách ly `brain4agent` mới · bậc thang cho repo dirty · não hóa hết 32 repo trắng. Ghi tại plan.md mục 5.
+5. **Kiểm não trước bàn giao:** boot `NÃO ĐÃ OK`; version 3 tầng khớp (project 1.2.2 / template 1.2.0 / marker đúng); anti-staleness grep sạch (mọi khớp còn lại là mục lịch sử hợp lệ). Kế hoạch #06 kế thừa + đóng mọi mục treo của #04/#05.
+
 ## 🧬 Phiên Não Hóa Nhóm C (kế hoạch #05, v1.2.2)
 
 1. **Lập kế hoạch Spec-First** cho 6 repo chưa có `AGENTS.md`: `plan.md` + `specs/{00-ARCHITECTURE, 01-CONTRACTS, SPEC-P01..P06}`. Khảo sát read-only trước cho thấy 6 hiện trạng khác hẳn nhau → phân lớp di trú **A / A+ / B / B+ / C / D**.

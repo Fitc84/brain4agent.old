@@ -13,6 +13,7 @@
 <project_foundation>
 - Project: brain4agent (v1.2.2) — khung não template v1.2.0 đã phủ: 13/19 repo Nhóm A+B (#04) + 6/6 repo Nhóm C não hóa (#05). Còn treo chờ user: 4 repo dirty, 2 repo chưa có commit, CausalAgent GĐ2 (xem roadmap Active). Mọi commit LOCAL, chưa push.
 - Nguyên tắc não hóa dự án cũ: DI TRÚ NGỮ NGHĨA TRƯỚC — ENGINE SAU (chống não song trùng); dự án có Brain OS riêng đang sống thì dùng CỘNG SINH + pointer file, không di trú.
+- Kế hoạch #06 (planning/06_2026-08-31_dong-bo-67-repo/): đồng bộ 67 repo, GIT TRƯỚC — NÃO SAU, đã chốt 3 mặc định (cách ly `brain4agent` mới — nghi hub kế nhiệm; bậc thang repo dirty; não hóa hết repo trắng); 15 repo có secret root → bắt buộc Giao Thức Chống Lộ Key.
 - Tech Stack: Node.js (Brain Engine Scripts), PowerShell (Deploy Automation), Markdown (Governance & Specs).
 - Data/State: Multi-Tier Hot/Cold Memory Architecture (`memory/hot/` + 7 partitions).
 - Core Guides: `docs/UNIVERSAL_AGENT_GUIDE.md` (Cẩm nang A-Z) & `CORE_GOVERNANCE_RULES.md` (Hiến pháp V5.2).
