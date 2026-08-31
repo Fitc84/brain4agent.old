@@ -11,6 +11,7 @@ Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên 
 - **Luật J / LUẬT 9 — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant):** nhúng vào `AGENTS.md`, `CORE_GOVERNANCE_RULES.md` và template governance sinh bởi `init_brain.js`. Quy định `AGENTS.md` là nguồn chân lý DUY NHẤT, `CLAUDE.md` là shim mỏng ≤10 dòng chỉ chứa `@AGENTS.md`.
 - `init_brain.js`: sinh/vá tự động `CLAUDE.md` (idempotent), thêm `hasClaudeMd` vào chẩn đoán và điều kiện `isFullyStandard` để phát hiện + tự sửa các dự án cũ thiếu shim.
 - Dogfooding: tạo `CLAUDE.md` ở root chính repo `brain4agent.old`.
+- Kế hoạch chi tiết & bằng chứng kiểm chứng: [`planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md`](file:///planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md).
 
 ## [v1.0.1] - 2026-08-28: Single Skill Vault Alignment & Project Identity Standard
 ### Added

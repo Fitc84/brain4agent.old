@@ -53,7 +53,8 @@ brain4agent/
 │   ├── -data-architecture.md         # [DATA ARCH] Kiến trúc dữ liệu & Data Flow
 │   └── project-intro.md              # [INTRO] Tổng quan Hub & Tech stack
 ├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
-│   └── 01_2026-08-28_modernize-hub-v52/
+│   ├── 01_2026-08-28_modernize-hub-v52/
+│   └── 02_2026-08-31_dual-entry-point-claude-shim/
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md

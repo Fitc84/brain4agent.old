@@ -1,6 +1,6 @@
 # Roadmap & Active Tasks
 
-File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.0.1)**.
+File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.1.0)**.
 
 ## Mục tiêu hiện tại (Active)
 - [x] Phát hành phiên bản chính thức **brain4agent v1.0.1**.

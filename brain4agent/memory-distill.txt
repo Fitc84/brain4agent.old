@@ -11,7 +11,7 @@
 </agent_startup_protocol>
 
 <project_foundation>
-- Project: brain4agent (v1.0.1)
+- Project: brain4agent (v1.1.0)
 - Tech Stack: Node.js (Brain Engine Scripts), PowerShell (Deploy Automation), Markdown (Governance & Specs).
 - Data/State: Multi-Tier Hot/Cold Memory Architecture (`memory/hot/` + 7 partitions).
 - Core Guides: `docs/UNIVERSAL_AGENT_GUIDE.md` (Cẩm nang A-Z) & `CORE_GOVERNANCE_RULES.md` (Hiến pháp V5.2).

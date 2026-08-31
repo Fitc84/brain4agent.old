@@ -1,33 +1,34 @@
-# 📅 Nhật Ký Làm Việc Ngày 28/08/2026 (Session Memory Log)
+# 📅 Nhật Ký Làm Việc Ngày 31/08/2026 (Session Memory Log)
 
-> Cập nhật lúc: `2026-08-28T14:05:00+07:00` | Phiên bản: `v1.0.1` (Grade A Runtime Verified)
+> Cập nhật lúc: `2026-08-31` | Phiên bản: `v1.1.0` (Dual Entry-Point Invariant — CLAUDE.md Shim Fix)
 
 ---
 
 ## 🎯 Thành Tựu Cốt Lõi Đạt Được Trong Phiên:
-1. **Phát hành & Chuẩn Hóa brain4agent v1.0.1:**
-   - Định danh chính thức dự án là **brain4agent (v1.0.1)**.
-   - Thiết lập `package.json` làm Single Source of Version Truth (`v1.0.1`).
-   - Cung cấp các lệnh npm tiện ích: `npm run init-brain`, `npm run deploy`.
-   - Di dời 100% skills vào `.agents/skills/` theo chuẩn Single Skill Vault.
-   - Hỗ trợ triển khai đa nền tảng cho **Antigravity, Gemini, Claude Code, Codex, Cursor**.
-2. **Xây dựng Cẩm Nang Tự Động Hóa Từ A-Z Cho Mọi AI Agent:**
-   - Tạo mới [`docs/UNIVERSAL_AGENT_GUIDE.md`](file:///docs/UNIVERSAL_AGENT_GUIDE.md) hướng dẫn toàn diện từ A đến Z giúp bất kỳ AI Agent nào cũng tự động chẩn đoán, khởi tạo, quản trị kế hoạch và đóng phiên mà không cần người dùng can thiệp thủ công.
-   - Cập nhật `init_brain.js` hỗ trợ nhận đường dẫn thư mục đích làm tham số CLI (`process.argv[2]`).
+1. **Chống lỗi thời cho não bộ sau đợt vá v1.1.0 (commit `94a4506`):**
+   - Sửa `roadmap.md` và `memory-distill.txt` — 2 chỗ còn khẳng định sai `brain4agent (v1.0.1)` trong khi `package.json` đã là `1.1.0`.
+   - Grep toàn repo (trừ `archive/` và `changelog.md`) xác nhận không còn tài liệu sống nào khẳng định version cũ hoặc câu sai "AGENTS.md nạp tự động khi khởi động phiên".
+2. **Ghi hồ sơ kế hoạch cho đợt vá Dual Entry-Point Invariant:**
+   - Tạo [`planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md`](file:///planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md) theo đúng khuôn plan #01, ghi lại bằng chứng nghiệm thu thật (3 ca kiểm chứng, commit `94a4506`, đồng bộ deploy, 7 test pytest bên `aiedu4vn`).
+3. **Bổ sung gotcha mới vào `-known-gotchas.md`:** mục "Claude Code — Điểm Nạp Luật (Entry Point)" — triệu chứng, nguyên nhân, bẫy phụ (backtick quanh `@AGENTS.md`), cách phát hiện, cách khắc phục.
+4. **Đồng bộ phần não còn lại:** `index.md` (thêm `planning/02_...` vào sơ đồ cây), `changelog.md` (tham chiếu tới plan #02 trong mục `[v1.1.0]`), `memory/hot/today.md` + `state.json` (phiên này).
 
 ---
 
-## 🧪 Kết Quả Benchmark / Kiểm Thử Thực Chiến:
-- **Zero-Config Agent Portability:** Hỗ trợ mọi AI Agent qua 1 lệnh duy nhất hoặc qua link GitHub / thư mục.
-- **Root Clean Invariant:** 100% đạt chuẩn (Không file rác ngoài root).
-- **Brain Partitions:** 7 phân vùng cố định + 1 phân khu Hot Memory.
+## 🧪 Kết Quả Kiểm Chứng:
+- Grep toàn repo `v1\.0\.1|1\.0\.1` (trừ `archive/`, `changelog.md`): 0 kết quả còn sót.
+- Grep câu sai "AGENTS.md nạp tự động": chỉ còn xuất hiện trong `changelog.md` với vai trò mô tả LỊCH SỬ lỗi đã sửa (giữ nguyên, không sửa hồi tố).
 
 ---
 
 ## 📁 Danh Sách File Đã Tạo / Sửa:
-- **Tạo mới:** [`docs/UNIVERSAL_AGENT_GUIDE.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/docs/UNIVERSAL_AGENT_GUIDE.md)
+- **Tạo mới:**
+  - [`planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md)
 - **Chỉnh sửa:**
-  - [`.agents/skills/.xay-dung-nao-bo/scripts/init_brain.js`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/.agents/skills/.xay-dung-nao-bo/scripts/init_brain.js)
-  - [`brain4agent/index.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/index.md)
+  - [`brain4agent/roadmap.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/roadmap.md)
   - [`brain4agent/memory-distill.txt`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/memory-distill.txt)
+  - [`brain4agent/-known-gotchas.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/-known-gotchas.md)
+  - [`brain4agent/index.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/index.md)
+  - [`brain4agent/changelog.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/changelog.md)
   - [`brain4agent/memory/hot/today.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/memory/hot/today.md)
+  - [`brain4agent/memory/hot/state.json`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/memory/hot/state.json)
