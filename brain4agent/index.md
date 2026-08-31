@@ -67,7 +67,8 @@ brain4agent/
 │   ├── 02_2026-08-31_dual-entry-point-claude-shim/
 │   ├── 03_2026-08-31_brain-version-marker/
 │   ├── 04_2026-08-31_rollout-ecosystem/
-│   └── 05_2026-08-31_nao-hoa-nhom-c/   # + specs/ (00-ARCHITECTURE, 01-CONTRACTS, SPEC-P01..P06)
+│   ├── 05_2026-08-31_nao-hoa-nhom-c/   # + specs/ (00-ARCHITECTURE, 01-CONTRACTS, SPEC-P01..P06)
+│   └── 06_2026-08-31_dong-bo-67-repo/  # + specs/ (git-init, first-commit, xử bẩn, não hóa, ca đặc biệt)
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
