@@ -1,6 +1,21 @@
 # 📅 Nhật Ký Làm Việc Ngày 31/08/2026 (Session Memory Log)
 
-> Cập nhật lúc: `2026-08-31` | Phiên bản: `v1.2.2` (Não Hóa Nhóm C #05 + Hotfix "Vá Bước 0 Giả")
+> Cập nhật lúc: `2026-08-31 19:02` | Phiên bản: `v1.3.0` (Đồng Bộ Cấu Trúc 67 Repo #06)
+
+---
+
+## 🚀 Phiên Thực Thi #06 — Đồng Bộ 67 Repo (HOÀN THÀNH MỘT PHẦN CÓ CHỦ ĐÍCH)
+
+1. **Kết quả đo bằng script kiểm kê chạy 2 lần (TRƯỚC/SAU):** `PARENT_GIT 9→0` ✅ · `UNBORN 13→5` · `DIRTY 16→10` · não chuẩn **21→52**. **46 commit local, 0 push.** Mục tiêu não ≥64/67 **chưa đạt** — 15 repo còn treo, mỗi repo có lý do ghi rõ trong `planning/06_*/plan.md` mục 6.
+2. **Thứ tự GIT TRƯỚC — NÃO SAU chứng minh là đúng:** P01 (9 repo `git init` + baseline) → P02 (8/13 first-commit) → P03 (5 commit Bậc 1, 8 báo cáo Bậc 2, 2 chẩn đoán Bậc 3) → P04 (31 repo não hóa, 4 subagent song song) → P06 → P07.
+3. **3 phát hiện lớn ngoài dự kiến:**
+   - **Repo git LỒNG NHAU** ở 7 repo — `git status` gộp cả một repo con thành ĐÚNG 1 dòng nên khảo sát #06 đọc `AI-input(2)` tưởng gần sạch, thật ra bên trong là cả một dự án 1.4 GB. Commit sẽ tạo gitlink `160000` mồ côi ⇒ dừng 4 repo unborn.
+   - **Bug cổng an toàn của chính mình:** biến vòng lặp `$sec` ghi đè hằng regex `$SEC` (PowerShell không phân biệt hoa/thường) làm cổng secret **báo PASS mà không kiểm gì**. Phát hiện nhờ NHÌN DỮ LIỆU cổng in ra chứ không nhìn kết luận. Sửa tên biến + audit lại bằng `git ls-files` (đường đo độc lập) ⇒ cả 9 repo sạch thật.
+   - **Phiên agent KHÁC chạy song song** trên cùng workspace (commit 17:36–17:45 ở `control-claude-code`, `fitc84.com`, `aiedu4vn` và chính hub này). Nhờ đối chiếu dấu thời gian nên KHÔNG commit đè việc đang dở của họ.
+4. **Chống "não giả" cho 7 kho TRỐNG** (`1seed`, `control-facebook/pc/telegram/zalo`, `control-PC-by-chatweb-ai`, `RE-Kit`): não ghi thẳng "kho TRỐNG, không mã nguồn", phạm vi CHỈ là suy đoán từ tên thư mục và phải hỏi chủ dự án; `system_status=scaffolded-empty-repo`.
+5. **2 việc DỪNG có bằng chứng, không tự chế phương án:** `CausalAgent` GĐ2 (các `scratch_*.py` dựng `sys.path` từ `os.path.dirname(__file__)` ⇒ mv là gãy import) và `control-LDplayer` (≥8 tham chiếu path cứng tới `Plan/` đang sống).
+6. **🔒 Cảnh báo bảo mật cần user xử riêng:** 4 repo có secret ĐÃ nằm trong lịch sử git từ TRƯỚC #06 — danh sách repo, đường dẫn và loại khoá được giữ ở hồ sơ chỉ-lưu-máy ngoài git. **Phải xoay khoá**, sửa code không đủ. #06 chỉ báo cáo, không untrack hộ (§3.5).
+7. **Engine KHÔNG đổi dòng nào** — không bug engine nào lộ ra ⇒ `BRAIN_TEMPLATE_VERSION` giữ `1.2.0`, chỉ bump version DỰ ÁN v1.2.2 → v1.3.0.
 
 ---
 

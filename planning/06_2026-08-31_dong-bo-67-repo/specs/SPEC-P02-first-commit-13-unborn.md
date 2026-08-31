@@ -20,22 +20,37 @@
 - `control-discord`: sau baseline đủ điều kiện vá não treo từ #04 (thiếu `CLAUDE.md`) → P04.
 - `teamworkflow`: sau baseline, xử theo kết luận #04: shim đã chuẩn, `AGENTS.md` hiện là Next.js tooling notice — P04 sẽ hỏi user trước khi thay/đắp bộ luật não (KHÔNG tự quyết ở SPEC này).
 
-## Nghiệm thu (điền khi thực thi)
+## Nghiệm thu — ⚠️ HOÀN THÀNH MỘT PHẦN 8/13 (2026-08-31 17:52)
 
 | Repo | SHA baseline | Files | Secret-scan | Ghi chú |
 | :--- | :--- | :--- | :--- | :--- |
-| 1seed | | | | |
-| AI-input | | | | |
-| auto-hot-key | | | | |
-| bi-kip-luyen-agent | | | | |
-| CausalAgent | | | | `.env` phải bị ignore; mở gate GĐ2 |
-| coding-orchestrator | | | | |
-| congquyengop.vn | | | | |
-| control-discord | | | | mở vá não treo #04 |
-| control-PC-by-chatweb-ai | | | | |
-| docker | | | | |
-| manage-fitc84 | | | | |
-| RE-Kit | | | | |
-| teamworkflow | | | | AGENTS.md = Next.js notice — chờ user ở P04 |
+| 1seed | `72f883f` | 1 | CLEAN | kho TRỐNG (chỉ `.gitignore`) |
+| AI-input | — | — | — | ⛔ **DỪNG** — repo git LỒNG NHAU |
+| auto-hot-key | — | — | — | ⛔ **DỪNG** — 1066 file / 490 MB build artifacts |
+| bi-kip-luyen-agent | — | — | — | ⛔ **DỪNG** — repo git LỒNG NHAU |
+| CausalAgent | `c702ea9` | 62 | CLEAN — `.env` ignored ✅ | mở gate GĐ2 (kết quả: xem cuối SPEC-P04) |
+| coding-orchestrator | `092930b` | 103 | CLEAN — `secrets.env` ignored ✅ | repo lồng ở `runtime/.../scope-gate-test` đã bị gitignore → không sinh gitlink |
+| congquyengop.vn | — | — | — | ⛔ **DỪNG** — repo git LỒNG NHAU |
+| control-discord | `bfbcf98` | 11 | CLEAN | mở vá não treo #04 → `c61f74f` |
+| control-PC-by-chatweb-ai | `2503c9d` | 1 | CLEAN | kho TRỐNG |
+| docker | `7964888` | 3 | CLEAN — `9router/.env` ignored ✅ | |
+| manage-fitc84 | — | — | — | ⛔ **DỪNG** — 2 repo git LỒNG NHAU |
+| RE-Kit | `8f5e7ef` | 1 | CLEAN | kho TRỐNG |
+| teamworkflow | `e1fa27e` | 40 | CLEAN | `node_modules/`, `.next/` đã ignore; xử tiếp ở lô 4e → `cb33a09` |
 
-- [ ] 13/13 hết unborn; 0 secret trong commit mới.
+- [x] 8/13 hết unborn; 0 secret trong mọi commit mới (kiểm 2 lớp: `git show --name-only` + audit `git ls-files`; cả 8 `SECRET_HITS=NONE`, `gitlinks=0`).
+- [ ] 5/13 CÒN UNBORN — chờ user quyết (chi tiết dưới).
+
+### 5 repo DỪNG — sai lệch khảo sát, cần user quyết
+
+Khảo sát P00 đếm "file bẩn" bằng `git status`, nên một thư mục con là **repo git riêng** chỉ hiện ra thành 1 dòng. Thực tế:
+
+| Repo | Phát hiện | Vì sao dừng | Khuyến nghị |
+| :--- | :--- | :--- | :--- |
+| `AI-input` | thư mục con `AI-input/` là repo git riêng; repo ngoài chỉ có `.gitignore` | commit sẽ ghi **gitlink 160000** không kèm URL submodule → tham chiếu hỏng, không clone lại được | thư mục ngoài chỉ là vỏ bọc — hoặc gỡ 1 tầng, hoặc để repo ngoài KHÔNG phải repo git |
+| `bi-kip-luyen-agent` | như trên (`bi-kip-luyen-agent/` lồng bên trong) | như trên | như trên |
+| `congquyengop.vn` | như trên (`congquyengop.vn/` lồng bên trong, 1.4 GB) | như trên | như trên |
+| `manage-fitc84` | có 18 file THẬT của chính nó + **2 repo lồng**: `9router/`, `Quản lý công ty FITC84/` | 18 file kia commit được, nhưng 2 gitlink sẽ lọt vào cùng commit | quyết cách xử 2 thư mục lồng (submodule thật / gitignore / gỡ) rồi commit |
+| `auto-hot-key` | 1066 file / **490 MB** sẽ vào commit đầu: `hidmacros-master/.../bin/`, `obj/`, `HIDMacros_Net.exe` 146 MB, `.r2r.dll` 82 MB | nhồi 490 MB build artifact vào commit đầu là không thể xoá sạch về sau; quyết định thuộc chủ dự án | thêm `bin/`, `obj/` vào `.gitignore` rồi commit baseline (còn ~vài chục file nguồn) |
+
+Không repo nào trong 5 repo trên bị chạm: `git status` trước = sau, không `git add`, không `.gitignore` bị sửa.

@@ -2,6 +2,26 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.3.0] - 2026-08-31: Đồng Bộ Cấu Trúc 67 Repo (Git Đúng Chỗ + Não Chuẩn v1.2.0)
+
+### Added
+- **46 commit local** trên toàn hệ sinh thái (0 push). `PARENT_GIT 9 → 0`; `UNBORN 13 → 5`; não chuẩn `21 → 52`.
+- 9 repo `control-*` lần đầu có `.git` của chính nó (trước đó `git -C` leo lên repo cha và vùng này bị cha `.gitignore` ⇒ thật sự vô chủ về version control).
+- 8 repo unborn có commit đầu tiên; 31 repo được não hóa/vá lên chuẩn v1.2.0.
+- Hồ sơ kế hoạch `planning/06_2026-08-31_dong-bo-67-repo/` với bảng nghiệm thu thật cho P01–P05 + bảng đối chiếu TRƯỚC/SAU.
+
+### Decisions
+- **Không bump `BRAIN_TEMPLATE_VERSION`** (giữ `1.2.0`): engine `init_brain.js` KHÔNG đổi dòng nào trong chiến dịch này — không bug engine nào lộ ra. Version bump chỉ ở tầng DỰ ÁN (v1.2.2 → v1.3.0) vì đây là nâng cấp phạm vi phủ sóng hệ sinh thái, giữ tương thích ngược ⇒ MINOR.
+- **`teamworkflow`:** SPEC ghi "hỏi user", đã tự quyết theo phương án AN TOÀN & ĐẢO NGƯỢC ĐƯỢC — đắp bộ luật vào CUỐI `AGENTS.md` (diff `17/0`), giữ nguyên khối `nextjs-agent-rules` ở đầu. Revert `cb33a09` nếu muốn đổi.
+- **`CausalAgent` Giai đoạn 2: KHÔNG thực thi** dù gate đã mở. Grep tham chiếu cho bằng chứng phủ định: các `scratch_*.py` dựng `sys.path` bằng `os.path.dirname(__file__) + 'src'` nên buộc phải nằm ở root; di chuyển sẽ gãy import ngay. Dọn root đòi sửa mã cho độc-lập-vị-trí trước — cần user duyệt.
+- **`control-LDplayer`: DỪNG chuẩn hoá tên `Plan/`+`DOCS/`** — `git grep` thấy ≥8 tham chiếu path cứng đang sống trong `.agent/domains/`.
+
+### Fixed / Learned
+- 3 gotcha mới (mục 6, 7, 8 trong `-known-gotchas.md`): biến `$sec` ghi đè hằng regex `$SEC` làm chết cổng secret trong im lặng · audit đếm "file bẩn" che mất repo git lồng nhau (nguy cơ gitlink `160000` mồ côi) · phiên agent khác chạy song song làm trạng thái đổi giữa chừng.
+
+### Security (báo cáo, KHÔNG tự sửa)
+- 4 repo có secret ĐÃ tracked từ trước #06 — cần **xoay khoá**, sửa code là chưa đủ: danh sách 4 repo kèm đường dẫn và loại khoá được giữ ở hồ sơ chỉ-lưu-máy ngoài git, không đưa lên kho công khai.
+
 ## [v1.2.2] - 2026-08-31: Não Hóa Nhóm C (6 Dự Án) + Hotfix "Vá Bước 0 Giả" Trong Kernel
 ### Fixed
 - **Bug báo-vá-nhưng-không-vá trong `init_brain.js` (2 subagent độc lập phát hiện khi thực thi kế hoạch #05):** nhánh tự vá Bước 0 vào `memory-distill.txt` dùng `String.replace(/<agent_startup_protocol>/i, ...)`. Với kernel cũ viết **markdown thuần** (không có tag XML), `replace` không khớp nên trả về chuỗi y nguyên, nhưng script vẫn `writeFileSync` và vẫn in `🔄 Đã tự động vá Bước 0` → log nói dối, dự án không bao giờ tự đạt chuẩn. Cùng lớp lỗi "báo-ổn-sai" đã vá cho nhánh `AGENTS.md` ở v1.2.0 (P09).

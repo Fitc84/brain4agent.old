@@ -42,3 +42,26 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Nguyên nhân:** Repo mới `git init` và **chưa có commit nào** (unborn branch) cũng làm `--abbrev-ref HEAD` in `HEAD` và `rev-parse HEAD` báo `fatal: Needed a single revision` — trùng triệu chứng với detached.
 - **Cách phân biệt (dứt khoát):** đọc trực tiếp `.git/HEAD` — `ref: refs/heads/<tên>` là **unborn/bình thường**, còn **SHA trần** mới là detached thật. Hoặc `git status -sb`: `## No commits yet on main` = unborn.
 - **Vì sao vẫn phải cẩn thận:** Không có nguy cơ commit mồ côi, nhưng commit vào repo unborn sẽ tạo **commit đầu tiên của cả dự án**, gộp mọi file đang untracked — đó là mốc lịch sử, phải để chủ dự án quyết, không được làm như hệ quả phụ của một đợt vá tự động.
+
+## 6. PowerShell Không Phân Biệt Hoa/Thường Tên Biến — `$sec` Ghi Đè `$SEC` Làm Chết Cổng Kiểm Secret
+- **Triệu chứng:** script quét secret hàng loạt chạy đúng ở repo ĐẦU TIÊN, từ repo thứ hai trở đi trả kết quả vô lý — có repo liệt kê MỌI file là "ứng viên secret", có repo bỏ sót cả `.env` nằm sờ sờ ở root. Không lỗi, không cảnh báo.
+- **Nguyên nhân:** hằng số regex đặt tên `$SEC` (`$SEC = '(?i)(^\.env...|secret|credential|...)'`), còn vòng lặp per-repo lại đặt `$sec = @(Find-SecretFiles $p)`. **PowerShell coi `$SEC` và `$sec` là CÙNG MỘT biến** ⇒ ngay sau repo đầu tiên, regex bị thay bằng mảng đường dẫn file. Từ đó `-match $SEC` so khớp với chuỗi nối của mảng đó, cho kết quả ngẫu nhiên.
+- **Bẫy kép:** cùng lỗi này làm hàm `Assert-NoSecretStaged` mất hiệu lực trong im lặng — cổng an toàn *báo PASS* trong khi thực ra không kiểm gì cả.
+- **Cách phát hiện:** đừng chỉ nhìn "PASS/FAIL", hãy **nhìn dữ liệu cổng kiểm in ra**. `control-tailscale` không có file secret nào mà in ra 13 ứng viên → đó là tín hiệu. Nguyên tắc: cổng an toàn phải in bằng chứng, không chỉ in kết luận.
+- **Khắc phục:** (a) đặt tên hằng số dài, khác biệt rõ (`$SECRET_RE`, `$SECRET_OK_RE`) và biến vòng lặp khác hẳn (`$secList`); (b) **kiểm chứng độc lập bằng nguồn khác**: sau khi commit, audit lại bằng `git ls-files` trên toàn repo với regex viết TẠI CHỖ — nếu 2 đường đo độc lập cùng nói CLEAN thì mới tin.
+- **Nguồn:** chiến dịch #06, phát hiện ngay trong lượt chạy P01 (9 repo `git init`); đã chạy lại toàn bộ cổng bằng code sửa và audit độc lập — cả 9 repo sạch.
+
+## 7. Audit Hàng Loạt Đếm "File Bẩn" Che Mất Repo Git LỒNG NHAU
+- **Triệu chứng:** khảo sát ghi `AI-input`(2 file bẩn), `bi-kip-luyen-agent`(2), `congquyengop.vn`(2) — trông như repo gần sạch, chỉ cần commit là xong. Đến lúc thực thi mới thấy `git add -A -n` in ra `add 'AI-input/'` **có dấu `/` ở cuối**.
+- **Nguyên nhân:** `git status --porcelain` gộp **cả một repo git con** thành ĐÚNG MỘT dòng. Con số "2 file bẩn" thật ra là `.gitignore` + toàn bộ một dự án khác nằm lồng bên trong (có repo nặng 1.4 GB).
+- **Vì sao nguy hiểm:** `git add` một thư mục chứa `.git` riêng sẽ ghi **gitlink mode `160000`** mà KHÔNG có `.gitmodules` kèm URL ⇒ commit trỏ tới một SHA không ai tìm lại được; clone repo ngoài về sẽ ra thư mục rỗng, và người sau tưởng mất dữ liệu.
+- **Cách phát hiện (rẻ, làm trước mọi first-commit):** (1) `git add -A -n` rồi grep dòng khớp `^add '.*/'$`; (2) `Get-ChildItem -Recurse -Directory -Force -Filter '.git'` và lọc những cái KHÔNG phải `.git` ở root; (3) sau commit `git ls-files -s | Where-Object { $_ -match '^160000' }` phải rỗng.
+- **Khắc phục:** KHÔNG tự quyết. Repo lồng là quyết định cấu trúc của chủ dự án — hoặc là submodule thật (cần URL remote), hoặc phải gitignore, hoặc gỡ một tầng thư mục. Dừng repo đó và hỏi.
+- **Nguồn:** chiến dịch #06 SPEC-P02 — 4/13 repo unborn phải dừng vì lý do này (`AI-input`, `bi-kip-luyen-agent`, `congquyengop.vn`, `manage-fitc84`); ngoài ra `FITC84-WorkOs-`, `openclaw-pro-studio`, `Token-Calcultor` cũng dính.
+
+## 8. Kho Nhiều Repo — Phiên Agent KHÁC Đang Chạy Song Song Làm Trạng Thái Đổi Giữa Chừng
+- **Triệu chứng:** chụp kiểm kê đầu phiên xong, làm việc 15 phút, chụp lại thì HEAD của mấy repo mình chưa hề đụng đã đổi; có repo đang sạch bỗng bẩn 2-3 file.
+- **Nguyên nhân:** người dùng mở nhiều phiên agent trên cùng workspace. Đo được bằng `git log -1 --date=format:'%H:%M:%S'` — dấu thời gian commit nằm GIỮA phiên của mình.
+- **Vì sao nguy hiểm:** (a) dễ kết luận nhầm "repo lệch hiện trạng khảo sát → có bất thường"; (b) tệ hơn, commit đè lên việc đang dở của phiên khác, hoặc `git add -A` nuốt luôn file phiên kia vừa tạo.
+- **Cách xử:** trước khi commit hộ BẤT KỲ repo bẩn nào, chạy `git log -1 --format='%ad' --date=format:'%Y-%m-%d %H:%M:%S'`. Nếu commit gần nhất nằm trong vòng vài chục phút của phiên hiện tại ⇒ coi như **repo đang có người làm**, chỉ báo cáo, không đụng. Với repo hub thì kiểm lại `git status` ngay trước khi commit đồng bộ.
+- **Nguồn:** chiến dịch #06 — `control-claude-code`, `fitc84.com`, `ai-news-radar` và chính hub `brain4agent.old` đều nhận commit từ phiên khác lúc 17:36–17:45 trong khi #06 đang chạy.

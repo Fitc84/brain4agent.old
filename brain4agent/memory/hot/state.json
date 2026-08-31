@@ -1,25 +1,20 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.2.2",
+  "current_version": "1.3.0",
   "system_status": "healthy_and_runtime_verified",
   "last_verification": {
     "timestamp": "2026-08-31",
     "scenarios_passed": [
-      "Dual Entry-Point Invariant (CLAUDE.md shim) verified across 3 real run scenarios",
-      "Zero Root Clutter verified",
-      "Single Skill Vault (.agents/skills/) verified",
-      "7 brain partitions verified",
-      "Hot Memory active",
-      "Safe deploy script verified — global copy byte-identical",
-      "Single Source of Version Truth (package.json v1.2.1) aligned",
-      "Brain Version Marker (brain_template_version) verified across 3 real run scenarios",
-      "Anti-staleness sweep: no living doc still asserts v1.0.1/v1.1.0 or wrong AGENTS.md auto-load claim",
-      "state.json POSIX trailing-newline fix verified (tail byte 0a) + idempotent re-run reports NAO DA OK"
+      "Plan #06 executed: PARENT_GIT 9->0, UNBORN 13->5, brain FULL 21->52, 46 local commits, 0 push",
+      "Secret gate verified by THREE independent layers (check-ignore, git show, git ls-files audit)",
+      "Isolation verified: brain4agent (new) and aiedu4vn byte-identical before/after (head + dirty count)",
+      "All 31 brain-onboarded repos re-run init_brain.js -> NAO DA OK, git status empty",
+      "Engine untouched this campaign -> BRAIN_TEMPLATE_VERSION stays 1.2.0"
     ],
     "benchmark_accuracy": "100%",
     "grade": "Grade A Runtime Verified"
   },
-  "active_plans_completed": 3,
+  "active_plans_completed": 4,
   "rollout_2026-08-31_plan04": {
     "engine": "init_brain.js v1.2.0 template + v1.2.1 newline hotfix",
     "patched_committed_local": {
@@ -34,13 +29,26 @@
       "wikiultra": "5f0b859 (kem va Buoc 0)"
     },
     "patched_no_git_with_backup": {
-      "repos": ["control-keypassxc", "control-router", "control-syncthing", "control-tailscale"],
+      "repos": [
+        "control-keypassxc",
+        "control-router",
+        "control-syncthing",
+        "control-tailscale"
+      ],
       "backup_dir": "C:\\Users\\hoang\\AppData\\Local\\Temp\\claude\\d--Data-Repositories--My-Repositories-brain4agent-old\\5688a6c6-dd21-4a7d-bf7c-818dd6760012\\scratchpad\\backup-nogit-2026-08-31",
       "verification": "subsequence check vs backup: onlyAdditions=True ca 4; lostStateKeys=0; marker/shim/tail0a OK",
       "no_git_init": true
     },
-    "skipped_dirty": ["GramPilot (15)", "control-gpm (59)", "control-codex (2)", "control-cloudflare (1)"],
-    "skipped_no_commits_yet": ["control-discord (3 muc untracked)", "teamworkflow (15 muc untracked)"],
+    "skipped_dirty": [
+      "GramPilot (15)",
+      "control-gpm (59)",
+      "control-codex (2)",
+      "control-cloudflare (1)"
+    ],
+    "skipped_no_commits_yet": [
+      "control-discord (3 muc untracked)",
+      "teamworkflow (15 muc untracked)"
+    ],
     "measurement_correction": "341-file-dirty cua 4 repo control-* la ARTEFACT: chung khong co .git rieng, git -C leo len repo cha D:\\Data\\Repositories (.gitignore dong 4 ignore /.My-Repositories/). Sau do repo cha da sach.",
     "detached_head_correction": "control-discord & teamworkflow KHONG detached — la unborn branch (.git/HEAD = ref: refs/heads/main, 'No commits yet on main'); van skip vi commit se tao moc lich su dau tien cua repo",
     "teamwork_flow_verdict": "CLAUDE.md la shim chuan (@AGENTS.md) NHUNG repo chua co commit nao va AGENTS.md chi la Next.js tooling notice 5 dong — SKIP cho user quyet",
@@ -73,5 +81,121 @@
     ],
     "not_pushed": true
   },
-  "brain_template_version": "1.2.0"
+  "brain_template_version": "1.2.0",
+  "dong_bo_67_repo_2026-08-31_plan06": {
+    "method": "GIT TRUOC - NAO SAU; P01->P02->P03->P04->P06->P07; 4 subagent song song cho phan dien noi dung nao; orchestrator kiem chung doc lap lai toan bo",
+    "inventory_before_after": {
+      "PARENT_GIT": "9 -> 0",
+      "UNBORN": "13 -> 5",
+      "DIRTY": "16 -> 10",
+      "CLEAN": "29 -> 52",
+      "brain_FULL": "21 -> 52",
+      "brain_PARTIAL": "14 -> 5",
+      "brain_NONE": "32 -> 10"
+    },
+    "commits_local_total": 46,
+    "p01_git_init_baseline": {
+      "control-chrome": "a07df91",
+      "control-facebook": "c1cdcbb",
+      "control-keypassxc": "1ccae59",
+      "control-pc": "b6375ee",
+      "control-router": "d3a6d4f (+ 4cbdc68 va Buoc 0)",
+      "control-syncthing": "e686af6 (+ fa3cf53 va Buoc 0)",
+      "control-tailscale": "e9e2d39",
+      "control-telegram": "903c89e",
+      "control-zalo": "903c89e"
+    },
+    "p02_first_commit": {
+      "1seed": "72f883f",
+      "CausalAgent": "c702ea9",
+      "coding-orchestrator": "092930b",
+      "control-discord": "bfbcf98",
+      "control-PC-by-chatweb-ai": "2503c9d",
+      "docker": "7964888",
+      "RE-Kit": "8f5e7ef",
+      "teamworkflow": "e1fa27e"
+    },
+    "p03_bac1_commits": {
+      "Bugbounty-Hunter": "58177db",
+      "control-cloudflare": "d20eab6",
+      "control-codex": "c509120",
+      "control-LDplayer": "1c25d8b",
+      "jina-proxy": "606d559"
+    },
+    "p04_brain_commits": {
+      "control-cloudflare": "d5f667a",
+      "control-codex": "0ede7ed",
+      "control-discord": "c61f74f",
+      "AI-Factory-FPT-DOCS": "1b7b847",
+      "control-phone": "00def2c",
+      "enterprise-signal-intelligence": "4d34c78",
+      "jina-proxy": "071d04f",
+      "xoayproxy": "09aa6a0",
+      "auto-excel": "ce54cc8",
+      "Base.labMCP": "574cfce",
+      "Bugbounty-Hunter": "3226373",
+      "coding-orchestrator": "20ffe9e",
+      "cross_ai_bridge": "55b4bee",
+      "Cong cu phan tich partern": "88f533e",
+      "Create-Restore-point": "0c3f494",
+      "CRM_MVP-main": "33a6fac",
+      "Fix-PC": "a19ccfb",
+      "Heimdall": "600160b",
+      "phong-chong-thien-tai": "64370c3",
+      "Radar-Scan-and-Collect": "7d9b7e5",
+      "Web-hoc-tap": "735bd14",
+      "docker": "50744b3",
+      "control-chrome": "84a96a4",
+      "1seed": "cedcc50",
+      "control-facebook": "13c41e8",
+      "control-pc": "11db39f",
+      "control-PC-by-chatweb-ai": "53b4215",
+      "control-telegram": "27f1e4b",
+      "control-zalo": "2806b1d",
+      "RE-Kit": "9d3e391",
+      "teamworkflow": "cb33a09"
+    },
+    "stopped_with_reason": {
+      "nested_git_repos": [
+        "AI-input",
+        "bi-kip-luyen-agent",
+        "congquyengop.vn",
+        "manage-fitc84"
+      ],
+      "build_artifacts_490MB": [
+        "auto-hot-key"
+      ],
+      "dirty_user_work": [
+        "control-gpm",
+        "GramPilot",
+        "ViDiaNorm",
+        "convert-json-to-9router-from-keycrop",
+        "FITC84-WorkOs-",
+        "CV",
+        "Token-Calcultor",
+        "openclaw-pro-studio"
+      ],
+      "live_uppercase_path_refs": [
+        "control-LDplayer"
+      ],
+      "isolated_by_decision": [
+        "brain4agent (new)",
+        "aiedu4vn"
+      ]
+    },
+    "causalagent_stage2_verdict": "KHONG thuc thi du gate da mo: scratch_*.py dung sys.path.append(os.path.dirname(__file__)+'src') va path tuong doi tu CWD=root -> mv se gay ImportError. Can sua ma nguon cho doc-lap-vi-tri truoc (can user duyet).",
+    "preexisting_secrets_reported_not_touched": [
+      "[da go khoi kho cong khai] vi tri 1/4 - xem ho so chi-luu-may ngoai git",
+      "[da go khoi kho cong khai] vi tri 2/4 - xem ho so chi-luu-may ngoai git",
+      "[da go khoi kho cong khai] vi tri 3/4 - xem ho so chi-luu-may ngoai git",
+      "[da go khoi kho cong khai] vi tri 4/4 - xem ho so chi-luu-may ngoai git"
+    ],
+    "new_gotchas": [
+      "#6 PowerShell khong phan biet hoa/thuong ten bien: $sec ghi de $SEC lam chet cong kiem secret trong im lang",
+      "#7 audit dem 'file ban' che mat repo git long nhau -> nguy co gitlink 160000 mo coi",
+      "#8 phien agent khac chay song song lam trang thai doi giua chung"
+    ],
+    "engine_untouched": true,
+    "not_pushed": true
+  }
 }

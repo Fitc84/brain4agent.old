@@ -29,9 +29,23 @@ Mọi thay đổi trong #06 với hub chỉ giới hạn ở: `planning/06_*/`, 
 | `reverse Claude` | dấu cách | như trên |
 | `Công cụ phân tích partern` | tiếng Việt có dấu + dấu cách | thuộc lô 4c (não hóa mới). Trước khi chạy: xác nhận engine/Node xử lý path Unicode đúng trên PowerShell (test `node -e "console.log(process.argv[2])"` với path đó); lỗi encode → DỪNG, báo user (có thể cần đổi tên thư mục — quyết định của user) |
 
-## Nghiệm thu (điền khi thực thi)
+## Nghiệm thu — ✅ HOÀN THÀNH 2026-08-31
 
-- [ ] `brain4agent` mới: 0 thay đổi (kiểm `git -C ... status --porcelain` trước/sau chiến dịch giống hệt nhau).
-- [ ] `aiedu4vn`: 0 thay đổi (kiểm như trên).
-- [ ] Câu trả lời của user cho mục 1 ghi tại đây: (điền)
-- [ ] Kết quả test Unicode path cho `Công cụ phân tích partern`: (điền)
+- [x] **`brain4agent` (mới): 0 thay đổi.** TRƯỚC `head=e01fdbf, dirty=38` → SAU `head=e01fdbf, dirty=38`. `git reflog -1` vẫn là `e01fdbf commit: test: add safe local model smoke automation`; commit gần nhất `2026-08-12 19:51:41` ⇒ không có thao tác ghi nào trong phiên #06. Không commit hộ 38 file, không chạy engine, không đổi `Plan/`.
+- [x] **`aiedu4vn`: 0 thay đổi.** TRƯỚC `head=a37ca3e dirty=0` → SAU `head=a37ca3e dirty=0`. (Lưu ý: commit `a37ca3e` lúc `17:33:03` là của **phiên agent khác**, không phải #06.)
+- [x] **Câu trả lời của user cho mục 1: CHƯA CÓ.** Chiến dịch chạy theo quyết định mặc định đã chốt ở `plan.md` mục 5.1 (cách ly tuyệt đối). 3 câu hỏi ở mục 1 của SPEC này VẪN TREO chờ user.
+- [x] **Test Unicode path cho `Công cụ phân tích partern`:** `node -e "console.log(process.argv[1])" "D:\Data\Repositories\.My-Repositories\Công cụ phân tích partern"` → in lại **đúng nguyên văn có dấu**, không lỗi encode. Repo não hóa bình thường: commit `88f533e`, `NÃO ĐÃ OK`. **Không cần đổi tên thư mục.**
+- [x] **`Agent to Product` / `reverse Claude`:** không cần đụng (đã chuẩn não từ #05, git sạch, không rơi vào nhóm nào của #06). Mọi lệnh trong chiến dịch đều bọc ngoặc kép — không repo tên-có-dấu-cách nào lỗi.
+
+### Ca đặc biệt PHÁT SINH khi thực thi (không có trong SPEC gốc)
+
+**Có phiên agent KHÁC đang chạy song song trên cùng workspace.** Đo được bằng dấu thời gian commit nằm GIỮA phiên #06 (bắt đầu ~17:35):
+
+| Repo | Commit của phiên khác | Thời điểm |
+| :--- | :--- | :--- |
+| `brain4agent.old` (chính hub này) | `8846338 docs(plan): close out plan #05 record and session log` | 17:40:58 |
+| `control-claude-code` | `9f7cf03` → `7718a6e` (plan #11 SPEC-04/05) | 17:42:54 → 17:45:26 |
+| `fitc84.com` | `786ec6f fix(ui): replay hero reveal…` | 17:42:20 |
+| `aiedu4vn` | `a37ca3e docs(planning): draft plan #17` | 17:33:03 |
+
+**Hệ quả đã xử:** `ai-news-radar`(3) và `fitc84.com`(2) bẩn lên GIỮA CHỪNG so với khảo sát → **loại khỏi Bậc 1 của P03, chỉ báo cáo**, tránh commit đè việc đang dở của phiên khác. Đã ghi thành gotcha #8 trong `brain4agent/-known-gotchas.md` của hub.
