@@ -4,6 +4,12 @@
 
 ---
 
+## 🔒 Đóng Phiên 2026-08-31
+
+- Audit lại `planning/05_*/plan.md` theo yêu cầu user → sửa 4 lỗi: tick P00b (gate đã mở bằng uỷ quyền, ghi rõ căn cứ), gạch-cập-nhật câu DRAFT lỗi thời ở Ghi Chú Phạm Vi, chú thích thứ tự P08 trước P07, chuẩn hoá số liệu `~20 → đếm thật 18` file scratch.
+- Push `origin main` cho hub `brain4agent.old` theo lệnh tường minh của user (lần đầu trong chuỗi phiên — trước đó mọi commit đều local). Các repo đích (9 repo có commit não hóa) VẪN CHƯA PUSH — user tự quyết từng repo.
+- Trạng thái bàn giao: kế hoạch #06 DRAFT + prompt thực thi đã trao cho user (today.md phần dưới); não đã kiểm không lệch.
+
 ## 🗺️ Phiên Lập Kế Hoạch #06 — Đồng Bộ 67 Repo (DRAFT, chưa thực thi)
 
 1. **Kiểm kê 67/67 repo** bằng script read-only: trục GIT (9 không có `.git` riêng / 13 unborn / 15 dirty / 30 clean) × trục NÃO (21 chuẩn / 13 nửa vời / 32 trắng / 2 ca đặc biệt). Hồ sơ: `planning/06_2026-08-31_dong-bo-67-repo/` (plan + 7 specs), commit `6fa15f5`.

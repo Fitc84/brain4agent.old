@@ -24,21 +24,21 @@
 | Audit | sạch, `master` | Não lồng thư mục phi chuẩn `core/`, `modules/`, `setup/`; `memory-distill.txt` nằm trong `core/` | **B — lồng phi chuẩn** | 🟠 |
 | reverse Claude | sạch, `main` | Não gần rỗng (chỉ `memory-distill.txt`); có hệ `planning/` + 9 skill riêng ĐANG SỐNG; root rác (`task.md`, `memory-distill.md`, transcript) | **B+ — não rỗng, governance riêng sống** | 🟠 |
 | Agent to Product | sạch, `main` ahead 2 | **Brain OS legacy đầy đủ đang sống**: `specs/` registry, `tasks/` state machine, `memory/graph.db` SQLite, governance riêng (`rules.md`, `SOP_WORKFLOW.md`); chứa script lạc `.brain-build` | **C — hệ legacy sống** | 🔴 |
-| CausalAgent | **34 file untracked, CHƯA CÓ COMMIT NÀO** (unborn `main`) | Não kiểu cũ (docs `-*` + distill); root ngập 20 file `scratch_*.py` vi phạm Root Clean | **D — bị chặn bởi git** | 🔴 (gate) |
+| CausalAgent | **34 file untracked, CHƯA CÓ COMMIT NÀO** (unborn `main`) | Não kiểu cũ (docs `-*` + distill); root ngập ~20 file `scratch_*.py` vi phạm Root Clean (đếm thật khi thực thi: 18) | **D — bị chặn bởi git** | 🔴 (gate) |
 
 ---
 
 ## 📋 2. Checklist Thực Thi (Model Tier Tagged)
 
 - [x] **P00 🔴 [Khảo sát & Lập kế hoạch]:** Khảo sát read-only 6 repo (root, não, skills, git, thư mục hoa) — bảng hiện trạng ở trên; viết bộ specs này. Hoàn thành 2026-08-31.
-- [ ] **P00b 🔴 [USER APPROVAL GATE]:** User duyệt kế hoạch + trả lời 3 câu hỏi mở ở mục 4. **Không thực thi trước khi duyệt.**
+- [x] **P00b 🔴 [USER APPROVAL GATE]:** ĐÃ MỞ 2026-08-31 — user uỷ quyền tường minh ("thực hiện theo hướng bạn cho là có lợi nhất... đảm bảo dự án toàn vẹn + đồng bộ theo 1 tiêu chuẩn"), 3 câu hỏi mở được agent tự chốt thành 3 quyết định ghi tại mục 4.
 - [x] **P01 🟢 [block-ads-fb-v2]:** Lớp A — SHA `1c0569e` @`master`.
 - [x] **P02 🟢 [dreamteam4vn]:** Lớp A+ — SHA `79efb93` + `cb2bcfa` @`master`.
 - [x] **P03 🟠 [Audit]:** Lớp B — SHA `451f1ac` @`master`.
 - [x] **P04 🟠 [reverse Claude]:** Lớp B+ — SHA `bf7e959` @`main`.
 - [x] **P05 🔴 [Agent to Product]:** Lớp C (cộng sinh) — SHA `a7c6ce4` @`main`.
 - [x] **P06 🔴 [CausalAgent — Giai đoạn 1]:** Lớp D — KHÔNG commit (đúng thiết kế). Giai đoạn 2 hoãn.
-- [x] **P08 🔴 [Hotfix engine phát sinh — v1.2.2]:** Bug "vá Bước 0 vào distill là no-op" (2 subagent độc lập phát hiện) — xem mục 5.
+- [x] **P08 🔴 [Hotfix engine phát sinh — v1.2.2]:** Bug "vá Bước 0 vào distill là no-op" (2 subagent độc lập phát hiện) — xem mục 5. *(Đánh số sau P07 vì phát sinh ngoài kế hoạch gốc, nhưng đứng trước trong danh sách vì phải xong TRƯỚC khi đóng plan.)*
 - [x] **P07 🟢 [Đóng kế hoạch]:** Báo cáo tổng, Sync Cascade 6 điểm vào `brain4agent/` hub, đóng plan ✅.
 
 **Cách thực thi thực tế:** thay vì tuần tự, dùng **6 subagent chạy song song 2 đợt** (đợt 1: P01/P02 model tầm trung + P03 model mạnh; đợt 2: P04/P05/P06 model mạnh) — an toàn vì 6 repo hoàn toàn độc lập, mỗi subagent bị khoá phạm vi vào đúng repo của nó và cấm chạm repo hub. Orchestrator kiểm chứng độc lập lại toàn bộ sau khi cả 6 báo xong.
@@ -112,7 +112,7 @@
 
 ## 📌 Ghi Chú Phạm Vi
 
-- Kế hoạch này CHỈ lập hồ sơ — chưa có repo đích nào bị sửa tại thời điểm DRAFT.
+- ~~Kế hoạch này CHỈ lập hồ sơ — chưa có repo đích nào bị sửa tại thời điểm DRAFT.~~ *(Câu thời DRAFT — đã lỗi thời: plan ĐÃ thực thi xong 6/6 repo ngày 2026-08-31, xem mục 5.)*
 - 2 repo pending của #04 (`control-discord`, `teamworkflow`) KHÔNG thuộc kế hoạch này — chúng đã có `AGENTS.md`/shim, chỉ chờ user xử lý git (xem roadmap).
 - Tên 2 repo chứa dấu cách (`Agent to Product`, `reverse Claude`) — mọi lệnh trong SPEC phải bọc ngoặc kép đường dẫn.
 - Backup bắt buộc trước di trú: toàn bộ `brain4agent/` của repo đích copy vào scratchpad (dù có git — di trú là thao tác nhiều file, revert bằng backup nhanh và an toàn hơn dò từng file).
