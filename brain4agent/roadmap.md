@@ -3,7 +3,8 @@
 File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.2.1)**.
 
 ## Mục tiêu hiện tại (Active)
-- [ ] **Rollout #04 — phần còn treo chờ user:** (a) 9 repo Nhóm A bị bỏ qua vì working tree bẩn (`GramPilot`, `control-cloudflare`, `control-codex`, `control-discord`, `control-gpm`, `control-keypassxc`, `control-router`, `control-syncthing`, `control-tailscale`) — user dọn sạch rồi chạy lại engine từng repo; (b) `teamworkflow` — repo chưa có commit nào + `AGENTS.md` là Next.js tooling notice, chờ user quyết; (c) 6 repo Nhóm C chưa có `AGENTS.md` — quyết định riêng từng dự án; (d) bản script cũ lạc `Agent to Product/.agents/skills/.brain-build/scripts/init_brain.js` — chờ user xử.
+- [ ] **Rollout #04 — 6 repo còn treo chờ user (13/19 đã xử lý):** (a) 4 repo working tree bẩn sẵn: `GramPilot` (15 file), `control-gpm` (59), `control-codex` (2), `control-cloudflare` (1) — dọn sạch rồi chạy lại engine; (b) 2 repo CHƯA có commit nào (unborn `main`, không phải detached): `control-discord`, `teamworkflow` — cần user tạo mốc commit đầu tiên trước; riêng `teamworkflow` còn phải quyết có não hóa không (`AGENTS.md` của nó là Next.js tooling notice).
+- [ ] **Rollout #04 — việc ngoài phạm vi:** (c) 6 repo Nhóm C chưa có `AGENTS.md` — quyết định riêng từng dự án; (d) bản script cũ lạc `Agent to Product/.agents/skills/.brain-build/scripts/init_brain.js` — chờ user xử; (e) 4 repo `control-keypassxc|router|syncthing|tailscale` KHÔNG có git riêng (nằm trong vùng bị repo cha ignore) — user cân nhắc `git init` để có đường revert.
 - [x] Phát hành phiên bản chính thức **brain4agent v1.2.0** (Brain Version Marker) + hotfix **v1.2.1** (POSIX newline).
 
 ## Tương lai (Upcoming)

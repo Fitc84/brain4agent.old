@@ -1,7 +1,7 @@
 # KẾ HOẠCH NÂNG CẤP: ROLLOUT KHUNG NÃO v1.2.0 RA TOÀN HỆ SINH THÁI (#04)
 
 - **STT KẾ HOẠCH:** #04
-- **TRẠNG THÁI:** ✅ ĐÃ HOÀN THÀNH ĐỢT 1 (9/18 repo Nhóm A vá + commit local) — phần treo 9 repo dirty + teamworkflow + Nhóm C bàn giao user (xem roadmap Active)
+- **TRẠNG THÁI:** 🔄 ĐÃ XỬ LÝ 13/19 REPO — **CHƯA hoàn tất**: còn 6 repo chờ user (4 working tree bẩn + 2 repo chưa có commit nào). Xem bảng phân loại 4 nhóm ở Cổng Nghiệm Thu.
 - **THỜI GIAN BẮT ĐẦU:** 2026-08-31
 - **THỜI GIAN HOÀN TẤT ĐỢT 1:** 2026-08-31 (sau phê duyệt pilot của user cùng ngày)
 - **PHIÊN BẢN MỤC TIÊU:** v1.2.1 (PATCH — hotfix newline `state.json` phát sinh khi user duyệt pilot; template khung não GIỮ v1.2.0)
@@ -33,6 +33,8 @@
 - [x] **P03 🟠 [Commit pilot]:** `control-claude-code` → **`eeba58a`** (`master`, 4 files, 95 insertions / 15 deletions — deletions toàn bộ thuộc re-format JSON state.json, AGENTS.md 0 deletion).
 - [x] **P04 🟠 [Rollout 17 repo Nhóm A còn lại]:** Chạy qua script `rollout.ps1` (scratchpad) với 5 cổng kiểm máy mỗi repo (status sạch; không `DOCS`/`Plan` hoa; diff `AGENTS.md` numstat deletions=0; đoạn luật xuất hiện đúng 1 lần; đúng 1 marker + CLAUDE.md shim + state.json tail `0a`). Kết quả: **8 vá + commit, 9 bỏ qua vì dirty** (bảng ở Cổng Nghiệm Thu). 2 repo (`control-chatgpt-web`, `translate4ide`) ban đầu FAIL cổng đếm chuỗi → điều tra xác nhận là false-positive của cổng kiểm (fallback phụ lục P09 làm tiêu đề + nội dung cùng chứa chuỗi; đoạn luật thật đếm = 1) → kiểm lại chuẩn rồi commit.
 - [x] **P05 🟠 [Nhóm B — teamworkflow]:** `CLAUDE.md` LÀ shim chuẩn (nguyên văn 1 dòng `@AGENTS.md`) — không phải file luật người viết. NHƯNG: (a) repo CHƯA có commit nào (`fatal: branch 'main' does not have any commits yet`, toàn bộ file untracked → không có HEAD để soi diff/rollback, dính bẫy 2); (b) `AGENTS.md` của nó chỉ là **notice 5 dòng do tooling Next.js sinh** ("This is NOT the Next.js you know"), không phải bộ luật não — chạy script sẽ vá luật quản trị vào file notice framework. → BỎ QUA, chờ user quyết.
+- [x] **P04b 🔴 [4 repo không có git riêng]:** Đính chính artefact đo "341 file bẩn"; backup thủ công `AGENTS.md` + `state.json`; chạy engine; kiểm chứng bằng subsequence + so khớp key JSON thay cho `git diff`; KHÔNG `git init`, KHÔNG commit. Chi tiết ở Cổng Nghiệm Thu P04b.
+- [x] **P04c 🔴 [Đính chính detached HEAD]:** `control-discord` và `teamworkflow` KHÔNG detached mà là unborn branch (`ref: refs/heads/main` + `No commits yet on main`); vẫn BỎ QUA nhưng vì lý do khác (commit sẽ tạo mốc lịch sử đầu tiên của repo — user quyết).
 - [x] **P06 🟢 [Báo cáo cuối]:** Trình bày đủ 7 mục (a)-(g) trong phản hồi phiên 2026-08-31.
 - [x] **P07 🟢 [Sync Cascade repo này]:** `changelog.md` (+mục v1.2.1), `roadmap.md` (Done + Active phần treo), `today.md`, `state.json` (current_version 1.2.1 + khối `rollout_2026-08-31_plan04`), `memory-distill.txt`, version bump `package.json`/`README.md`/`project-intro.md`/`index.md`.
 
@@ -72,22 +74,60 @@
 | GramPilot | ⏭️ BỎ QUA | dirty — 15 file đang dở | user dọn rồi tự chạy lại engine |
 | control-cloudflare | ⏭️ BỎ QUA | dirty — 1 file | — |
 | control-codex | ⏭️ BỎ QUA | dirty — 2 file | — |
-| control-discord | ⏭️ BỎ QUA | dirty — 3 file | — |
 | control-gpm | ⏭️ BỎ QUA | dirty — 59 file | — |
-| control-keypassxc | ⏭️ BỎ QUA | dirty — 341 file | 4 repo cùng số 341 — nghi hiện tượng chung (line-ending / thư mục đồng bộ?) |
-| control-router | ⏭️ BỎ QUA | dirty — 341 file | — |
-| control-syncthing | ⏭️ BỎ QUA | dirty — 341 file | — |
-| control-tailscale | ⏭️ BỎ QUA | dirty — 341 file | — |
+| control-discord | ⏭️ BỎ QUA | repo CHƯA có commit nào | `## No commits yet on main`, `AGENTS.md` + `brain4agent/` đều untracked |
+| control-keypassxc | ✅ VÁ (P04b) | không có git riêng | xử lý ở đợt bổ sung, có bản lưu |
+| control-router | ✅ VÁ (P04b) | không có git riêng | — |
+| control-syncthing | ✅ VÁ (P04b) | không có git riêng | — |
+| control-tailscale | ✅ VÁ (P04b) | không có git riêng | — |
+
+### P04b 🔴 — Đính chính đo đạc & xử lý 4 repo KHÔNG CÓ GIT RIÊNG (2026-08-31, đợt bổ sung)
+
+**Đính chính 1 — "341 file bẩn" là ARTEFACT ĐO, không phải repo bẩn.** 4 repo `control-keypassxc`, `control-router`, `control-syncthing`, `control-tailscale` **không có `.git` riêng**. Lệnh `git -C <repo> status` leo lên tổ tiên và trả về trạng thái của repo cha `D:\Data\Repositories` (`rev-parse --git-dir` → `D:/Data/Repositories/.git`), lúc đó đang có 341 thay đổi — nên cổng "status sạch" của đợt 1 hiểu nhầm là repo con bẩn. Đo lại 2026-08-31: repo cha đã sạch (`main...origin/main [ahead 2]`, dirty=0).
+
+**Xác nhận 4 repo này THẬT SỰ không được version control:** `.gitignore` của repo cha dòng 4 là `/.My-Repositories/` → `git check-ignore -v` khớp cho cả 4; `git ls-files` = 0 file được theo dõi. Nghĩa là không thể revert bằng git → BẮT BUỘC backup thủ công trước khi sửa.
+
+- **Bản lưu (trước khi chạy):** `…\scratchpad\backup-nogit-2026-08-31\<repo>\{AGENTS.md, state.json}` — keypassxc 11821/1622 bytes, router 13207/914, syncthing 12948/1929, tailscale 12919/1166.
+- **KHÔNG chạy `git init`, KHÔNG commit** (quyết định của user, không phải của agent).
+- **Cổng kiểm thay cho `git diff` (so với bản lưu):** kiểm *subsequence* — mọi dòng của `AGENTS.md` gốc phải còn nguyên, đúng thứ tự, trong bản mới ⇒ chứng minh chỉ-thêm-không-mất; và so khớp tập key JSON của `state.json`.
+
+| Repo | AGENTS.md dòng | onlyAdditions | luật đếm | marker | CLAUDE.md shim | state tail `0a` | key JSON mất |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| control-keypassxc | 102 → 118 | ✅ True | 1 / 1 | ✅ | ✅ | ✅ | 0 |
+| control-router | 125 → 135 | ✅ True | 1 / 1 | ✅ | ✅ | ✅ | 0 |
+| control-syncthing | 145 → 154 | ✅ True | 1 / 1 | ✅ | ✅ | ✅ | 0 |
+| control-tailscale | 125 → 135 | ✅ True | 1 / 1 | ✅ | ✅ | ✅ | 0 |
+
+- Cả 4 vá vào **đúng section chuẩn** (không phải fallback phụ lục); `brain_template_version=1.2.0` ghi thành công, 0 key cũ bị mất.
+- Repo cha `D:\Data\Repositories` **vẫn dirty=0** sau khi chạy — đúng như dự đoán vì `/.My-Repositories/` bị ignore, thao tác không rò rỉ sang repo cha.
+
+### P04c 🔴 — Đính chính về "detached HEAD"
+
+Ngữ cảnh bổ sung của user nêu `control-discord` và `teamworkflow` đang **detached HEAD**. **Đo lại cho thấy KHÔNG PHẢI detached:** file `.git/HEAD` của cả hai là `ref: refs/heads/main` (detached thì phải là SHA trần), `git status -sb` trả về `## No commits yet on main`. Đây là **nhánh chưa sinh (unborn branch)** — repo đã `git init` nhưng chưa có commit nào, nên `git rev-parse HEAD` báo `fatal: Needed a single revision` và `--abbrev-ref HEAD` in ra chữ `HEAD` (chính chỗ này dễ bị nhầm là detached).
+
+**Kết luận xử lý vẫn là BỎ QUA cả hai** (trùng chỉ thị của user, khác lý do): commit ở đây sẽ tạo **commit đầu tiên của repo** gộp toàn bộ file dự án đang untracked (`control-discord`: 3 mục gồm cả `brain4agent/`; `teamworkflow`: 15 mục gồm `src/`, `package.json`…) — đó là mốc lịch sử của dự án, phải do user quyết, không phải hệ quả phụ của một đợt vá não. Không có nguy cơ commit mồ côi.
 
 - Không repo nào có thư mục `DOCS`/`Plan` viết hoa (kiểm case-sensitive từng repo trước khi chạy) — bẫy 1 không kích hoạt ở bất kỳ đâu.
 - Mỗi repo PATCHED đều qua đủ 5 cổng máy: numstat AGENTS.md deletions=0; đoạn luật đếm=1; đúng 1 marker `brain4agent-v1.2.0.md`; `CLAUDE.md` chứa `@AGENTS.md`; `state.json` tail `0a`. `git status` sau commit = rỗng.
 
 ### Nhóm B — teamworkflow (P05)
 
-- `CLAUDE.md` = đúng 1 dòng `@AGENTS.md` → LÀ shim chuẩn.
-- `git log` → `fatal: your current branch 'main' does not have any commits yet`; toàn bộ file `??` untracked → không có HEAD, không soi diff/rollback được (bẫy 2).
+- `CLAUDE.md` = đúng 1 dòng `@AGENTS.md` → LÀ shim chuẩn (không phải file luật người viết, nên không dính điều kiện "dừng hỏi" của brief).
+- `git log` → `fatal: your current branch 'main' does not have any commits yet`; `status -sb` → `## No commits yet on main`; toàn bộ 15 mục `??` untracked → không có HEAD để soi diff/rollback (bẫy 2). **Không phải detached HEAD** — xem P04c.
 - `AGENTS.md` chỉ 5 dòng notice `<!-- BEGIN:nextjs-agent-rules -->` do tooling Next.js sinh — không phải bộ luật não. Grep: dual=0, marker_law=0, step0=0.
 - → BỎ QUA, bàn giao user quyết (nên commit mốc đầu repo trước, và quyết định có muốn não hóa repo này không).
+
+### 📊 Phân loại tổng kết — 19/19 repo (không sót)
+
+| Nhóm | Số repo | Danh sách |
+| :--- | :--- | :--- |
+| ✅ ĐÃ XỬ LÝ — vá + commit local | 9 | control-claude-code, ai-news-radar, control-9router, control-chatgpt-web, control-linux-server, fitc84.com, router4vn, translate4ide, wikiultra |
+| ✅ KHÔNG CÓ GIT — đã xử lý kèm backup | 4 | control-keypassxc, control-router, control-syncthing, control-tailscale |
+| ⏭️ BỎ QUA — working tree bẩn sẵn | 4 | GramPilot (15 file), control-gpm (59), control-codex (2), control-cloudflare (1) |
+| ⏭️ BỎ QUA — repo chưa có commit nào (unborn `main`, KHÔNG phải detached) | 2 | control-discord (3 mục untracked), teamworkflow (15 mục untracked) |
+| **TỔNG** | **19** | — |
+
+**CHƯA HOÀN TẤT TOÀN BỘ:** còn **6 repo** chờ user xử lý (4 bẩn + 2 chưa có commit), cộng 6 repo Nhóm C ngoài phạm vi đợt này.
 
 - [x] KHÔNG push bất kỳ repo nào (user tự push) — mọi thao tác chỉ `git commit` local, không lệnh `push` nào được chạy.
 

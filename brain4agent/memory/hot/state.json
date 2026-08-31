@@ -33,8 +33,18 @@
       "translate4ide": "7485563 (fallback appendix)",
       "wikiultra": "5f0b859 (kem va Buoc 0)"
     },
-    "skipped_dirty": ["GramPilot (15)", "control-cloudflare (1)", "control-codex (2)", "control-discord (3)", "control-gpm (59)", "control-keypassxc (341)", "control-router (341)", "control-syncthing (341)", "control-tailscale (341)"],
-    "teamwork_flow_verdict": "CLAUDE.md la shim chuan (@AGENTS.md) NHUNG repo chua co commit nao (no HEAD) va AGENTS.md chi la Next.js tooling notice 5 dong — SKIP cho user quyet",
+    "patched_no_git_with_backup": {
+      "repos": ["control-keypassxc", "control-router", "control-syncthing", "control-tailscale"],
+      "backup_dir": "C:\\Users\\hoang\\AppData\\Local\\Temp\\claude\\d--Data-Repositories--My-Repositories-brain4agent-old\\5688a6c6-dd21-4a7d-bf7c-818dd6760012\\scratchpad\\backup-nogit-2026-08-31",
+      "verification": "subsequence check vs backup: onlyAdditions=True ca 4; lostStateKeys=0; marker/shim/tail0a OK",
+      "no_git_init": true
+    },
+    "skipped_dirty": ["GramPilot (15)", "control-gpm (59)", "control-codex (2)", "control-cloudflare (1)"],
+    "skipped_no_commits_yet": ["control-discord (3 muc untracked)", "teamworkflow (15 muc untracked)"],
+    "measurement_correction": "341-file-dirty cua 4 repo control-* la ARTEFACT: chung khong co .git rieng, git -C leo len repo cha D:\\Data\\Repositories (.gitignore dong 4 ignore /.My-Repositories/). Sau do repo cha da sach.",
+    "detached_head_correction": "control-discord & teamworkflow KHONG detached — la unborn branch (.git/HEAD = ref: refs/heads/main, 'No commits yet on main'); van skip vi commit se tao moc lich su dau tien cua repo",
+    "teamwork_flow_verdict": "CLAUDE.md la shim chuan (@AGENTS.md) NHUNG repo chua co commit nao va AGENTS.md chi la Next.js tooling notice 5 dong — SKIP cho user quyet",
+    "totals_19_repos": "9 committed + 4 no-git-patched + 4 dirty-skipped + 2 no-commits-skipped",
     "not_pushed": true,
     "stale_script_found": "Agent to Product/.agents/skills/.brain-build/scripts/init_brain.js (0 nhac CLAUDE.md) — chi bao cao, khong xoa"
   },

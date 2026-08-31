@@ -11,6 +11,12 @@ Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên 
 ### Added
 - **Rollout khung não v1.2.0 ra hệ sinh thái (kế hoạch #04):** vá + commit local 9 repo Nhóm A (`control-claude-code` pilot `eeba58a`, `ai-news-radar`, `control-9router`, `control-chatgpt-web`, `control-linux-server`, `fitc84.com`, `router4vn`, `translate4ide`, `wikiultra`); 9 repo bỏ qua vì working tree bẩn; `teamworkflow` (Nhóm B) bỏ qua — CLAUDE.md là shim chuẩn nhưng repo chưa có commit nào và AGENTS.md chỉ là Next.js tooling notice. KHÔNG push repo nào. Chi tiết + bằng chứng: [`planning/04_2026-08-31_rollout-ecosystem/plan.md`](file:///planning/04_2026-08-31_rollout-ecosystem/plan.md).
 - Xác nhận thực chiến cơ chế fallback phụ lục của P09: 2 repo có `AGENTS.md` không theo cấu trúc chuẩn (`control-chatgpt-web`, `translate4ide`) được vá qua "PHỤ LỤC TỰ ĐỘNG VÁ" cuối file, diff chỉ-thêm-không-xoá.
+- **Đợt bổ sung — xử lý 4 repo không có git riêng:** `control-keypassxc`, `control-router`, `control-syncthing`, `control-tailscale` được vá kèm bản lưu thủ công (`AGENTS.md` + `state.json`) và kiểm chứng bằng *subsequence check* thay cho `git diff` (`onlyAdditions=True` cả 4, `lostStateKeys=0`); không `git init`, không commit. Nâng tổng số repo đã xử lý lên 13/19.
+- Hai gotcha mới trong `-known-gotchas.md`: (4) `git -C` leo lên repo cha làm audit hàng loạt đo sai trạng thái repo con — cách phát hiện bằng `rev-parse --show-toplevel` + `check-ignore`; (5) phân biệt *unborn branch* với *detached HEAD* qua `.git/HEAD` (`ref:` vs SHA trần).
+
+### Corrected
+- **Đo sai ở đợt 1:** 4 repo trên bị ghi nhận nhầm là "bẩn 341 file" nên bỏ qua oan — thực chất `git -C` đang báo trạng thái của repo cha `D:\Data\Repositories`. Đã đo lại và xử lý dứt điểm.
+- **Đính chính phân loại:** `control-discord` và `teamworkflow` không phải *detached HEAD* mà là *unborn branch* (chưa có commit nào); kết luận bỏ qua giữ nguyên nhưng lý do được ghi lại chính xác để lần sau không né nhầm.
 
 ## [v1.2.0] - 2026-08-31: Brain Version Marker (Nhìn Thấy Ngay Phiên Bản Khung Não Ở Root)
 ### Added
