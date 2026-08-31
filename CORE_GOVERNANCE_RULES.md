@@ -138,3 +138,10 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (`MAJOR.MINOR.PATCH`)**:
 ### 📌 LUẬT 8: Giám Sát Tác Vụ Ngầm & Heartbeat Tiết Kiệm Token
 - Cấm Polling `view_file` liên tục theo chu kỳ ngắn (1-5s).
 - Sử dụng Reactive Wakeup hoặc `schedule` heartbeat chu kỳ $\ge 45\text{s} - 60\text{s}$.
+
+### 📌 LUẬT 9: Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)
+- Root repo BẮT BUỘC đủ 2 file: `AGENTS.md` = nguồn chân lý DUY NHẤT chứa toàn bộ luật; `CLAUDE.md` = shim mỏng $\le 10$ dòng, chỉ 1 dòng `@AGENTS.md` + ghi chú ngắn, TUYỆT ĐỐI không chứa luật.
+- Lý do: mỗi hãng agent đọc tên file khác nhau. Claude Code CHỈ auto-load `CLAUDE.md`, KHÔNG đọc `AGENTS.md`; Gemini/Codex và agent theo chuẩn `agents.md` đọc `AGENTS.md`. Hai điểm nạp, MỘT nguồn chân lý.
+- Cấm: chép/nhân bản luật sang `CLAUDE.md` (sinh 2 nguồn chân lý lệch nhau); đổi tên `AGENTS.md`.
+- Khi khởi tạo dự án MỚI hoặc chạy skill `.xay-dung-nao-bo`: PHẢI sinh ĐỦ CẢ HAI file.
+- Mở rộng cho agent khác đọc tên file riêng (`GEMINI.md`, `.cursorrules`...): thêm shim mỏng trỏ về `AGENTS.md`, KHÔNG nhân bản luật. Giới hạn `@import`: tối đa 4 hop lồng nhau, file $\le 4\text{ MiB}$.

@@ -9,6 +9,7 @@ const agentsDir = path.join(rootDir, '.agents');
 const skillsDir = path.join(agentsDir, 'skills');
 const docsDir = path.join(rootDir, 'docs');
 const agentsMdPath = path.join(rootDir, 'AGENTS.md');
+const claudeMdPath = path.join(rootDir, 'CLAUDE.md');
 const legacyLatestMemory = path.join(rootDir, 'latest_memory.md');
 
 console.log("\n===========================================================");
@@ -36,6 +37,14 @@ const hasAgentsMd = fs.existsSync(agentsMdPath);
 const hasSkillsVault = fs.existsSync(skillsDir);
 const hasLegacyLatest = fs.existsSync(legacyLatestMemory);
 
+// Kiểm tra shim CLAUDE.md — Claude Code CHỈ auto-load CLAUDE.md, không đọc AGENTS.md,
+// nên mọi dự án bắt buộc phải có shim này trỏ về AGENTS.md (Dual Entry-Point Invariant, mục J).
+let hasClaudeMd = false;
+if (fs.existsSync(claudeMdPath)) {
+    const claudeMdContent = fs.readFileSync(claudeMdPath, 'utf8');
+    hasClaudeMd = claudeMdContent.includes('@AGENTS.md');
+}
+
 // Kiểm tra xem AGENTS.md và memory-distill.txt đã được cập nhật Bước 0 (Boot Não) chưa
 let hasStep0InAgentsMd = false;
 if (hasAgentsMd) {
@@ -56,7 +65,7 @@ if (hasBrainDir) {
 }
 
 const isBrandNew = !hasBrainDir;
-const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill;
+const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill;
 
 if (isFullyStandard) {
     console.log("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
@@ -65,6 +74,7 @@ if (isFullyStandard) {
     console.log("✅ Phân khu Hot Memory (brain4agent/memory/hot/) đang hoạt động.");
     console.log("✅ Thư mục planning/ và .agents/skills/ chuẩn hoá.");
     console.log("✅ Giao thức khởi động có Bước 0 (.xay-dung-nao-bo boot) trong AGENTS.md & memory-distill.txt.");
+    console.log("✅ Bất Biến Hai Điểm Nạp: AGENTS.md (nguồn chân lý) + CLAUDE.md (shim) đều tồn tại.");
     console.log("✅ Thư mục root sạch sẽ 100% (Root Clean Invariant).");
     console.log("-----------------------------------------------------------");
     console.log("👉 Trạng thái: NÃO ĐÃ OK — KHÔNG CẦN NÂNG CẤP THÊM!\n");
@@ -212,7 +222,8 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 \`\`\`text
 project-root/
-├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nạp tự động khi khởi động phiên làm việc
+├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
+├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
 ├── README.md                         # Tài liệu giới thiệu và hướng dẫn build dự án
 ├── brain4agent/                      # [BỘ NHỚ DỰ ÁN] Single Source of Truth
 │   ├── memory/hot/                   # [HOT MEMORY] Ký ức nóng phiên (today.md, state.json)
@@ -465,6 +476,15 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (\`MAJOR.MINOR.PATCH\`)**:
 ### H. Quy tắc Giám Sát Tác Vụ Ngầm & Heartbeat Tiết Kiệm Token
 1. **Cấm Polling File Log liên tục theo giây:** Tuyệt đối **CẤM** gọi vòng lặp \`view_file\` lên các tệp log liên tục theo chu kỳ ngắn (1-5s).
 2. **Cơ chế Reactive Wakeup:** Để hệ thống tự đánh thức khi task ngầm hoàn tất; nếu cần heartbeat dùng \`schedule\` với chu kỳ $\\ge 45\\text{s} - 60\\text{s}$.
+
+### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)
+1. Root repo BẮT BUỘC đủ 2 file: \`AGENTS.md\` = nguồn chân lý DUY NHẤT chứa toàn bộ luật; \`CLAUDE.md\` = shim mỏng ≤10 dòng, chỉ 1 dòng \`@AGENTS.md\` + ghi chú ngắn, TUYỆT ĐỐI không chứa luật.
+2. Lý do: mỗi hãng agent đọc tên file khác nhau. Claude Code CHỈ auto-load \`CLAUDE.md\`; Gemini/Codex và agent theo chuẩn \`agents.md\` đọc \`AGENTS.md\`. Hai điểm nạp, MỘT nguồn chân lý.
+3. CẤM: (a) chép/nhân bản luật sang \`CLAUDE.md\` → sinh 2 nguồn chân lý lệch nhau; (b) đổi tên \`AGENTS.md\` (các tài liệu trong repo + agent khác tham chiếu đúng tên này).
+4. Khi khởi tạo dự án MỚI hoặc chạy skill \`xay-dung-nao-bo\`: PHẢI sinh ĐỦ CẢ HAI file, không sinh mỗi một cái.
+5. Mở rộng: agent mới đọc tên file riêng (\`GEMINI.md\`, \`.cursorrules\`) → thêm shim mỏng trỏ về \`AGENTS.md\`, KHÔNG nhân bản luật.
+6. Giới hạn \`@import\`: tối đa 4 hop lồng nhau, file ≤4 MiB mới được nạp.
+7. Cách kiểm: sửa luật KHÔNG cần đụng \`CLAUDE.md\`; \`CLAUDE.md\` phình >10 dòng hoặc chứa câu luật là vi phạm. Kiểm nạp thật bằng \`/context\` ở phiên MỚI.
 `;
 
 // Ghi hoặc cập nhật AGENTS.md
@@ -480,6 +500,36 @@ if (!fs.existsSync(agentsMdPath)) {
         );
         fs.writeFileSync(agentsMdPath, patchedAgentsMd, 'utf8');
         console.log('🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào AGENTS.md tại root.');
+    }
+}
+
+// -------------------------------------------------------------------------
+// Ghi hoặc vá CLAUDE.md — Shim mỏng cho Claude Code (Dual Entry-Point Invariant, luật J)
+// Claude Code CHỈ tự động nạp CLAUDE.md, không nạp AGENTS.md. Shim này CHỈ import
+// AGENTS.md, KHÔNG BAO GIỜ được chứa luật trực tiếp (giữ AGENTS.md là nguồn chân lý DUY NHẤT).
+// -------------------------------------------------------------------------
+const claudeMdShimContent = `# CLAUDE.md — Điểm nạp tự động cho Claude Code
+
+Claude Code CHỈ tự động nạp \`CLAUDE.md\`, không nạp \`AGENTS.md\`. File này chỉ để import luật
+tối thượng của dự án, giữ **\`AGENTS.md\` là nguồn chân lý DUY NHẤT**.
+
+**Sửa luật thì sửa trong \`AGENTS.md\`, KHÔNG chép nội dung vào đây.**
+
+@AGENTS.md
+`;
+
+if (!fs.existsSync(claudeMdPath)) {
+    fs.writeFileSync(claudeMdPath, claudeMdShimContent, 'utf8');
+    console.log('✅ Đã tạo mới: CLAUDE.md (shim ≤10 dòng, trỏ @AGENTS.md — Dual Entry-Point Invariant).');
+} else {
+    const currentClaudeMd = fs.readFileSync(claudeMdPath, 'utf8');
+    if (!currentClaudeMd.includes('@AGENTS.md')) {
+        // Vá thêm dòng import, giữ nguyên nội dung người dùng đã viết thêm (không ghi đè).
+        const patchedClaudeMd = currentClaudeMd.replace(/\s*$/, '') + '\n\n@AGENTS.md\n';
+        fs.writeFileSync(claudeMdPath, patchedClaudeMd, 'utf8');
+        console.log('🔄 Đã tự động vá dòng @AGENTS.md vào CLAUDE.md hiện có (giữ nguyên nội dung cũ).');
+    } else {
+        console.log('📄 Đã có sẵn: CLAUDE.md (đã trỏ @AGENTS.md, giữ nguyên).');
     }
 }
 

@@ -38,8 +38,9 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 ```text
 brain4agent/
-├── package.json                      # [VERSION TRUTH] Phiên bản v1.0.1
-├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nạp tự động khi khởi động phiên
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.1.0
+├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
+├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
 ├── README.md                         # [TỔNG QUAN] Bản đồ trung tâm quản lý và hướng dẫn vận hành
 ├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện
 ├── brain4agent/                      # [BỘ NHỚ WORKSPACE] Single Source of Truth của Hub
