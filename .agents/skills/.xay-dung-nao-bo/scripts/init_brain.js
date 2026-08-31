@@ -52,9 +52,16 @@ if (fs.existsSync(claudeMdPath)) {
 
 // Kiểm tra xem AGENTS.md và memory-distill.txt đã được cập nhật Bước 0 (Boot Não) chưa
 let hasStep0InAgentsMd = false;
+// Kiểm tra AGENTS.md ĐÃ TỒN TẠI đã có ngoại lệ §5.G (marker phiên bản khung não) và
+// Luật J (Dual Entry-Point Invariant) chưa — dò bằng chuỗi ổn định (không dò theo số dòng),
+// vì các luật này có thể được thêm vào SAU KHI dự án đã init lần đầu (giống lỗ hổng Luật J v1.1.0).
+let hasRootMarkerException = false;
+let hasDualEntryPointLawInAgentsMd = false;
 if (hasAgentsMd) {
     const agentsContent = fs.readFileSync(agentsMdPath, 'utf8');
     hasStep0InAgentsMd = agentsContent.includes('xay-dung-nao-bo');
+    hasRootMarkerException = agentsContent.includes('Marker Phiên Bản Khung Não');
+    hasDualEntryPointLawInAgentsMd = agentsContent.includes('Dual Entry-Point Invariant');
 }
 
 let hasStep0InDistill = false;
@@ -83,7 +90,7 @@ const currentMarkerFileName = `brain4agent-v${BRAIN_TEMPLATE_VERSION}.md`;
 const hasBrainVersionMarker = existingMarkerFiles.length === 1 && existingMarkerFiles[0] === currentMarkerFileName;
 
 const isBrandNew = !hasBrainDir;
-const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker;
+const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker && hasRootMarkerException && hasDualEntryPointLawInAgentsMd;
 
 if (isFullyStandard) {
     console.log("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
@@ -93,6 +100,7 @@ if (isFullyStandard) {
     console.log("✅ Thư mục planning/ và .agents/skills/ chuẩn hoá.");
     console.log("✅ Giao thức khởi động có Bước 0 (.xay-dung-nao-bo boot) trong AGENTS.md & memory-distill.txt.");
     console.log("✅ Bất Biến Hai Điểm Nạp: AGENTS.md (nguồn chân lý) + CLAUDE.md (shim) đều tồn tại.");
+    console.log("✅ AGENTS.md chứa đủ Luật J (Dual Entry-Point Invariant) và Ngoại Lệ Marker (§5.G mục 3).");
     console.log(`✅ Marker Phiên Bản Khung Não: brain4agent-v${BRAIN_TEMPLATE_VERSION}.md đúng chuẩn tại root.`);
     console.log("✅ Thư mục root sạch sẽ 100% (Root Clean Invariant).");
     console.log("-----------------------------------------------------------");
@@ -573,14 +581,64 @@ if (!fs.existsSync(agentsMdPath)) {
     fs.writeFileSync(agentsMdPath, fullAgentsMdContent, 'utf8');
     console.log('✅ Đã tạo mới: AGENTS.md với ĐẦY ĐỦ CÁC BỘ LUẬT QUẢN TRỊ TINH HOA!');
 } else {
-    const currentAgentsMd = fs.readFileSync(agentsMdPath, 'utf8');
+    let currentAgentsMd = fs.readFileSync(agentsMdPath, 'utf8');
+    let agentsMdPatched = false;
+
+    // Vá Bước 0 (Boot Não) nếu thiếu
     if (!currentAgentsMd.includes('xay-dung-nao-bo')) {
-        const patchedAgentsMd = currentAgentsMd.replace(
+        currentAgentsMd = currentAgentsMd.replace(
             /## ⚡ 1\. GIAO THỨC KHỞI ĐỘNG \(Agent Startup Protocol\)\s*\n\s*Khi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:\s*\n/i,
             `## ⚡ 1. GIAO THỨC KHỞI ĐỘNG (Agent Startup Protocol)\n\nKhi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:\n\n1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\\\Users\\\\hoang\\\\.gemini\\\\config\\\\skills\\\\.xay-dung-nao-bo\\\\scripts\\\\init_brain.js\`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.\n`
         );
-        fs.writeFileSync(agentsMdPath, patchedAgentsMd, 'utf8');
+        agentsMdPatched = true;
         console.log('🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào AGENTS.md tại root.');
+    }
+
+    // Vá Ngoại Lệ Root Clean §5.G mục 3 (Marker Phiên Bản Khung Não) nếu AGENTS.md CŨ chưa có.
+    // Dò bằng chuỗi ổn định 'Marker Phiên Bản Khung Não' (không dò theo số dòng/thứ tự mục).
+    if (!currentAgentsMd.includes('Marker Phiên Bản Khung Não')) {
+        const rootMarkerExceptionText = `3. **NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não:** Root được phép có **ĐÚNG MỘT** file \`brain4agent-v<x.y.z>.md\` (vd \`brain4agent-v${BRAIN_TEMPLATE_VERSION}.md\`) do \`init_brain.js\` tự sinh và quản lý — đây là bản soi CHO NGƯỜI để nhìn thấy ngay ở root dự án đang chạy khung não phiên bản nào. **CẤM sửa tay** file này; **CẤM để tồn tại 2 file marker** trở lên (bump version thì script tự xoá bản cũ, sinh bản mới). Nguồn chân lý MÁY ĐỌC là \`brain4agent/memory/hot/state.json\` → field \`brain_template_version\`; file \`.md\` chỉ là bản dẫn xuất, KHÔNG được coi là nguồn chân lý. Field này khác với version DỰ ÁN (\`current_version\` trong \`state.json\`, hoặc \`package.json\`) — tuyệt đối không trộn/ghi đè lẫn nhau.`;
+        const gSectionMatch = currentAgentsMd.match(/### G\.[^\n]*\n[\s\S]*?(?=\n### |\n## |$)/);
+        if (gSectionMatch) {
+            const originalSection = gSectionMatch[0];
+            const patchedSection = originalSection.replace(/\s*$/, '') + '\n' + rootMarkerExceptionText + '\n';
+            currentAgentsMd = currentAgentsMd.replace(originalSection, patchedSection);
+        } else {
+            // Fallback: AGENTS.md không theo đúng cấu trúc chuẩn §5.G -> phụ lục cuối file, vẫn dò được qua includes() lần sau.
+            currentAgentsMd = currentAgentsMd.replace(/\s*$/, '') + `\n\n---\n\n## 🛡️ [PHỤ LỤC TỰ ĐỘNG VÁ] Ngoại Lệ Root Clean — Marker Phiên Bản Khung Não\n\n${rootMarkerExceptionText}\n`;
+        }
+        agentsMdPatched = true;
+        console.log('🔄 Đã tự động vá ngoại lệ "Marker Phiên Bản Khung Não" (§5.G mục 3) vào AGENTS.md hiện có.');
+    }
+
+    // Vá Luật J — Dual Entry-Point Invariant nếu AGENTS.md CŨ chưa có (dự án init trước khi Luật J
+    // ra đời ở v1.1.0 nhưng AGENTS.md không được vá lại — cùng lớp lỗi với marker exception ở trên).
+    if (!currentAgentsMd.includes('Dual Entry-Point Invariant')) {
+        const dualEntryPointLawText = `### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)
+1. Root repo BẮT BUỘC đủ 2 file: \`AGENTS.md\` = nguồn chân lý DUY NHẤT chứa toàn bộ luật; \`CLAUDE.md\` = shim mỏng ≤10 dòng, chỉ 1 dòng \`@AGENTS.md\` + ghi chú ngắn, TUYỆT ĐỐI không chứa luật.
+2. Lý do: mỗi hãng agent đọc tên file khác nhau. Claude Code CHỈ auto-load \`CLAUDE.md\`; Gemini/Codex và agent theo chuẩn \`agents.md\` đọc \`AGENTS.md\`. Hai điểm nạp, MỘT nguồn chân lý.
+3. CẤM: (a) chép/nhân bản luật sang \`CLAUDE.md\` → sinh 2 nguồn chân lý lệch nhau; (b) đổi tên \`AGENTS.md\` (các tài liệu trong repo + agent khác tham chiếu đúng tên này).
+4. Khi khởi tạo dự án MỚI hoặc chạy skill \`xay-dung-nao-bo\`: PHẢI sinh ĐỦ CẢ HAI file, không sinh mỗi một cái.
+5. Mở rộng: agent mới đọc tên file riêng (\`GEMINI.md\`, \`.cursorrules\`) → thêm shim mỏng trỏ về \`AGENTS.md\`, KHÔNG nhân bản luật.
+6. Giới hạn \`@import\`: tối đa 4 hop lồng nhau, file ≤4 MiB mới được nạp.
+7. Cách kiểm: sửa luật KHÔNG cần đụng \`CLAUDE.md\`; \`CLAUDE.md\` phình >10 dòng hoặc chứa câu luật là vi phạm. Kiểm nạp thật bằng \`/context\` ở phiên MỚI.`;
+        const hSectionMatch = currentAgentsMd.match(/### H\.[^\n]*\n[\s\S]*?(?=\n### |\n## |$)/);
+        if (hSectionMatch) {
+            const originalSection = hSectionMatch[0];
+            const patchedSection = originalSection.replace(/\s*$/, '') + '\n\n' + dualEntryPointLawText + '\n';
+            currentAgentsMd = currentAgentsMd.replace(originalSection, patchedSection);
+        } else {
+            // Fallback: không tìm thấy section H theo cấu trúc chuẩn -> phụ lục cuối file.
+            currentAgentsMd = currentAgentsMd.replace(/\s*$/, '') + `\n\n---\n\n${dualEntryPointLawText}\n`;
+        }
+        agentsMdPatched = true;
+        console.log('🔄 Đã tự động vá Luật J (Dual Entry-Point Invariant) vào AGENTS.md hiện có.');
+    }
+
+    if (agentsMdPatched) {
+        fs.writeFileSync(agentsMdPath, currentAgentsMd, 'utf8');
+    } else {
+        console.log('📄 Đã có sẵn: AGENTS.md (đầy đủ luật, giữ nguyên).');
     }
 }
 

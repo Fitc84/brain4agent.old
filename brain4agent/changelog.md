@@ -12,6 +12,12 @@ Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên 
 - Dogfooding: chính repo `brain4agent.old` có `brain4agent-v1.2.0.md` ở root và `state.json` có `brain_template_version: "1.2.0"`.
 - Kế hoạch chi tiết & bằng chứng kiểm chứng: [`planning/03_2026-08-31_brain-version-marker/plan.md`](file:///planning/03_2026-08-31_brain-version-marker/plan.md).
 
+### Fixed
+- **Lỗi báo-ổn-sai (silent false-OK) phát hiện qua kiểm chứng độc lập:** `init_brain.js` chỉ nhúng ngoại lệ §5.G mục 3 (Marker) và Luật J (Dual Entry-Point Invariant) vào `AGENTS.md` khi sinh **mới**, KHÔNG vá vào `AGENTS.md` **đã tồn tại** của dự án cũ — cùng lớp lỗi với sự cố Luật J ở v1.1.0 (đã vá CLAUDE.md nhưng bỏ sót AGENTS.md text). Hệ quả: script báo "NÃO ĐÃ OK" trong khi luật cho phép marker tồn tại đang vắng mặt, khiến một đợt Root Clean audit khác có thể xoá nhầm marker.
+- Thêm chẩn đoán `hasRootMarkerException` và `hasDualEntryPointLawInAgentsMd` (dò bằng chuỗi ổn định `Marker Phiên Bản Khung Não` / `Dual Entry-Point Invariant`, không dò theo số dòng) vào điều kiện `isFullyStandard`.
+- `init_brain.js` giờ tự vá cả hai luật vào `AGENTS.md` đã tồn tại nếu thiếu (chèn vào đúng section §5.G / mục J theo cấu trúc chuẩn, có fallback phụ lục cuối file nếu cấu trúc khác chuẩn), idempotent — chạy lại không nhân đôi đoạn luật.
+- Kiểm chứng bằng 3 ca thật (Ca A: dự án cũ thiếu cả 2 luật → vá và KHÔNG báo OK ở lần đó; Ca B: chạy lại → idempotent, báo OK; Ca C: dự án trắng không hồi quy) — chi tiết trong `planning/03_2026-08-31_brain-version-marker/plan.md`.
+
 ## [v1.1.0] - 2026-08-31: Dual Entry-Point Invariant (CLAUDE.md Shim Fix)
 ### Fixed
 - **Lỗi nghiêm trọng đã xác minh:** Claude Code CHỈ tự động nạp `CLAUDE.md`, KHÔNG đọc `AGENTS.md` (theo docs chính thức code.claude.com/docs/en/memory.md). `init_brain.js` cũ chỉ sinh `AGENTS.md` → mọi dự án mới khởi tạo qua skill này bị Claude Code bỏ qua toàn bộ luật quản trị một cách im lặng.

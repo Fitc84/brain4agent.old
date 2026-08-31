@@ -34,6 +34,12 @@
 - [x] **P06 🟢 [Dogfooding]:** Chạy `init_brain.js` bản nguồn trên chính repo `brain4agent.old` → tự vá `brain_template_version` vào `state.json` hiện có + sinh `brain4agent-v1.2.0.md` ở root.
 - [x] **P07 🟠 [Multi-Agent Deploy Sync]:** Chạy `scripts/deploy_skills.ps1` đồng bộ bản vá sang `C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\`, xác nhận byte-identical với nguồn (`diff` rỗng).
 - [x] **P08 🔴 [Verification Gate]:** Chạy 3 ca kiểm chứng thật bằng bản DEPLOY tại `C:\Users\hoang\AppData\Local\Temp\claude\...\scratchpad\test-marker\`.
+- [x] **P09 🔴 [Regression Fix — Silent False-OK]:** Phát hiện qua kiểm chứng độc lập của coordinator: `init_brain.js` KHÔNG vá ngoại lệ §5.G mục 3 (marker) lẫn Luật J (Dual Entry-Point Invariant) vào `AGENTS.md` **đã tồn tại** của dự án cũ — chỉ nhúng khi sinh file mới. Hệ quả: script báo "NÃO ĐÃ OK" trong khi luật cho phép marker đang vắng mặt trong `AGENTS.md` của dự án đó (rủi ro: một đợt Root Clean audit khác coi marker là rác và xoá nhầm). Cùng lớp lỗi với sự cố Luật J ở v1.1.0 (đã vá `CLAUDE.md` nhưng bỏ sót việc vá `AGENTS.md` text cho dự án cũ).
+  - Thêm chẩn đoán `hasRootMarkerException` (dò chuỗi ổn định `Marker Phiên Bản Khung Não`) và `hasDualEntryPointLawInAgentsMd` (dò chuỗi ổn định `Dual Entry-Point Invariant`) — không dò theo số dòng.
+  - Đưa cả hai vào điều kiện `isFullyStandard`.
+  - Mở rộng khối "Ghi hoặc cập nhật AGENTS.md": nếu file đã tồn tại và thiếu 1 trong 2 luật, tự vá đúng vị trí (chèn vào cuối section `### G.` / `### H.` theo cấu trúc chuẩn, có fallback phụ lục cuối file nếu AGENTS.md không theo đúng cấu trúc mẫu), giữ nguyên phần còn lại, chỉ ghi file một lần nếu có patch nào xảy ra.
+  - Rà thêm không phát hiện cờ nào khác bị bỏ sót cùng lớp lỗi (Bước 0 đã có cơ chế vá từ trước, CLAUDE.md đã có cơ chế vá từ v1.1.0).
+- [x] **P10 🟠 [Re-verify + Re-deploy]:** Chạy lại `deploy_skills.ps1`, xác nhận `diff` rỗng; chạy 3 ca A/B/C mới bằng bản DEPLOY; chạy lại Ca 1/2/3 cũ để xác nhận không hồi quy; dogfood lại `brain4agent.old`.
 
 ---
 
@@ -75,6 +81,26 @@ Chạy lại `init_brain.js` lần nữa trên `ca1/`:
 
 ### Cú pháp
 - `node --check .agents/skills/.xay-dung-nao-bo/scripts/init_brain.js` → `OK_SYNTAX` (không có bộ test tự động khác trong repo — dự án này là bộ khung/script Node.js thuần, không có `package.json` scripts `test`/`typecheck`/`lint`).
+
+### Ca A — Dự án CŨ thiếu cả 2 luật (mô phỏng lỗ hổng đã phát hiện)
+Lấy `test-marker/ca-old/AGENTS.md` (sinh từ Ca trắng trước đó, đã strip tay 2 đoạn — item 3 của `### G.` và toàn bộ `### J.`) rồi chạy lại `init_brain.js`:
+- Trước khi chạy: `grep -c "Marker Phiên Bản Khung Não" AGENTS.md` = `0`; `grep -c "Dual Entry-Point Invariant" AGENTS.md` = `0`.
+- Output: `🔄 Đã tự động vá ngoại lệ "Marker Phiên Bản Khung Não" (§5.G mục 3) vào AGENTS.md hiện có.` và `🔄 Đã tự động vá Luật J (Dual Entry-Point Invariant) vào AGENTS.md hiện có.`
+- **KHÔNG báo "NÃO ĐÃ OK"** ở lần chạy này — output bắt đầu bằng `🔄 [TRẠNG THÁI] Phát hiện Não cũ / Chưa đồng bộ...`, `EXIT=0` (chạy xong migration, không phải branch "đã chuẩn").
+- Sau khi chạy: cả hai đoạn luật xuất hiện đúng **1 lần**, đúng vị trí (`3. **NGOẠI LỆ TƯỜNG MINH...` nối tiếp mục 2 trong `### G.`; `### J. Quy tắc Tương Thích Đa Agent...` chèn sau `### H.`, trước phần còn lại của file).
+
+### Ca B — Idempotent sau khi vá (chạy lại lần nữa trên `ca-old/`)
+- Output: `🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!` kèm dòng mới `✅ AGENTS.md chứa đủ Luật J (Dual Entry-Point Invariant) và Ngoại Lệ Marker (§5.G mục 3).`
+- `EXIT=0`.
+- `grep -c` cho cả 2 chuỗi vẫn = `1` mỗi chuỗi — **không nhân đôi** đoạn luật.
+
+### Ca C — Dự án trắng không hồi quy (`test-marker/ca-fresh/`)
+- Chạy lần 1 trên thư mục trống → sinh đầy đủ, `AGENTS.md` đã có sẵn cả 2 chuỗi (`grep -c` = 1 mỗi chuỗi) ngay từ lần sinh mới (không cần patch riêng vì đã có trong `fullAgentsMdContent`).
+- Chạy lần 2 → báo `NÃO ĐÃ OK` ngay lập tức.
+
+### Regression check — Ca 1/2/3 cũ (không hồi quy sau khi thêm P09)
+- Chạy lại `init_brain.js` trên `test-marker/ca1/` (đã qua Ca 1/2/3 gốc) → vẫn báo `NÃO ĐÃ OK` (AGENTS.md của Ca 1 vốn đã có sẵn 2 luật từ `fullAgentsMdContent`, không bị đánh dấu thiếu).
+- Dogfood lại `brain4agent.old`: chạy bản nguồn → báo `NÃO ĐÃ OK` ngay, `git status --short` chỉ còn thay đổi ở `init_brain.js` (không sinh thêm side-effect nào trên các file khác).
 
 - [x] Toàn bộ mã nguồn đã commit; **chưa push** (chờ quyết định của user cho hành động ảnh hưởng remote).
 
