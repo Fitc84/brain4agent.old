@@ -344,12 +344,21 @@ for (const [filename, content] of Object.entries(templates)) {
         if (filename === 'memory-distill.txt') {
             const currentDistill = fs.readFileSync(filePath, 'utf8');
             if (!currentDistill.includes('xay-dung-nao-bo')) {
-                const patchedDistill = currentDistill.replace(
-                    /<agent_startup_protocol>/i,
-                    `<agent_startup_protocol>\n0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\\\Users\\\\hoang\\\\.gemini\\\\config\\\\skills\\\\.xay-dung-nao-bo\\\\scripts\\\\init_brain.js\`) để đảm bảo não luôn cập nhật chuẩn mới nhất.`
-                );
+                const step0Line = `0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\\\Users\\\\hoang\\\\.gemini\\\\config\\\\skills\\\\.xay-dung-nao-bo\\\\scripts\\\\init_brain.js\`) để đảm bảo não luôn cập nhật chuẩn mới nhất.`;
+                let patchedDistill;
+                if (/<agent_startup_protocol>/i.test(currentDistill)) {
+                    patchedDistill = currentDistill.replace(
+                        /<agent_startup_protocol>/i,
+                        `<agent_startup_protocol>\n${step0Line}`
+                    );
+                    console.log(`🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào brain4agent/memory-distill.txt`);
+                } else {
+                    // Fallback: kernel cũ KHÔNG theo khuôn XML (markdown thuần) — regex trên sẽ trượt và
+                    // ghi lại y nguyên file, sinh log báo-vá-nhưng-không-vá. Chèn khối giao thức lên ĐẦU file.
+                    patchedDistill = `<agent_startup_protocol>\n${step0Line}\n</agent_startup_protocol>\n\n${currentDistill}`;
+                    console.log(`🔄 Kernel không theo khuôn <agent_startup_protocol> — đã chèn khối Bước 0 lên đầu brain4agent/memory-distill.txt (fallback).`);
+                }
                 fs.writeFileSync(filePath, patchedDistill, 'utf8');
-                console.log(`🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào brain4agent/memory-distill.txt`);
             } else {
                 console.log(`📄 Đã có sẵn: brain4agent/${filename} (Giữ nguyên dữ liệu)`);
             }

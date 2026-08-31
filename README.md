@@ -1,6 +1,6 @@
-# 🧠 BRAIN4AGENT (v1.2.1) — TRUNG TÂM QUẢN TRỊ & NÂNG CẤP NÃO BỘ (BRAIN GOVERNANCE HUB)
+# 🧠 BRAIN4AGENT (v1.2.2) — TRUNG TÂM QUẢN TRỊ & NÂNG CẤP NÃO BỘ (BRAIN GOVERNANCE HUB)
 
-Dự án này (**brain4agent v1.2.1**) là **Tổng Hành Dinh Quản Lý & Nâng Cấp Não Bộ (Single Source of Truth for Brain Development & AI Governance)**. Mọi nghiên cứu, tối ưu thuật toán, nâng cấp luật vận hành và phát triển bộ skill lõi (`.xay-dung-nao-bo`, `.compact`) được hoàn thiện tập trung tại kho chuẩn `.agents/skills/` trước khi deploy ra toàn bộ hệ sinh thái.
+Dự án này (**brain4agent v1.2.2**) là **Tổng Hành Dinh Quản Lý & Nâng Cấp Não Bộ (Single Source of Truth for Brain Development & AI Governance)**. Mọi nghiên cứu, tối ưu thuật toán, nâng cấp luật vận hành và phát triển bộ skill lõi (`.xay-dung-nao-bo`, `.compact`) được hoàn thiện tập trung tại kho chuẩn `.agents/skills/` trước khi deploy ra toàn bộ hệ sinh thái.
 
 ---
 
@@ -46,7 +46,7 @@ npm run deploy
 
 ```text
 brain4agent/
-├── package.json                      # [VERSION TRUTH] Phiên bản v1.2.1
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.2.2
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
 ├── brain4agent-v1.2.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
@@ -64,7 +64,9 @@ brain4agent/
 ├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
 │   ├── 01_2026-08-28_modernize-hub-v52/
 │   ├── 02_2026-08-31_dual-entry-point-claude-shim/
-│   └── 03_2026-08-31_brain-version-marker/
+│   ├── 03_2026-08-31_brain-version-marker/
+│   ├── 04_2026-08-31_rollout-ecosystem/
+│   └── 05_2026-08-31_nao-hoa-nhom-c/   # + specs/ (Spec-First: 00-ARCHITECTURE, 01-CONTRACTS, SPEC-P01..P06)
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md

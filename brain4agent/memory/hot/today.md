@@ -1,8 +1,18 @@
 # 📅 Nhật Ký Làm Việc Ngày 31/08/2026 (Session Memory Log)
 
-> Cập nhật lúc: `2026-08-31` | Phiên bản: `v1.2.1` (POSIX Newline Hotfix + Rollout Ecosystem #04)
+> Cập nhật lúc: `2026-08-31` | Phiên bản: `v1.2.2` (Não Hóa Nhóm C #05 + Hotfix "Vá Bước 0 Giả")
 
 ---
+
+## 🧬 Phiên Não Hóa Nhóm C (kế hoạch #05, v1.2.2)
+
+1. **Lập kế hoạch Spec-First** cho 6 repo chưa có `AGENTS.md`: `plan.md` + `specs/{00-ARCHITECTURE, 01-CONTRACTS, SPEC-P01..P06}`. Khảo sát read-only trước cho thấy 6 hiện trạng khác hẳn nhau → phân lớp di trú **A / A+ / B / B+ / C / D**.
+2. **Nguyên tắc kiến trúc rút ra:** *di trú ngữ nghĩa TRƯỚC — engine SAU*. Chạy thẳng engine lên não schema cũ sinh **não song trùng** (bộ chuẩn RỖNG cạnh bộ cũ ĐẦY, agent đời sau đọc bộ rỗng và mất trí nhớ).
+3. **Thực thi bằng 6 subagent song song 2 đợt** (đợt 1: A/A+/B; đợt 2: B+/C/D), mỗi subagent khoá phạm vi đúng repo của nó, cấm chạm repo hub. Orchestrator **kiểm chứng độc lập lại toàn bộ** sau đó, không tin báo cáo suông.
+4. **Kết quả 6/6:** `block-ads-fb-v2` `1c0569e` · `dreamteam4vn` `79efb93`+`cb2bcfa` · `Audit` `451f1ac` · `reverse Claude` `bf7e959` · `Agent to Product` `a7c6ce4` · `CausalAgent` GĐ1 không commit (repo unborn — đúng thiết kế). Tất cả local, KHÔNG push.
+5. **Hotfix engine v1.2.2:** 2 subagent độc lập phát hiện nhánh vá Bước 0 vào `memory-distill.txt` là **no-op khi kernel không có tag `<agent_startup_protocol>`** — vẫn in log "Đã tự động vá". Đã thêm fallback chèn khối lên đầu file; test ca fallback + ca hồi quy XML + deploy `DIFF_EMPTY_BYTE_IDENTICAL`.
+6. **2 sai lệch hợp đồng CÓ CHỦ ĐÍCH (không phải lỗi):** `Agent to Product` không thêm `current_version` (schema legacy đã có `release` — thêm nữa sẽ thành 2 nguồn chân lý); `reverse Claude` đưa transcript vào `scratch/` thay `raw/` (quy ước sẵn có của dự án thắng dự đoán trong SPEC).
+7. **3 gotcha mới:** 5b (não song trùng), 5c (grep tham chiếu trước khi dọn root).
 
 ## 🚀 Phiên Rollout Hệ Sinh Thái (kế hoạch #04, v1.2.1):
 

@@ -24,6 +24,19 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Cách phát hiện:** Đừng tin `git status` khi audit hàng loạt. Kiểm 3 lệnh: `Test-Path <repo>\.git`; `git -C <repo> rev-parse --show-toplevel` (phải TRÙNG chính đường dẫn repo); `git -C <repo> check-ignore -v .` (xem có bị tổ tiên ignore không).
 - **Khắc phục:** Thư mục nào `--show-toplevel` không trùng chính nó ⇒ coi như KHÔNG có git: backup thủ công file sắp bị sửa ra ngoài trước khi chạy script, và thay `git diff` bằng kiểm **subsequence** (mọi dòng bản gốc còn nguyên, đúng thứ tự, trong bản mới ⇒ chỉ-thêm-không-mất) cộng so khớp tập key JSON.
 
+## 5b. Não Song Trùng — Chạy Engine Đè Lên Não Schema Cũ
+- **Triệu chứng:** não hóa một dự án cũ xong, agent đời sau đọc `brain4agent/index.md` thấy trống rỗng và mất sạch trí nhớ dự án, dù dữ liệu vẫn còn nguyên trên đĩa.
+- **Nguyên nhân:** `init_brain.js` chỉ sinh file THIẾU **theo tên chuẩn** — nó không hiểu ngữ nghĩa. Dự án cũ để dữ liệu ở tên/vị trí khác (`core/memory-distill.txt`, `gotchas.md`, `modules/-api-routing.md`...) thì engine coi như phân vùng chuẩn chưa tồn tại và sinh bản RỖNG nằm cạnh bản ĐẦY. Hai bộ song song, agent đọc đúng tên chuẩn nên trúng bộ rỗng.
+- **Cách tránh:** luôn **di trú ngữ nghĩa TRƯỚC, chạy engine SAU**. Con người/agent quyết file nào là gotchas/roadmap/data-architecture rồi `git mv` về đúng tên chuẩn; engine chỉ được lấp phần cấu trúc còn thiếu. Không bao giờ để engine "đoán" ngữ nghĩa.
+- **Trường hợp không di trú được** (dự án có Brain OS riêng đang vận hành, di trú sẽ gãy logic): dùng mẫu **cộng sinh** — giữ nguyên hệ legacy, biến mỗi phân vùng chuẩn rỗng thành **pointer file ≤15 dòng** trỏ về file legacy tương ứng. Tuyệt đối KHÔNG copy nội dung sang (sẽ thành 2 nguồn chân lý lệch nhau).
+- **Nguồn:** kế hoạch #05, thấy rõ nhất ở `Audit` (lồng `core/`+`modules/`+`setup/`) và `Agent to Product` (Brain OS legacy đầy đủ).
+
+## 5c. Đừng Tin "File Root Trông Như Rác" — Grep Tham Chiếu Trước Khi Dọn
+- **Triệu chứng:** dọn Root Clean, xoá/di chuyển mấy file trông như nháp (`task.md`, `memory-distill.md`) → gãy pipeline kiểm định của dự án.
+- **Nguyên nhân:** ở dự án có governance riêng, các file này có thể là **projection sinh tự động từ registry** hoặc **đầu vào bắt buộc của gate CI**. Ví dụ thật (`reverse Claude`): `memory-distill.md` nằm trong `DOCS_TO_CHECK` của `scripts/verify-documentation-integrity.js` — thiếu file là FAIL gate; `task.md` là dashboard sinh từ `spec-registry.json`.
+- **Cách tránh:** trước khi di chuyển/xoá BẤT KỲ file nào, `grep -r "<tên file>"` toàn repo (trừ `node_modules`, `.git`, thư mục dữ liệu thô). Có tham chiếu → GIỮ NGUYÊN, ghi chú vào `-known-gotchas.md` của repo đó.
+- **Hệ quả kèm theo:** quy ước sẵn có của dự án THẮNG dự đoán trong SPEC. Cùng ca đó, SPEC ghi transcript vào `raw/` nhưng `raw/` là input read-only ghim manifest SHA và hook hygiene báo động mọi path chứa `raw` → đích đúng là `scratch/` theo `CODEBASE_ATLAS.md` của chính dự án.
+
 ## 5. Nhầm "Unborn Branch" Thành "Detached HEAD"
 - **Triệu chứng:** `git rev-parse --abbrev-ref HEAD` in ra đúng chữ `HEAD` → tưởng repo đang detached, sợ commit sẽ mồ côi nên né.
 - **Nguyên nhân:** Repo mới `git init` và **chưa có commit nào** (unborn branch) cũng làm `--abbrev-ref HEAD` in `HEAD` và `rev-parse HEAD` báo `fatal: Needed a single revision` — trùng triệu chứng với detached.

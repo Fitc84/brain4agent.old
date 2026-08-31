@@ -2,6 +2,19 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.2.2] - 2026-08-31: Não Hóa Nhóm C (6 Dự Án) + Hotfix "Vá Bước 0 Giả" Trong Kernel
+### Fixed
+- **Bug báo-vá-nhưng-không-vá trong `init_brain.js` (2 subagent độc lập phát hiện khi thực thi kế hoạch #05):** nhánh tự vá Bước 0 vào `memory-distill.txt` dùng `String.replace(/<agent_startup_protocol>/i, ...)`. Với kernel cũ viết **markdown thuần** (không có tag XML), `replace` không khớp nên trả về chuỗi y nguyên, nhưng script vẫn `writeFileSync` và vẫn in `🔄 Đã tự động vá Bước 0` → log nói dối, dự án không bao giờ tự đạt chuẩn. Cùng lớp lỗi "báo-ổn-sai" đã vá cho nhánh `AGENTS.md` ở v1.2.0 (P09).
+- **Sửa:** kiểm `regex.test()` trước khi thay; khớp → vá vào trong tag như cũ; KHÔNG khớp → fallback chèn nguyên khối `<agent_startup_protocol>…</agent_startup_protocol>` lên đầu file, log nói rõ đã dùng fallback. Kiểm chứng: ca fallback (kernel markdown thuần) vá thành công + giữ nguyên nội dung cũ + idempotent (đếm tag = 2, không nhân đôi); ca hồi quy (kernel XML) vẫn đi nhánh cũ; deploy lại `DIFF_EMPTY_BYTE_IDENTICAL`.
+- **Quyết định:** GIỮ `BRAIN_TEMPLATE_VERSION = 1.2.0` (nội dung sinh ra không đổi) — tránh churn đổi tên marker trên 19 repo đã vá ở #04. Version DỰ ÁN bump v1.2.2.
+
+### Added
+- **Não hóa Nhóm C — 6 dự án chưa có `AGENTS.md` (kế hoạch #05):** `block-ads-fb-v2` `1c0569e`, `dreamteam4vn` `79efb93`+`cb2bcfa`, `Audit` `451f1ac`, `reverse Claude` `bf7e959`, `Agent to Product` `a7c6ce4` (đều local, KHÔNG push); `CausalAgent` Giai đoạn 1 xong không commit (repo unborn — mốc lịch sử thuộc quyền user).
+- **Nguyên tắc kiến trúc mới — "di trú ngữ nghĩa TRƯỚC, engine SAU":** chạy thẳng engine lên não schema cũ sinh **não song trùng** (bộ file chuẩn RỖNG cạnh bộ file cũ đầy dữ liệu, agent đời sau đọc bộ rỗng và mất trí nhớ dự án). Ghi thành `specs/00-ARCHITECTURE.md` + phân lớp di trú A/A+/B/B+/C/D.
+- **Mẫu "cộng sinh" cho dự án có Brain OS legacy đang sống (`Agent to Product`):** giữ nguyên 100% hệ legacy, biến phân vùng chuẩn engine sinh rỗng thành **pointer file** trỏ về file legacy — đạt mục tiêu mọi agent nạp được luật mà vẫn giữ MỘT nguồn chân lý. Bằng chứng an toàn: `graph.db` SHA256 sau = trước, `state.json` qua validator legacy của chính dự án.
+- **Mẫu thực thi bằng subagent song song:** 6 repo độc lập → 6 subagent 2 đợt, mỗi subagent khoá phạm vi vào đúng repo của nó và bị cấm chạm repo hub; orchestrator kiểm chứng độc lập lại toàn bộ sau khi cả 6 báo xong (không tin báo cáo suông).
+- Kế hoạch + bằng chứng: [`planning/05_2026-08-31_nao-hoa-nhom-c/plan.md`](file:///planning/05_2026-08-31_nao-hoa-nhom-c/plan.md).
+
 ## [v1.2.1] - 2026-08-31: POSIX Newline Hotfix + Rollout Khung Não v1.2.0 Ra Hệ Sinh Thái
 ### Fixed
 - **`state.json` thiếu newline cuối file (user phát hiện khi duyệt pilot):** cả hai chỗ ghi `state.json` trong `init_brain.js` dùng `JSON.stringify(..., null, 2)` không kèm `'\n'` → mọi repo được vá sẽ mang vết `\ No newline at end of file` vĩnh viễn trong git diff. Sửa cả hai thành `+ '\n'`; rà toàn bộ điểm ghi file khác (`CLAUDE.md`, marker, `AGENTS.md`, `today.md`) — đều đã kết thúc `0a`, không cần sửa.

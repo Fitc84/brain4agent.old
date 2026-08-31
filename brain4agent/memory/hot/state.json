@@ -1,6 +1,6 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.2.1",
+  "current_version": "1.2.2",
   "system_status": "healthy_and_runtime_verified",
   "last_verification": {
     "timestamp": "2026-08-31",
@@ -47,6 +47,31 @@
     "totals_19_repos": "9 committed + 4 no-git-patched + 4 dirty-skipped + 2 no-commits-skipped",
     "not_pushed": true,
     "stale_script_found": "Agent to Product/.agents/skills/.brain-build/scripts/init_brain.js (0 nhac CLAUDE.md) — chi bao cao, khong xoa"
+  },
+  "nao_hoa_nhom_c_2026-08-31_plan05": {
+    "method": "6 subagent song song 2 dot + orchestrator kiem chung doc lap lai toan bo",
+    "patched_committed_local": {
+      "block-ads-fb-v2": "1c0569e @master (lop A)",
+      "dreamteam4vn": "79efb93 + cb2bcfa @master (lop A+)",
+      "Audit": "451f1ac @master (lop B — phang hoa core/modules/setup)",
+      "reverse Claude": "bf7e959 @main (lop B+ — lop bo sung tren spec-registry governance)",
+      "Agent to Product": "a7c6ce4 @main (lop C — cong sinh + 6 pointer file)"
+    },
+    "patched_no_commit_by_design": {
+      "CausalAgent": "Giai doan 1 xong; repo unborn main — KHONG tao commit dau tien (quyen user); 0 lenh git ghi; backup scratchpad/backup-plan05-CausalAgent"
+    },
+    "new_patterns": [
+      "di tru ngu nghia TRUOC — engine SAU (chong nao song trung)",
+      "cong sinh + pointer file cho du an co Brain OS legacy dang song",
+      "grep tham chieu truoc khi don root: file trong nhu rac co the la input cua CI gate"
+    ],
+    "engine_hotfix_v1.2.2": "va Buoc 0 vao memory-distill.txt la no-op khi kernel khong co tag <agent_startup_protocol> — da them fallback chen khoi len dau file; BRAIN_TEMPLATE_VERSION giu 1.2.0",
+    "pending_user": [
+      "CausalAgent Giai doan 2 (don root) — can user tao commit dau tien",
+      "Audit: security_platform.db mo coi o root + requirements.txt dong cuoi UTF-16LE",
+      "reverse Claude: verify-documentation-integrity.js FAIL do 2 broken link co truoc"
+    ],
+    "not_pushed": true
   },
   "brain_template_version": "1.2.0"
 }

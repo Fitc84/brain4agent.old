@@ -41,8 +41,50 @@ AGENTS.md sinh mới phải THÊM mục cuối "PHỤ LỤC LUẬT RIÊNG DỰ �
 - **RỦI RO CAO NHẤT: đứt tham chiếu.** Trước khi mv `transcript_*.jsonl` hay xóa `memory-distill.md`/`task.md`, PHẢI `grep -r "<tên file>"` toàn repo (trừ node_modules, raw) — có tham chiếu thì KHÔNG di chuyển, giữ nguyên và ghi chú.
 - `agent.md` tên gần giống `AGENTS.md` — cấm nhầm lẫn ghi đè; hai file khác vai trò hoàn toàn.
 
-## Nghiệm thu (điền khi thực thi)
+## Nghiệm thu — ✅ ĐÃ HOÀN THÀNH (2026-08-31)
 
-- [ ] Kết quả grep tham chiếu trước di trú: (điền)
-- [ ] V1–V7, bằng chứng: (điền)
-- [ ] SHA commit: (điền)
+### Pre-flight
+
+- `git rev-parse --show-toplevel` = `D:/Data/Repositories/.My-Repositories/reverse Claude` ✅ · branch `main` · `git status --porcelain` RỖNG ✅
+- Không có thư mục `DOCS`/`Plan` viết hoa (`docs/`, `planning/` đã đúng chuẩn) ✅
+- Backup: `scratchpad\backup-plan05-reverse-claude\` chứa `brain4agent\memory-distill.txt` (4435 B), `agent.md` (4551 B), `task.md` (1940 B), `memory-distill.md` (292 B) ✅
+
+### [x] Kết quả grep tham chiếu trước di trú (loại trừ `node_modules`, `raw`, `scratch`, `.git`)
+
+| File | Tham chiếu tìm được | Quyết định |
+| :--- | :--- | :--- |
+| `task.md` | `.agents/AGENTS.md:121,164`; `scripts/render-planning-roadmap.js` (TASK_PATH); `scripts/verify-planning-governance.js` (TASK_PATH); `.agents/skills/.planning-init/scripts/init.js:52-54` + templates; `Update-project/UPGRADE_GOVERNANCE.md` | **CÓ tham chiếu → GIỮ NGUYÊN.** Là dashboard SINH TỰ ĐỘNG từ `spec-registry.json`, không phải file nháp. |
+| `memory-distill.md` (292 B) | `.agents/AGENTS.md:66,173`; `scripts/verify-documentation-integrity.js:11` (`DOCS_TO_CHECK` — thiếu file là FAIL gate); `planning/spec-registry.json:1732,2324` (coordinatorWriteSet SPEC-122); `planning/assignments/SPEC-96.json`, `SPEC-122.json` | **CÓ tham chiếu → GIỮ NGUYÊN, KHÔNG gộp, KHÔNG xoá.** |
+| `transcript_9b28848e-….jsonl` | 0 hit | KHÔNG tham chiếu → `git mv` |
+| `transcript_b32eac3c-….jsonl` | 0 hit | KHÔNG tham chiếu → `git mv` |
+
+**Lệch SPEC có chủ đích (báo cáo):** đích của 2 transcript là **`scratch/` chứ không phải `raw/`**. Lý do: `raw/` là input read-only ghim manifest (`raw/anthropic.claude-code-2.1.207-win32-x64.zip`, SHA-256 `87fe1ac4…`) và `scripts/verify-worktree-hygiene.js:34` báo **"Tracked Raw Capture Risk"** cho *mọi* path đã thay đổi có chứa chuỗi `raw`. `docs/CODEBASE_ATLAS.md` quy định `scratch/` là nơi chứa script/log vứt đi và "never put scratch files at repository root" → `scratch/` là đích đúng theo quy ước sẵn có của dự án.
+
+### [x] Bảng ánh xạ đã thực hiện
+
+| Mục cũ | Đã làm | Ghi chú |
+| :--- | :--- | :--- |
+| `brain4agent/memory-distill.txt` | Viết lại theo khuôn `<kernel_instructions>` (89 dòng), thêm Bước 0 `.xay-dung-nao-bo`, trỏ trạng thái phase về `agent.md` | Giữ NGUYÊN 100% quyết định bền vững + gotcha bản cũ; giữ chuỗi `mini-claude-v2` (bắt buộc bởi `verify-documentation-integrity.js` architecture marker); dùng backtick thay markdown link để không sinh broken link |
+| `memory-distill.md` (root) | **KHÔNG đụng** | Có tham chiếu code + gate (xem bảng grep) |
+| `task.md` (root) | **KHÔNG đụng** | Projection sinh tự động; nội dung là dashboard SPEC-114→122, đã phản ánh vào `brain4agent/roadmap.md` dưới dạng tóm tắt trỏ về registry |
+| `transcript_*.jsonl` ×2 | `git mv` → `scratch/` | rename 100%, git history giữ vết |
+| `agent.md` | **KHÔNG đụng** (`git diff` rỗng) | AGENTS.md §6.2 trỏ tới như "snapshot đọc ĐẦU TIÊN" |
+| `planning/`, `Update-project/`, `.agents/` (gồm `.agents/AGENTS.md` + 9 skill) | **KHÔNG đụng** | `index.md` router + AGENTS.md §6 trỏ vào |
+| Script rời root (`dump_files.js`, `examine_bash.js`, `run_proxy.ts`, `search_sandbox.js`) | KHÔNG di trú | Ghi vào `-known-gotchas.md` §4 + `roadmap.md` Idea Vault |
+
+### [x] V1–V8, bằng chứng thật
+
+- **V1 (idempotent):** chạy `init_brain.js` lần 2 → `🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!` + đủ 8 dòng ✅, `EXITCODE=0`.
+- **V2 (dual entry):** `CLAUDE.md` = **8 dòng**, `has @AGENTS.md: True`, `backticked import: False` ✅.
+- **V3 (marker):** đúng **1** file `brain4agent-v1.2.0.md` (689 B) ✅.
+- **V4 (state):** `[System.IO.File]::ReadAllBytes($p)[-1]` = **10** (kiểm cả trước và sau commit/normalize) ✅; `current_version=0.1.0`, `brain_template_version=1.2.0` ✅ (kèm field `current_version_source` ghi rõ nguồn: repo không có `package.json` ở root, chưa có release chính thức).
+- **V5 (không mất nội dung):** `git status --porcelain` cuối = **RỖNG**; commit `14 files changed, 695 insertions(+), 44 deletions(-)` với 2 dòng `rename … (100%)` — mọi file cũ truy vết được, 0 file nội dung bị mất.
+- **V6 (luật riêng còn sống):** grep trong `AGENTS.md` → `spec-registry.json` **2 hits**, `agent.md` **7 hits**, `.githooks/` **2 hits** ✅ (mục mới `## 📜 6. PHỤ LỤC LUẬT RIÊNG DỰ ÁN` với 6 tiểu mục 6.1–6.6).
+- **V7 (bảo tồn):** `git diff -- agent.md` và `git diff --cached -- agent.md` đều RỖNG ✅; `git status --porcelain -- planning .agents task.md memory-distill.md docs scripts Update-project` RỖNG ✅.
+- **V8 (riêng SPEC này):** `git status` cuối cùng RỖNG hoàn toàn — không file nào trong `planning/` hay `.agents/skills/` bị thay đổi ✅.
+- **Bonus — gate riêng của dự án:** `node scripts/verify-worktree-hygiene.js` → `Hygiene checks passed.` exit 0 ✅. `node scripts/verify-documentation-integrity.js` FAIL với **2 broken link CÓ TRƯỚC** (`docs/README.md` và `docs/CODEBASE_ATLAS.md` trỏ `../output/target_corpus/verification/phase-xxi-static.json`; thư mục `output/` không tồn tại trong worktree này) — hai file đó KHÔNG bị đợt não hóa này chạm vào.
+
+### [x] SHA commit
+
+- `bf7e959d212b872ad67cc43b8513e2097680b4f5` trên branch `main` (repo `reverse Claude`) — **KHÔNG push**.
+- Message: `feat(brain): adopt brain template v1.2.0 as a layer over the existing spec-registry governance`
