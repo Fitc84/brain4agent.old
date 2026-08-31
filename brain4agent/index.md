@@ -66,7 +66,8 @@ brain4agent/
 │   ├── 01_2026-08-28_modernize-hub-v52/
 │   ├── 02_2026-08-31_dual-entry-point-claude-shim/
 │   ├── 03_2026-08-31_brain-version-marker/
-│   └── 04_2026-08-31_rollout-ecosystem/
+│   ├── 04_2026-08-31_rollout-ecosystem/
+│   └── 05_2026-08-31_nao-hoa-nhom-c/
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
