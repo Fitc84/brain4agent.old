@@ -2,6 +2,16 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.2.0] - 2026-08-31: Brain Version Marker (Nhìn Thấy Ngay Phiên Bản Khung Não Ở Root)
+### Added
+- **Nguồn chân lý máy đọc:** thêm field `brain_template_version` vào `brain4agent/memory/hot/state.json` — tách bạch tuyệt đối với `current_version` (version DỰ ÁN). `init_brain.js` tự vá field này vào state.json đã có mà không đụng field khác.
+- **Bản soi cho người:** `init_brain.js` sinh marker `brain4agent-v<x.y.z>.md` ở root (nội dung chuẩn, dẫn xuất từ `state.json`). Cưỡng chế ĐÚNG MỘT file: trước khi ghi, script glob tìm và xoá mọi `brain4agent-v*.md` khác version; nếu bản đúng version đã tồn tại thì không ghi lại (idempotent).
+- **Chẩn đoán mở rộng:** thêm `hasBrainVersionMarker` (so khớp đúng tên file + đúng 1 file duy nhất) vào khối chẩn đoán và điều kiện `isFullyStandard` của `init_brain.js` — dự án cũ thiếu marker hoặc marker sai version bị phát hiện và tự vá khi chạy lại.
+- **Luật quản trị:** nhúng ngoại lệ tường minh vào §5.G (`AGENTS.md`) và LUẬT 6 (`CORE_GOVERNANCE_RULES.md`) + template `fullAgentsMdContent` sinh bởi `init_brain.js`, để dự án mới khởi tạo đã có luật đúng ngay từ đầu.
+- Cập nhật sơ đồ cây thư mục trong template `index.md` sinh bởi `init_brain.js`, thêm dòng marker.
+- Dogfooding: chính repo `brain4agent.old` có `brain4agent-v1.2.0.md` ở root và `state.json` có `brain_template_version: "1.2.0"`.
+- Kế hoạch chi tiết & bằng chứng kiểm chứng: [`planning/03_2026-08-31_brain-version-marker/plan.md`](file:///planning/03_2026-08-31_brain-version-marker/plan.md).
+
 ## [v1.1.0] - 2026-08-31: Dual Entry-Point Invariant (CLAUDE.md Shim Fix)
 ### Fixed
 - **Lỗi nghiêm trọng đã xác minh:** Claude Code CHỈ tự động nạp `CLAUDE.md`, KHÔNG đọc `AGENTS.md` (theo docs chính thức code.claude.com/docs/en/memory.md). `init_brain.js` cũ chỉ sinh `AGENTS.md` → mọi dự án mới khởi tạo qua skill này bị Claude Code bỏ qua toàn bộ luật quản trị một cách im lặng.

@@ -1,6 +1,6 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.1.0",
+  "current_version": "1.2.0",
   "system_status": "healthy_and_runtime_verified",
   "last_verification": {
     "timestamp": "2026-08-31",
@@ -11,11 +11,13 @@
       "7 brain partitions verified",
       "Hot Memory active",
       "Safe deploy script verified — global copy byte-identical",
-      "Single Source of Version Truth (package.json v1.1.0) aligned",
-      "Anti-staleness sweep: no living doc still asserts v1.0.1 or wrong AGENTS.md auto-load claim"
+      "Single Source of Version Truth (package.json v1.2.0) aligned",
+      "Brain Version Marker (brain_template_version) verified across 3 real run scenarios",
+      "Anti-staleness sweep: no living doc still asserts v1.0.1/v1.1.0 or wrong AGENTS.md auto-load claim"
     ],
     "benchmark_accuracy": "100%",
     "grade": "Grade A Runtime Verified"
   },
-  "active_plans_completed": 2
+  "active_plans_completed": 3,
+  "brain_template_version": "1.2.0"
 }

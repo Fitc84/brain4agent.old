@@ -128,6 +128,7 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (`MAJOR.MINOR.PATCH`)**:
 ### 📌 LUẬT 6: Kỷ Luật Root Clean 100% (Zero Root Clutter Invariant)
 - Thư mục root của dự án phải luôn giữ trạng thái sạch sẽ tuyệt đối.
 - Cấm để các file nháp `latest_memory.md`, `task.md`, script tạm thời ngoài thư mục root. Ký ức phiên đưa toàn bộ vào `brain4agent/memory/hot/`.
+- **Ngoại lệ tường minh — Marker Phiên Bản Khung Não:** Root được phép có **ĐÚNG MỘT** file `brain4agent-v<x.y.z>.md` do `init_brain.js` tự sinh/quản lý (bản soi cho người, cho biết ngay ở root dự án đang chạy khung não phiên bản nào). Cấm sửa tay; cấm tồn tại 2 file marker trở lên — bump version thì script tự xoá bản cũ, sinh bản mới. Nguồn chân lý máy đọc là `brain4agent/memory/hot/state.json` → `brain_template_version`; file `.md` chỉ là bản dẫn xuất. Khác biệt tuyệt đối với version DỰ ÁN (`current_version`/`package.json`) — không trộn/ghi đè lẫn nhau.
 
 ### 📌 LUẬT 7: Tư Duy Phân Lập Lỗi 4 Tầng & Tự Phục Hồi Thích Ứng (Fault Isolation)
 - **Tầng 1 (Hạ tầng / Mạng / Server):** 502, 504, timeout kết nối, rớt socket $\rightarrow$ Cơ chế Exponential Backoff & Retry.

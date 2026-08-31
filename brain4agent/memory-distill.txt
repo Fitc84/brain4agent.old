@@ -1,5 +1,5 @@
 <kernel_instructions>
-<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.1.0) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
+<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.2.0) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
 
 <agent_startup_protocol>
 0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill `.xay-dung-nao-bo` (`node .agents\skills\.xay-dung-nao-bo\scripts\init_brain.js` hoặc bản global `node C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo não luôn cập nhật chuẩn mới nhất.
@@ -11,7 +11,7 @@
 </agent_startup_protocol>
 
 <project_foundation>
-- Project: brain4agent (v1.1.0)
+- Project: brain4agent (v1.2.0)
 - Tech Stack: Node.js (Brain Engine Scripts), PowerShell (Deploy Automation), Markdown (Governance & Specs).
 - Data/State: Multi-Tier Hot/Cold Memory Architecture (`memory/hot/` + 7 partitions).
 - Core Guides: `docs/UNIVERSAL_AGENT_GUIDE.md` (Cẩm nang A-Z) & `CORE_GOVERNANCE_RULES.md` (Hiến pháp V5.2).
@@ -39,5 +39,6 @@
 - BẮT BUỘC dùng bảng hỏi bằng Tiếng Việt (`ask_question`) để tương tác; commit message 100% Tiếng Anh (Conventional Commits).
 - Model Tier Tagging: 🔴 (Opus/Claude 3.7) cho kiến trúc core, 🟠 (Sonnet) cho feature/scripts, 🟢 (Haiku) cho task nhẹ/docs.
 - Dual Entry-Point Invariant (Luật J/9): root PHẢI có cả `AGENTS.md` (nguồn chân lý) và `CLAUDE.md` (shim ≤10 dòng, chỉ `@AGENTS.md`) — Claude Code CHỈ nạp CLAUDE.md.
+- Brain Version Marker (§5.G ngoại lệ): root có ĐÚNG 1 file `brain4agent-v<x.y.z>.md` do `init_brain.js` quản lý; nguồn chân lý máy đọc là `state.json.brain_template_version` (khác `current_version` — version dự án).
 </memory_management>
 </kernel_instructions>

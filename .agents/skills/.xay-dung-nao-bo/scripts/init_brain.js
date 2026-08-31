@@ -1,6 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 
+// Phiên bản khung não (brain4agent template) — DUY NHẤT MỘT NƠI khai báo.
+// Mọi chỗ khác trong script này đọc từ hằng số này, KHÔNG hardcode rải rác.
+// Đây là version của KHUNG (template engine), khác với version DỰ ÁN (package.json/current_version).
+const BRAIN_TEMPLATE_VERSION = '1.2.0';
+
 const rootDir = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
 const brainDir = path.join(rootDir, 'brain4agent');
 const hotDir = path.join(brainDir, 'memory', 'hot');
@@ -64,8 +69,21 @@ if (hasBrainDir) {
     missingBrainFiles = REQUIRED_FILES.filter(f => !fs.existsSync(path.join(brainDir, f)));
 }
 
+// Kiểm tra Marker Phiên Bản Khung Não ở root (brain4agent-v<version>.md) — bản soi cho người,
+// dẫn xuất từ nguồn chân lý máy đọc brain4agent/memory/hot/state.json -> brain_template_version.
+const brainMarkerRegex = /^brain4agent-v(\d+\.\d+\.\d+)\.md$/;
+let rootFilesForMarker = [];
+try {
+    rootFilesForMarker = fs.readdirSync(rootDir);
+} catch (e) {
+    rootFilesForMarker = [];
+}
+const existingMarkerFiles = rootFilesForMarker.filter(f => brainMarkerRegex.test(f));
+const currentMarkerFileName = `brain4agent-v${BRAIN_TEMPLATE_VERSION}.md`;
+const hasBrainVersionMarker = existingMarkerFiles.length === 1 && existingMarkerFiles[0] === currentMarkerFileName;
+
 const isBrandNew = !hasBrainDir;
-const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill;
+const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker;
 
 if (isFullyStandard) {
     console.log("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
@@ -75,6 +93,7 @@ if (isFullyStandard) {
     console.log("✅ Thư mục planning/ và .agents/skills/ chuẩn hoá.");
     console.log("✅ Giao thức khởi động có Bước 0 (.xay-dung-nao-bo boot) trong AGENTS.md & memory-distill.txt.");
     console.log("✅ Bất Biến Hai Điểm Nạp: AGENTS.md (nguồn chân lý) + CLAUDE.md (shim) đều tồn tại.");
+    console.log(`✅ Marker Phiên Bản Khung Não: brain4agent-v${BRAIN_TEMPLATE_VERSION}.md đúng chuẩn tại root.`);
     console.log("✅ Thư mục root sạch sẽ 100% (Root Clean Invariant).");
     console.log("-----------------------------------------------------------");
     console.log("👉 Trạng thái: NÃO ĐÃ OK — KHÔNG CẦN NÂNG CẤP THÊM!\n");
@@ -224,6 +243,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 project-root/
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
+├── brain4agent-v${BRAIN_TEMPLATE_VERSION}.md   # [MARKER] Phiên bản khung não — soi nhanh ở root
 ├── README.md                         # Tài liệu giới thiệu và hướng dẫn build dự án
 ├── brain4agent/                      # [BỘ NHỚ DỰ ÁN] Single Source of Truth
 │   ├── memory/hot/                   # [HOT MEMORY] Ký ức nóng phiên (today.md, state.json)
@@ -328,6 +348,7 @@ const stateJsonPath = path.join(hotDir, 'state.json');
 if (!fs.existsSync(stateJsonPath)) {
     const initialState = {
         "current_version": "1.0.0",
+        "brain_template_version": BRAIN_TEMPLATE_VERSION,
         "system_status": "initialized",
         "last_verification": {
             "timestamp": new Date().toISOString(),
@@ -336,7 +357,66 @@ if (!fs.existsSync(stateJsonPath)) {
         "active_plans_completed": 0
     };
     fs.writeFileSync(stateJsonPath, JSON.stringify(initialState, null, 2), 'utf8');
-    console.log('✅ Đã tạo mới: memory/hot/state.json');
+    console.log('✅ Đã tạo mới: memory/hot/state.json (kèm brain_template_version)');
+} else {
+    // Vá brain_template_version vào state.json đã có, KHÔNG đụng các field khác (vd current_version
+    // là version DỰ ÁN — khái niệm khác, tuyệt đối không trộn/ghi đè lên nhau).
+    try {
+        const currentStateRaw = fs.readFileSync(stateJsonPath, 'utf8');
+        const currentState = JSON.parse(currentStateRaw);
+        if (currentState.brain_template_version !== BRAIN_TEMPLATE_VERSION) {
+            currentState.brain_template_version = BRAIN_TEMPLATE_VERSION;
+            fs.writeFileSync(stateJsonPath, JSON.stringify(currentState, null, 2), 'utf8');
+            console.log(`🔄 Đã vá brain_template_version=${BRAIN_TEMPLATE_VERSION} vào memory/hot/state.json (giữ nguyên các field khác).`);
+        } else {
+            console.log('📄 Đã có sẵn: memory/hot/state.json (brain_template_version đúng chuẩn, giữ nguyên dữ liệu).');
+        }
+    } catch (e) {
+        console.error('⚠️ Không thể vá brain_template_version vào state.json:', e.message);
+    }
+}
+
+// -------------------------------------------------------------------------
+// Marker Phiên Bản Khung Não ở root — brain4agent-v<version>.md (bản soi cho người).
+// CƯỠNG CHẾ ĐÚNG MỘT FILE: xoá mọi bản marker khác version trước khi ghi bản đúng.
+// Idempotent: nếu bản đúng version đã tồn tại thì không ghi lại.
+// -------------------------------------------------------------------------
+const brainMarkerPath = path.join(rootDir, currentMarkerFileName);
+let rootFilesForMarkerWrite = [];
+try {
+    rootFilesForMarkerWrite = fs.readdirSync(rootDir);
+} catch (e) {
+    rootFilesForMarkerWrite = [];
+}
+const staleMarkerFiles = rootFilesForMarkerWrite.filter(f => brainMarkerRegex.test(f) && f !== currentMarkerFileName);
+for (const staleFile of staleMarkerFiles) {
+    try {
+        fs.unlinkSync(path.join(rootDir, staleFile));
+        console.log(`🗑️ Đã xoá marker phiên bản khung não lỗi thời: ${staleFile}`);
+    } catch (e) {
+        console.error(`⚠️ Không thể xoá marker lỗi thời ${staleFile}:`, e.message);
+    }
+}
+
+if (!fs.existsSync(brainMarkerPath)) {
+    const syncDate = new Date().toISOString().split('T')[0];
+    const brainMarkerContent = `# brain4agent v${BRAIN_TEMPLATE_VERSION}
+
+Bộ khung Não Bộ Đa Tầng sinh ra cấu trúc \`brain4agent/\` của dự án này.
+
+- **Phiên bản khung não:** v${BRAIN_TEMPLATE_VERSION}
+- **Nguồn chân lý (máy đọc):** \`brain4agent/memory/hot/state.json\` → \`brain_template_version\`
+- **Ngày đồng bộ:** ${syncDate}
+- **Luật quản trị:** \`AGENTS.md\` (nguồn chân lý) · \`CLAUDE.md\` (shim auto-load Claude Code)
+
+> File này do \`init_brain.js\` quản lý — tên file mang version để nhìn thấy ngay ở root.
+> KHÔNG sửa tay: bump version thì script xoá bản cũ \`brain4agent-v*.md\` và sinh bản mới.
+> Version dự án (khác với version khung não) nằm ở \`VERSION\` / \`package.json\`.
+`;
+    fs.writeFileSync(brainMarkerPath, brainMarkerContent, 'utf8');
+    console.log(`✅ Đã tạo mới marker phiên bản khung não: ${currentMarkerFileName}`);
+} else {
+    console.log(`📄 Đã có sẵn: ${currentMarkerFileName} (đúng chuẩn, giữ nguyên).`);
 }
 
 const todayMdPath = path.join(hotDir, 'today.md');
@@ -472,6 +552,7 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (\`MAJOR.MINOR.PATCH\`)**:
 ### G. Quy tắc Kỷ Luật Root Clean 100% (Zero Root Clutter Invariant)
 1. Thư mục root của dự án phải luôn giữ trạng thái sạch sẽ tuyệt đối.
 2. **CẤM** tạo các file nháp tạm thời (\`latest_memory.md\`, \`task.md\`, script test tạm) trực tiếp ngoài root. Ký ức phiên đưa toàn bộ vào \`brain4agent/memory/hot/\`.
+3. **NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não:** Root được phép có **ĐÚNG MỘT** file \`brain4agent-v<x.y.z>.md\` (vd \`brain4agent-v1.2.0.md\`) do \`init_brain.js\` tự sinh và quản lý — đây là bản soi CHO NGƯỜI để nhìn thấy ngay ở root dự án đang chạy khung não phiên bản nào. **CẤM sửa tay** file này; **CẤM để tồn tại 2 file marker** trở lên (bump version thì script tự xoá bản cũ, sinh bản mới). Nguồn chân lý MÁY ĐỌC là \`brain4agent/memory/hot/state.json\` → field \`brain_template_version\`; file \`.md\` chỉ là bản dẫn xuất, KHÔNG được coi là nguồn chân lý. Field này khác với version DỰ ÁN (\`current_version\` trong \`state.json\`, hoặc \`package.json\`) — tuyệt đối không trộn/ghi đè lẫn nhau.
 
 ### H. Quy tắc Giám Sát Tác Vụ Ngầm & Heartbeat Tiết Kiệm Token
 1. **Cấm Polling File Log liên tục theo giây:** Tuyệt đối **CẤM** gọi vòng lặp \`view_file\` lên các tệp log liên tục theo chu kỳ ngắn (1-5s).

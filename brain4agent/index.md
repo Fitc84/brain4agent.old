@@ -34,17 +34,27 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 ---
 
+### 🏷️ 1.3. Marker Phiên Bản Khung Não (Brain Version Marker)
+
+| Thành phần | Vị trí | Vai trò |
+| :--- | :--- | :--- |
+| **Nguồn chân lý (máy đọc)** | [`memory/hot/state.json`](file:///brain4agent/memory/hot/state.json) → `brain_template_version` | Giá trị version khung não thực sự được tin cậy. Tách bạch với `current_version` (version DỰ ÁN). |
+| **Bản soi (cho người)** | `brain4agent-v<x.y.z>.md` ở root | Do `init_brain.js` tự sinh/xoá — nhìn thấy ngay version khung não ở root, không sửa tay. |
+
+---
+
 ## 🗺️ 2. BẢN ĐỒ CẤU TRÚC MÃ NGUỒN (Codebase Directory Map)
 
 ```text
 brain4agent/
-├── package.json                      # [VERSION TRUTH] Phiên bản v1.1.0
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.2.0
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
+├── brain4agent-v1.2.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
 ├── README.md                         # [TỔNG QUAN] Bản đồ trung tâm quản lý và hướng dẫn vận hành
 ├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện
 ├── brain4agent/                      # [BỘ NHỚ WORKSPACE] Single Source of Truth của Hub
-│   ├── memory/hot/                   # [HOT MEMORY] Ký ức nóng phiên (today.md, state.json)
+│   ├── memory/hot/                   # [HOT MEMORY] Ký ức nóng phiên (today.md, state.json — chứa brain_template_version)
 │   ├── memory-distill.txt            # [KERNEL] Bản cô đọng tối thượng (< 100 dòng)
 │   ├── index.md                      # [ROUTER] Master Index Map & Codebase Navigation
 │   ├── roadmap.md                    # [ROADMAP] Tiến độ, Active tasks & Idea Vault
@@ -54,7 +64,8 @@ brain4agent/
 │   └── project-intro.md              # [INTRO] Tổng quan Hub & Tech stack
 ├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
 │   ├── 01_2026-08-28_modernize-hub-v52/
-│   └── 02_2026-08-31_dual-entry-point-claude-shim/
+│   ├── 02_2026-08-31_dual-entry-point-claude-shim/
+│   └── 03_2026-08-31_brain-version-marker/
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
