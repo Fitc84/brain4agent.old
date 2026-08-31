@@ -5,7 +5,7 @@
   "last_verification": {
     "timestamp": "2026-08-31",
     "scenarios_passed": [
-      "Plan #06 executed: PARENT_GIT 9->0, UNBORN 13->5, brain FULL 21->52, 46 local commits, 0 push",
+      "Plan #06 executed: PARENT_GIT 9->0, UNBORN 13->5, brain FULL 21->52, 56 local commits, 0 push",
       "Secret gate verified by THREE independent layers (check-ignore, git show, git ls-files audit)",
       "Isolation verified: brain4agent (new) and aiedu4vn byte-identical before/after (head + dirty count)",
       "All 31 brain-onboarded repos re-run init_brain.js -> NAO DA OK, git status empty",
@@ -93,7 +93,7 @@
       "brain_PARTIAL": "14 -> 5",
       "brain_NONE": "32 -> 10"
     },
-    "commits_local_total": 46,
+    "commits_local_total": 56,
     "p01_git_init_baseline": {
       "control-chrome": "a07df91",
       "control-facebook": "c1cdcbb",

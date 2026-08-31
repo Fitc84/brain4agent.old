@@ -110,9 +110,9 @@ User uỷ quyền tự quyết theo hướng an toàn nhất (tiền lệ #05). 
 | | `NONE` | 32 | 10 | |
 | | **TỔNG** | 67 | 67 | |
 
-### Tổng commit do chiến dịch #06 tạo ra: **46 commit local, 0 push**
+### Tổng commit do chiến dịch #06 tạo ra: **56 commit local, 0 push**
 
-`9` baseline P01 · `2` vá Bước 0 · `8` baseline P02 · `5` Bậc 1 P03 · `3` lô 4a · `5` lô 4b · `22` lô 4c · `1` lô 4e (`teamworkflow`) + `1` commit đồng bộ hub.
+`9` baseline P01 + `2` vá Bước 0 + `8` baseline P02 + `5` Bậc 1 P03 + `3` lô 4a + `5` lô 4b + `22` lô 4c + `1` lô 4e (`teamworkflow`) + `1` commit đồng bộ hub = **56**.
 
 ### 15 repo CHƯA đạt chuẩn — không repo nào bị bỏ qua trong im lặng
 

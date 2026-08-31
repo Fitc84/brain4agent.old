@@ -5,7 +5,7 @@ Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên 
 ## [v1.3.0] - 2026-08-31: Đồng Bộ Cấu Trúc 67 Repo (Git Đúng Chỗ + Não Chuẩn v1.2.0)
 
 ### Added
-- **46 commit local** trên toàn hệ sinh thái (0 push). `PARENT_GIT 9 → 0`; `UNBORN 13 → 5`; não chuẩn `21 → 52`.
+- **56 commit local** trên toàn hệ sinh thái (0 push). `PARENT_GIT 9 → 0`; `UNBORN 13 → 5`; não chuẩn `21 → 52`.
 - 9 repo `control-*` lần đầu có `.git` của chính nó (trước đó `git -C` leo lên repo cha và vùng này bị cha `.gitignore` ⇒ thật sự vô chủ về version control).
 - 8 repo unborn có commit đầu tiên; 31 repo được não hóa/vá lên chuẩn v1.2.0.
 - Hồ sơ kế hoạch `planning/06_2026-08-31_dong-bo-67-repo/` với bảng nghiệm thu thật cho P01–P05 + bảng đối chiếu TRƯỚC/SAU.

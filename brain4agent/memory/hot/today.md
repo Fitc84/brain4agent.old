@@ -6,7 +6,7 @@
 
 ## 🚀 Phiên Thực Thi #06 — Đồng Bộ 67 Repo (HOÀN THÀNH MỘT PHẦN CÓ CHỦ ĐÍCH)
 
-1. **Kết quả đo bằng script kiểm kê chạy 2 lần (TRƯỚC/SAU):** `PARENT_GIT 9→0` ✅ · `UNBORN 13→5` · `DIRTY 16→10` · não chuẩn **21→52**. **46 commit local, 0 push.** Mục tiêu não ≥64/67 **chưa đạt** — 15 repo còn treo, mỗi repo có lý do ghi rõ trong `planning/06_*/plan.md` mục 6.
+1. **Kết quả đo bằng script kiểm kê chạy 2 lần (TRƯỚC/SAU):** `PARENT_GIT 9→0` ✅ · `UNBORN 13→5` · `DIRTY 16→10` · não chuẩn **21→52**. **56 commit local, 0 push.** Mục tiêu não ≥64/67 **chưa đạt** — 15 repo còn treo, mỗi repo có lý do ghi rõ trong `planning/06_*/plan.md` mục 6.
 2. **Thứ tự GIT TRƯỚC — NÃO SAU chứng minh là đúng:** P01 (9 repo `git init` + baseline) → P02 (8/13 first-commit) → P03 (5 commit Bậc 1, 8 báo cáo Bậc 2, 2 chẩn đoán Bậc 3) → P04 (31 repo não hóa, 4 subagent song song) → P06 → P07.
 3. **3 phát hiện lớn ngoài dự kiến:**
    - **Repo git LỒNG NHAU** ở 7 repo — `git status` gộp cả một repo con thành ĐÚNG 1 dòng nên khảo sát #06 đọc `AI-input(2)` tưởng gần sạch, thật ra bên trong là cả một dự án 1.4 GB. Commit sẽ tạo gitlink `160000` mồ côi ⇒ dừng 4 repo unborn.
