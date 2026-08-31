@@ -1,6 +1,6 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.2.0",
+  "current_version": "1.2.1",
   "system_status": "healthy_and_runtime_verified",
   "last_verification": {
     "timestamp": "2026-08-31",
@@ -11,13 +11,32 @@
       "7 brain partitions verified",
       "Hot Memory active",
       "Safe deploy script verified — global copy byte-identical",
-      "Single Source of Version Truth (package.json v1.2.0) aligned",
+      "Single Source of Version Truth (package.json v1.2.1) aligned",
       "Brain Version Marker (brain_template_version) verified across 3 real run scenarios",
-      "Anti-staleness sweep: no living doc still asserts v1.0.1/v1.1.0 or wrong AGENTS.md auto-load claim"
+      "Anti-staleness sweep: no living doc still asserts v1.0.1/v1.1.0 or wrong AGENTS.md auto-load claim",
+      "state.json POSIX trailing-newline fix verified (tail byte 0a) + idempotent re-run reports NAO DA OK"
     ],
     "benchmark_accuracy": "100%",
     "grade": "Grade A Runtime Verified"
   },
   "active_plans_completed": 3,
+  "rollout_2026-08-31_plan04": {
+    "engine": "init_brain.js v1.2.0 template + v1.2.1 newline hotfix",
+    "patched_committed_local": {
+      "control-claude-code": "eeba58a",
+      "ai-news-radar": "6e8d41a",
+      "control-9router": "5172ef0",
+      "control-chatgpt-web": "e433b55 (fallback appendix — AGENTS.md khong theo cau truc chuan)",
+      "control-linux-server": "cf32bf0",
+      "fitc84.com": "44db266 (branch feat/ui-upgrade-v1.1)",
+      "router4vn": "2753b87",
+      "translate4ide": "7485563 (fallback appendix)",
+      "wikiultra": "5f0b859 (kem va Buoc 0)"
+    },
+    "skipped_dirty": ["GramPilot (15)", "control-cloudflare (1)", "control-codex (2)", "control-discord (3)", "control-gpm (59)", "control-keypassxc (341)", "control-router (341)", "control-syncthing (341)", "control-tailscale (341)"],
+    "teamwork_flow_verdict": "CLAUDE.md la shim chuan (@AGENTS.md) NHUNG repo chua co commit nao (no HEAD) va AGENTS.md chi la Next.js tooling notice 5 dong — SKIP cho user quyet",
+    "not_pushed": true,
+    "stale_script_found": "Agent to Product/.agents/skills/.brain-build/scripts/init_brain.js (0 nhac CLAUDE.md) — chi bao cao, khong xoa"
+  },
   "brain_template_version": "1.2.0"
 }

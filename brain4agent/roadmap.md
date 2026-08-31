@@ -1,9 +1,10 @@
 # Roadmap & Active Tasks
 
-File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.2.0)**.
+File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.2.1)**.
 
 ## Mục tiêu hiện tại (Active)
-- [x] Phát hành phiên bản chính thức **brain4agent v1.2.0** (Brain Version Marker).
+- [ ] **Rollout #04 — phần còn treo chờ user:** (a) 9 repo Nhóm A bị bỏ qua vì working tree bẩn (`GramPilot`, `control-cloudflare`, `control-codex`, `control-discord`, `control-gpm`, `control-keypassxc`, `control-router`, `control-syncthing`, `control-tailscale`) — user dọn sạch rồi chạy lại engine từng repo; (b) `teamworkflow` — repo chưa có commit nào + `AGENTS.md` là Next.js tooling notice, chờ user quyết; (c) 6 repo Nhóm C chưa có `AGENTS.md` — quyết định riêng từng dự án; (d) bản script cũ lạc `Agent to Product/.agents/skills/.brain-build/scripts/init_brain.js` — chờ user xử.
+- [x] Phát hành phiên bản chính thức **brain4agent v1.2.0** (Brain Version Marker) + hotfix **v1.2.1** (POSIX newline).
 
 ## Tương lai (Upcoming)
 - [ ] Nghiên cứu cơ chế Vector Memory & Semantic Search tích hợp cho Brain V2.0.
@@ -15,6 +16,7 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 - [ ] **Cross-OS Path Normalizer:** Chuẩn hóa đường dẫn tương đối xuyên suốt giữa môi trường Windows PowerShell và Linux Bash.
 
 ## Đã hoàn thành (Done)
+- [x] **Rollout khung não v1.2.0 ra hệ sinh thái — đợt 1 (v1.2.1, kế hoạch #04):** Vá + commit local 9/18 repo Nhóm A (pilot `control-claude-code` được user duyệt trước khi rollout); sửa hotfix `init_brain.js` thiếu newline cuối `state.json` (user phát hiện, thêm `hasStateJsonTrailingNewline` vào chẩn đoán); xác nhận thực chiến fallback phụ lục P09 trên 2 repo `AGENTS.md` phi chuẩn. KHÔNG push. Bằng chứng: `planning/04_2026-08-31_rollout-ecosystem/plan.md`.
 - [x] **Brain Version Marker — nhìn thấy ngay phiên bản khung não ở root (v1.2.0):** Thêm `brain_template_version` vào `state.json` (nguồn chân lý máy đọc), sinh marker `brain4agent-v<x.y.z>.md` ở root (bản soi cho người, cưỡng chế đúng 1 file, tự xoá bản cũ khi bump), thêm ngoại lệ vào Luật Root Clean (§5.G/LUẬT 6), cập nhật chẩn đoán `init_brain.js` (`hasBrainVersionMarker`). Đợt kiểm chứng độc lập phát hiện thêm lỗi báo-ổn-sai: script không vá ngoại lệ §5.G lẫn Luật J (Dual Entry-Point Invariant) vào `AGENTS.md` ĐÃ TỒN TẠI của dự án cũ (chỉ nhúng khi sinh mới) — đã vá bổ sung `hasRootMarkerException` + `hasDualEntryPointLawInAgentsMd`, kiểm chứng qua Ca A/B/C.
 - [x] **Dual Entry-Point Invariant — CLAUDE.md shim fix (v1.1.0):** Phát hiện & vá lỗi Claude Code không nạp luật (chỉ đọc `CLAUDE.md`, không đọc `AGENTS.md`). Thêm Luật J/9, cập nhật `init_brain.js` tự sinh/vá `CLAUDE.md`, sửa toàn bộ sơ đồ cây thư mục sai trong repo.
 - [x] **Phát hành brain4agent v1.0.1 (v1.0.1):** Chuẩn hóa toàn diện Single Skill Vault (`.agents/skills/`), Root Clean 100%, bổ sung `package.json` và đồng bộ tài liệu toàn dự án.

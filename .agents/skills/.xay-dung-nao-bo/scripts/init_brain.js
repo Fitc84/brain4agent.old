@@ -89,8 +89,16 @@ const existingMarkerFiles = rootFilesForMarker.filter(f => brainMarkerRegex.test
 const currentMarkerFileName = `brain4agent-v${BRAIN_TEMPLATE_VERSION}.md`;
 const hasBrainVersionMarker = existingMarkerFiles.length === 1 && existingMarkerFiles[0] === currentMarkerFileName;
 
+// state.json phải kết thúc bằng newline (chuẩn POSIX) — tránh vết "\ No newline at end of file"
+// xuất hiện vĩnh viễn trong mọi git diff về sau của file này.
+let hasStateJsonTrailingNewline = true;
+const stateJsonDiagPath = path.join(hotDir, 'state.json');
+if (fs.existsSync(stateJsonDiagPath)) {
+    hasStateJsonTrailingNewline = fs.readFileSync(stateJsonDiagPath, 'utf8').endsWith('\n');
+}
+
 const isBrandNew = !hasBrainDir;
-const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker && hasRootMarkerException && hasDualEntryPointLawInAgentsMd;
+const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker && hasRootMarkerException && hasDualEntryPointLawInAgentsMd && hasStateJsonTrailingNewline;
 
 if (isFullyStandard) {
     console.log("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
@@ -364,7 +372,7 @@ if (!fs.existsSync(stateJsonPath)) {
         },
         "active_plans_completed": 0
     };
-    fs.writeFileSync(stateJsonPath, JSON.stringify(initialState, null, 2), 'utf8');
+    fs.writeFileSync(stateJsonPath, JSON.stringify(initialState, null, 2) + '\n', 'utf8');
     console.log('✅ Đã tạo mới: memory/hot/state.json (kèm brain_template_version)');
 } else {
     // Vá brain_template_version vào state.json đã có, KHÔNG đụng các field khác (vd current_version
@@ -372,10 +380,17 @@ if (!fs.existsSync(stateJsonPath)) {
     try {
         const currentStateRaw = fs.readFileSync(stateJsonPath, 'utf8');
         const currentState = JSON.parse(currentStateRaw);
-        if (currentState.brain_template_version !== BRAIN_TEMPLATE_VERSION) {
+        const needsVersionPatch = currentState.brain_template_version !== BRAIN_TEMPLATE_VERSION;
+        const needsNewlineFix = !currentStateRaw.endsWith('\n');
+        if (needsVersionPatch || needsNewlineFix) {
             currentState.brain_template_version = BRAIN_TEMPLATE_VERSION;
-            fs.writeFileSync(stateJsonPath, JSON.stringify(currentState, null, 2), 'utf8');
-            console.log(`🔄 Đã vá brain_template_version=${BRAIN_TEMPLATE_VERSION} vào memory/hot/state.json (giữ nguyên các field khác).`);
+            fs.writeFileSync(stateJsonPath, JSON.stringify(currentState, null, 2) + '\n', 'utf8');
+            if (needsVersionPatch) {
+                console.log(`🔄 Đã vá brain_template_version=${BRAIN_TEMPLATE_VERSION} vào memory/hot/state.json (giữ nguyên các field khác).`);
+            }
+            if (needsNewlineFix) {
+                console.log('🔄 Đã bổ sung newline cuối file cho memory/hot/state.json (chuẩn POSIX, sạch git diff).');
+            }
         } else {
             console.log('📄 Đã có sẵn: memory/hot/state.json (brain_template_version đúng chuẩn, giữ nguyên dữ liệu).');
         }

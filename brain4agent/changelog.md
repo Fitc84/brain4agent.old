@@ -2,6 +2,16 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.2.1] - 2026-08-31: POSIX Newline Hotfix + Rollout Khung Não v1.2.0 Ra Hệ Sinh Thái
+### Fixed
+- **`state.json` thiếu newline cuối file (user phát hiện khi duyệt pilot):** cả hai chỗ ghi `state.json` trong `init_brain.js` dùng `JSON.stringify(..., null, 2)` không kèm `'\n'` → mọi repo được vá sẽ mang vết `\ No newline at end of file` vĩnh viễn trong git diff. Sửa cả hai thành `+ '\n'`; rà toàn bộ điểm ghi file khác (`CLAUDE.md`, marker, `AGENTS.md`, `today.md`) — đều đã kết thúc `0a`, không cần sửa.
+- Thêm chẩn đoán `hasStateJsonTrailingNewline` vào `isFullyStandard` + mở rộng nhánh vá state.json (ghi lại khi thiếu newline dù version đã đúng) — để repo đã "NÃO ĐÃ OK" vẫn tự sửa được newline khi chạy lại. Kiểm chứng: chạy lại trên `brain4agent.old` và `control-claude-code` → tail byte `0a`, chạy lần 2 báo OK (idempotent).
+- **Quyết định:** GIỮ `BRAIN_TEMPLATE_VERSION = 1.2.0` (không bump) vì nội dung sinh ra không đổi về bản chất — tránh churn đổi tên marker trên 9 repo vừa commit. Version DỰ ÁN bump v1.2.1.
+
+### Added
+- **Rollout khung não v1.2.0 ra hệ sinh thái (kế hoạch #04):** vá + commit local 9 repo Nhóm A (`control-claude-code` pilot `eeba58a`, `ai-news-radar`, `control-9router`, `control-chatgpt-web`, `control-linux-server`, `fitc84.com`, `router4vn`, `translate4ide`, `wikiultra`); 9 repo bỏ qua vì working tree bẩn; `teamworkflow` (Nhóm B) bỏ qua — CLAUDE.md là shim chuẩn nhưng repo chưa có commit nào và AGENTS.md chỉ là Next.js tooling notice. KHÔNG push repo nào. Chi tiết + bằng chứng: [`planning/04_2026-08-31_rollout-ecosystem/plan.md`](file:///planning/04_2026-08-31_rollout-ecosystem/plan.md).
+- Xác nhận thực chiến cơ chế fallback phụ lục của P09: 2 repo có `AGENTS.md` không theo cấu trúc chuẩn (`control-chatgpt-web`, `translate4ide`) được vá qua "PHỤ LỤC TỰ ĐỘNG VÁ" cuối file, diff chỉ-thêm-không-xoá.
+
 ## [v1.2.0] - 2026-08-31: Brain Version Marker (Nhìn Thấy Ngay Phiên Bản Khung Não Ở Root)
 ### Added
 - **Nguồn chân lý máy đọc:** thêm field `brain_template_version` vào `brain4agent/memory/hot/state.json` — tách bạch tuyệt đối với `current_version` (version DỰ ÁN). `init_brain.js` tự vá field này vào state.json đã có mà không đụng field khác.

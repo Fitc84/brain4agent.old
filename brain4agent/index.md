@@ -47,7 +47,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 ```text
 brain4agent/
-├── package.json                      # [VERSION TRUTH] Phiên bản v1.2.0
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.2.1
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
 ├── brain4agent-v1.2.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
@@ -65,7 +65,8 @@ brain4agent/
 ├── planning/                         # [QUẢN LÝ KẾ HOẠCH] Chứa các bản kế hoạch RFCs
 │   ├── 01_2026-08-28_modernize-hub-v52/
 │   ├── 02_2026-08-31_dual-entry-point-claude-shim/
-│   └── 03_2026-08-31_brain-version-marker/
+│   ├── 03_2026-08-31_brain-version-marker/
+│   └── 04_2026-08-31_rollout-ecosystem/
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
