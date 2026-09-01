@@ -4,6 +4,24 @@
 
 ---
 
+## 🔒 ĐÓNG PHIÊN 2026-09-02 — BÀN GIAO NGẮN
+
+**Trạng thái chốt:** hub `v1.5.1` (`8cb91f0`) · khung não template `v1.3.0` · **65/67 repo đạt chuẩn** ·
+engine nguồn ↔ bản deploy global **byte-identical** · 0 repo còn 2 khối luật mâu thuẫn ·
+**mọi commit LOCAL, chưa push lần nào**.
+
+**2 repo chưa đạt, cả hai vì LUẬT CẤM CHẠM chứ không phải vướng kỹ thuật:**
+`aiedu4vn` (luật ⛔ thường trực từ #04) · `brain4agent` (KHÔNG `.old` — cách ly theo #06 mục 5.1).
+Gỡ luật là xong trong một lần chạy engine.
+
+**Việc đầu tiên của phiên sau — theo đúng thứ tự:**
+1. Chạy Bước 0 (boot engine), rồi **`git log -3` của hub** xem có phiên khác vừa đổi `BRAIN_TEMPLATE_VERSION` không.
+   Bài học #07: chuẩn có thể dịch chuyển ngay sau khi mình vừa phủ xong.
+2. Đọc mục **🔴 Active** trong `roadmap.md` — việc ưu tiên cao nhất là **xoay 6 khoá đã lộ trong lịch sử git**.
+3. Nếu sửa engine: **BẮT BUỘC** chạy `scripts/deploy_skills.ps1` rồi so hash tới khi `diff` RỖNG (gotcha #12).
+
+---
+
 ## ⚠️ BÀI HỌC LỚN NHẤT PHIÊN NÀY: "XONG" CHỈ ĐÚNG SO VỚI CHUẨN TẠI THỜI ĐIỂM ĐO
 
 Ngày 01/09 đóng chiến dịch #06 với 66/67 repo đạt chuẩn **v1.2.0**. Chỉ **1 tiếng sau**, một phiên
@@ -25,6 +43,24 @@ HÀNH trước khi khẳng định "đã xong"** — và kiểm `git log` của 
 ## 📌 Còn Lại
 2 repo chưa đạt và **cả hai đều vì luật cấm chạm, không phải vì kỹ thuật**: `aiedu4vn` (⛔ từ #04) và
 `brain4agent` (cách ly #06 mục 5.1). Gỡ luật là xong trong một lệnh.
+
+---
+
+## 🏛️ Phiên KHÁC 2026-09-01 22:23 — v1.5.0: Luật SPEC PACKAGE, CẤM plan phẳng (khung não 1.3.0)
+
+**Nguồn gốc:** user review kế hoạch #10 của repo `ai-news-radar`, trả lại **2 lần** với yêu cầu "cần SPEC chi tiết chứ không phải plan phẳng", rồi yêu cầu ghi thành quy tắc chung cho MỌI dự án.
+
+**Chẩn đoán vì sao luật cũ không đủ:** `Spec-First` cũ CÓ vẽ cấu trúc `plan.md` + `specs/` — nhưng chỉ là *mô tả*, không phải *ràng buộc*. Nó không cấm plan phẳng, không nói mỗi file SPEC phải chứa gì, và không cấm nhét thiết kế vào `plan.md`. Kết quả: một agent viết plan mỏng vẫn "đúng luật". Đây là lỗi kinh điển của luật mô tả mà không có mệnh đề CẤM.
+
+**Đã sửa — luật §3 mục 2 (SPEC PACKAGE):** cấm plan phẳng cho mọi đợt MINOR/MAJOR; bộ SPEC tối thiểu phủ 4 mảng; định nghĩa nội dung bắt buộc của MỖI file SPEC (contract chính xác, luật BẮT BUỘC/CẤM kèm **"vùng cấm"** để chống agent sau tự ý "sửa cho tốt hơn", bảng phân loại lỗi + hành vi caller, số đo nghiệm thu thật); `plan.md` rút về hồ sơ (metadata + nhật ký quyết định có mốc thời gian + mục "quyết định bị thay thế" + WP/Tier + checklist + router); Exit Gates đánh dấu theo môi trường; ngoại lệ duy nhất hotfix PATCH; điều khoản grandfather cho package cũ dạng phẳng.
+
+**Lan ra hệ sinh thái — điểm mấu chốt:** ngoài template cho dự án MỚI, đã thêm **patcher** vào `init_brain.js` dò chuỗi ổn định `SPEC PACKAGE` để vá `AGENTS.md` **ĐÃ TỒN TẠI** (cùng cơ chế đã dùng cho Luật J và Marker). Không có patcher thì 66 repo đã não hóa sẽ giữ luật cũ vĩnh viễn — đúng lỗ hổng đã mắc với Luật J ở v1.1.0.
+
+**Verify (không tin code chưa chạy):** `node --check` sạch; dựng dự án giả từ `AGENTS.md` bản `HEAD` (kiểu cũ) rồi chạy engine thật → in `🔄 Đã tự động vá luật SPEC PACKAGE`, khối §3 mục 2 đúng nội dung, mục 1/3/4 nguyên vẹn; **chạy lần 2 không vá lặp** (`SPEC PACKAGE` đúng 1 lần).
+
+**Version:** Hub `package.json` 1.4.0 → **1.5.0**; `BRAIN_TEMPLATE_VERSION` 1.2.0 → **1.3.0** (marker root sẽ tự đổi tên khi chạy engine).
+
+**CÒN LẠI (cập nhật 02/09):** (a) ~~`npm run deploy`~~ → ĐÃ chạy ở #07, `diff` nguồn↔global RỖNG; (b) ~~quét lại 66 repo~~ → ĐÃ quét ở #07, đạt 65/67; (c) repo `ai-news-radar` đã tự ghi luật này vào `AGENTS.md` riêng trước đó — cần đồng bộ lại cho khớp câu chữ chuẩn của Hub.
 
 ---
 
@@ -122,21 +158,3 @@ HÀNH trước khi khẳng định "đã xong"** — và kiểm `git log` của 
   - [`brain4agent/changelog.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/changelog.md)
   - [`brain4agent/memory/hot/today.md`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/memory/hot/today.md)
   - [`brain4agent/memory/hot/state.json`](file:///d:/Data/Repositories/.My-Repositories/brain4agent.old/brain4agent/memory/hot/state.json)
-
----
-
-## Session 2026-09-01 (tiếp) — v1.5.0: Luật SPEC PACKAGE, CẤM plan phẳng (khung não 1.3.0)
-
-**Nguồn gốc:** user review kế hoạch #10 của repo `ai-news-radar`, trả lại **2 lần** với yêu cầu "cần SPEC chi tiết chứ không phải plan phẳng", rồi yêu cầu ghi thành quy tắc chung cho MỌI dự án.
-
-**Chẩn đoán vì sao luật cũ không đủ:** `Spec-First` cũ CÓ vẽ cấu trúc `plan.md` + `specs/` — nhưng chỉ là *mô tả*, không phải *ràng buộc*. Nó không cấm plan phẳng, không nói mỗi file SPEC phải chứa gì, và không cấm nhét thiết kế vào `plan.md`. Kết quả: một agent viết plan mỏng vẫn "đúng luật". Đây là lỗi kinh điển của luật mô tả mà không có mệnh đề CẤM.
-
-**Đã sửa — luật §3 mục 2 (SPEC PACKAGE):** cấm plan phẳng cho mọi đợt MINOR/MAJOR; bộ SPEC tối thiểu phủ 4 mảng; định nghĩa nội dung bắt buộc của MỖI file SPEC (contract chính xác, luật BẮT BUỘC/CẤM kèm **"vùng cấm"** để chống agent sau tự ý "sửa cho tốt hơn", bảng phân loại lỗi + hành vi caller, số đo nghiệm thu thật); `plan.md` rút về hồ sơ (metadata + nhật ký quyết định có mốc thời gian + mục "quyết định bị thay thế" + WP/Tier + checklist + router); Exit Gates đánh dấu theo môi trường; ngoại lệ duy nhất hotfix PATCH; điều khoản grandfather cho package cũ dạng phẳng.
-
-**Lan ra hệ sinh thái — điểm mấu chốt:** ngoài template cho dự án MỚI, đã thêm **patcher** vào `init_brain.js` dò chuỗi ổn định `SPEC PACKAGE` để vá `AGENTS.md` **ĐÃ TỒN TẠI** (cùng cơ chế đã dùng cho Luật J và Marker). Không có patcher thì 66 repo đã não hóa sẽ giữ luật cũ vĩnh viễn — đúng lỗ hổng đã mắc với Luật J ở v1.1.0.
-
-**Verify (không tin code chưa chạy):** `node --check` sạch; dựng dự án giả từ `AGENTS.md` bản `HEAD` (kiểu cũ) rồi chạy engine thật → in `🔄 Đã tự động vá luật SPEC PACKAGE`, khối §3 mục 2 đúng nội dung, mục 1/3/4 nguyên vẹn; **chạy lần 2 không vá lặp** (`SPEC PACKAGE` đúng 1 lần).
-
-**Version:** Hub `package.json` 1.4.0 → **1.5.0**; `BRAIN_TEMPLATE_VERSION` 1.2.0 → **1.3.0** (marker root sẽ tự đổi tên khi chạy engine).
-
-**CÒN LẠI:** (a) `npm run deploy` đẩy skill sang Global AI Skills — CHƯA chạy; (b) quyết định có quét lại 66 repo ngay hay để tự vá dần theo phiên; (c) repo `ai-news-radar` đã tự ghi luật này vào `AGENTS.md` riêng trước đó — cần đồng bộ lại cho khớp câu chữ chuẩn của Hub.

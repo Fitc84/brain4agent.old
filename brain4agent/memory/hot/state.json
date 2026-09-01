@@ -274,5 +274,24 @@
     },
     "brain_template_version_unchanged": "1.3.0 — day la sua loi ap dung, khong doi chuan => hub chi bump PATCH 1.5.0 -> 1.5.1",
     "not_pushed": true
+  },
+  "session_closed": {
+    "at": "2026-09-02",
+    "hub_commit": "8cb91f0",
+    "hub_version": "1.5.1",
+    "brain_template_version": "1.3.0",
+    "compliant_repos": "65/67",
+    "engine_source_vs_global_deploy": "hash-identical",
+    "repos_with_duplicate_planning_law": 0,
+    "pushed": false,
+    "blocked_only_by_standing_rules": {
+      "aiedu4vn": "luat ⛔ thuong truc tu #04",
+      "brain4agent (new)": "cach ly #06 muc 5.1"
+    },
+    "next_session_first_steps": [
+      "chay Buoc 0, roi git log -3 cua hub xem BRAIN_TEMPLATE_VERSION co vua doi khong (bai hoc #07)",
+      "doc muc Active trong roadmap.md - uu tien cao nhat la xoay 6 khoa da lo trong lich su git",
+      "neu sua engine: BAT BUOC chay scripts/deploy_skills.ps1 roi so hash toi khi diff RONG (gotcha #12)"
+    ]
   }
 }

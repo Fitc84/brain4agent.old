@@ -2,19 +2,6 @@
 
 File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.5.1)**.
 
-## Mục tiêu hiện tại (Active)
-- [ ] **Lan luật SPEC PACKAGE ra 66 repo đã não hóa (v1.5.1, 01/09):** luật đã vào `AGENTS.md` Hub + `CORE_GOVERNANCE_RULES.md` + template & **patcher** trong `init_brain.js` (đã test thật: vá đúng, idempotent). Repo cũ nhận luật khi chạy `init_brain` lần kế tiếp — CHƯA chạy hàng loạt. Cần: (a) `npm run deploy` đẩy skill sang Global AI Skills; (b) quyết có quét lại 66 repo ngay hay để tự vá dần theo phiên làm việc.
-- [ ] **Kế hoạch #06 — Đồng bộ cấu trúc 67 repo (DRAFT chờ user duyệt):** trục GIT trước (9 repo git-init + 13 first-commit + 14 xử bẩn bậc thang) → trục NÃO sau (4 lô não hóa). Đã kiểm kê 67/67; 15 repo có secret ở root → Giao Thức Chống Lộ Key bắt buộc; 2 ca cách ly (`brain4agent` mới — nghi hub thế hệ kế nhiệm đang dở 38 file, `aiedu4vn`). 3 câu hỏi chờ user tại `planning/06_2026-08-31_dong-bo-67-repo/plan.md` mục 5. Kế hoạch này KẾ THỪA + ĐÓNG mọi mục treo của #04/#05.
-- [ ] **Kế hoạch #05 — phần còn treo:** (a) `CausalAgent` Giai đoạn 2 (dọn 18 `scratch_*.py` + 8 file dữ liệu ở root) — cần user tạo commit đầu tiên "as-is" mới mở gate; (b) `Audit`: `security_platform.db` mồ côi ở root do `db.py` dùng path tương đối theo CWD + `requirements.txt` có dòng cuối UTF-16LE (đã nạp vào não repo đó, chưa sửa code); (c) `reverse Claude`: gate `verify-documentation-integrity.js` FAIL do 2 broken link trỏ `output/target_corpus/` — lỗi có TRƯỚC đợt não hóa.
-- [ ] **Rollout #04 — 6 repo còn treo chờ user (13/19 đã xử lý):** (a) 4 repo working tree bẩn sẵn: `GramPilot` (15 file), `control-gpm` (59), `control-codex` (2), `control-cloudflare` (1) — dọn sạch rồi chạy lại engine; (b) 2 repo CHƯA có commit nào (unborn `main`, không phải detached): `control-discord`, `teamworkflow` — cần user tạo mốc commit đầu tiên trước; riêng `teamworkflow` còn phải quyết có não hóa không (`AGENTS.md` của nó là Next.js tooling notice).
-- [ ] **Rollout #04 — việc ngoài phạm vi:** (c) 6 repo Nhóm C chưa có `AGENTS.md` — quyết định riêng từng dự án; (d) bản script cũ lạc `Agent to Product/.agents/skills/.brain-build/scripts/init_brain.js` — chờ user xử; (e) 4 repo `control-keypassxc|router|syncthing|tailscale` KHÔNG có git riêng (nằm trong vùng bị repo cha ignore) — user cân nhắc `git init` để có đường revert.
-- [x] Phát hành phiên bản chính thức **brain4agent v1.2.0** (Brain Version Marker) + hotfix **v1.2.1** (POSIX newline).
-
-## Tương lai (Upcoming)
-- [ ] Nghiên cứu cơ chế Vector Memory & Semantic Search tích hợp cho Brain V2.0.
-- [ ] Xây dựng test suite tự động kiểm tra tính tương thích của Brain Engine trên cả Windows / Linux / macOS.
-
-
 ## 🔴 Active — chờ user (không còn vướng kỹ thuật)
 
 - [ ] **🔒 XOAY KHOÁ (ưu tiên cao nhất)** — 6 chỗ có secret nằm sẵn trong lịch sử git hoặc lộ ra client, sửa code KHÔNG đủ: danh sách 6 vị trí giữ ở hồ sơ chỉ-lưu-máy ngoài git.
@@ -29,6 +16,21 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 - [ ] **`CausalAgent`** — dọn root cần sửa `scratch_*.py` cho độc-lập-vị-trí (`Path(__file__).resolve().parents[1]`) trước.
 - [ ] **`openclaw-pro-studio`** — bỏ track `admin_server.log`; cân nhắc gộp `AGENT_GUIDELINES.md` vào `AGENTS.md`.
 - [ ] **Nghiệm thu môi trường thật** — mọi Exit Gate của #07 mới đạt ở mức `local`; chưa xác nhận trên máy/tài khoản khác.
+- [ ] **`Audit` (treo từ #05):** `security_platform.db` mồ côi ở root do `db.py` dùng path tương đối theo CWD; `requirements.txt` có dòng cuối mã hoá UTF-16LE. Đã nạp vào não repo đó, CHƯA sửa code.
+- [ ] **`reverse Claude` (treo từ #05):** gate `verify-documentation-integrity.js` FAIL do 2 broken link trỏ `output/target_corpus/` — lỗi có TRƯỚC đợt não hóa, chưa sửa.
+- [ ] **`Agent to Product` (treo từ #04):** còn bản script engine cũ lạc ở `.agents/skills/.brain-build/scripts/init_brain.js` (không nhắc `CLAUDE.md`) — chỉ mới báo cáo, chưa xử.
+
+
+> **Ghi chú chống lỗi thời (2026-09-02):** mục Active cũ đã được gộp vào đây. Các việc trong đó nay
+> ĐÃ XONG nên bị gỡ khỏi danh sách chờ: lan luật SPEC PACKAGE ra hệ sinh thái + `deploy_skills.ps1`
+> (xong ở #07) · kế hoạch #06 duyệt & đóng · 6 repo treo của #04 (`GramPilot`, `control-gpm`,
+> `control-codex`, `control-cloudflare`, `control-discord`, `teamworkflow`) · 4 repo không có git
+> riêng (`control-keypassxc|router|syncthing|tailscale`) · 6 repo Nhóm C chưa có `AGENTS.md`.
+
+## Tương lai (Upcoming)
+- [ ] Nghiên cứu cơ chế Vector Memory & Semantic Search tích hợp cho Brain V2.0.
+- [ ] Xây dựng test suite tự động kiểm tra tính tương thích của Brain Engine trên cả Windows / Linux / macOS.
+
 
 ## 💡 Kho Ý Tưởng & Backlog (Idea Vault)
 *Nơi lưu trữ các ý tưởng hay, kiến trúc mở rộng chưa ưu tiên làm ngay nhưng cần giữ lại để tham khảo.*
