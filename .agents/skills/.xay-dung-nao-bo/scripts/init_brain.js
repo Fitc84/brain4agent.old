@@ -4,7 +4,7 @@ const path = require('path');
 // Phiên bản khung não (brain4agent template) — DUY NHẤT MỘT NƠI khai báo.
 // Mọi chỗ khác trong script này đọc từ hằng số này, KHÔNG hardcode rải rác.
 // Đây là version của KHUNG (template engine), khác với version DỰ ÁN (package.json/current_version).
-const BRAIN_TEMPLATE_VERSION = '1.2.0';
+const BRAIN_TEMPLATE_VERSION = '1.3.0';
 
 const rootDir = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
 const brainDir = path.join(rootDir, 'brain4agent');
@@ -494,7 +494,7 @@ Bộ nhớ dự án trong \`brain4agent/\` được tổ chức theo kiến trú
 
 ---
 
-## 📋 3. QUY CHUẨN QUẢN TRỊ KẾ HOẠCH NÂNG CẤP (\`planning/\`)
+## 📋 3. QUY CHUẨN QUẢN TRỊ KẾ HOẠCH NÂNG CẤP (\`planning/\`) — SPEC-FIRST BẮT BUỘC
 
 Mọi đề xuất nâng cấp tính năng lớn, tái cấu trúc hoặc thêm module mới phải được quản lý tập trung trong thư mục **[\`planning/\`](file:///planning)** tại root repository:
 
@@ -503,21 +503,30 @@ Mọi đề xuất nâng cấp tính năng lớn, tái cấu trúc hoặc thêm 
    - **Quy tắc STT:** 2 chữ số (\`01\`, \`02\`, ..., \`99\`) tăng dần theo thời gian thực tế.
    - **Quy tắc tên ngắn (2-3 từ):** Giữ độ dài thư mục trong khoảng 25 - 35 ký tự.
    - **Cố định đường dẫn (Path Invariant):** Không đổi tên thư mục khi hoàn thành.
-2. **Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First):**
+2. **BẮT BUỘC DẠNG SPEC PACKAGE — CẤM PLAN PHẲNG/MỎNG (luật chốt 2026-09-01):**
+   Một kế hoạch KHÔNG được là một file \`plan.md\` dồn hết mọi thứ. Bắt buộc tách thành **bộ SPEC nhiều file**, mỗi file là MỘT hợp đồng độc lập:
    \`\`\`text
    planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]/
-   ├── plan.md                          # Master Checklist + Tier Tags + Cổng nghiệm thu
+   ├── plan.md                          # HỒ SƠ kế hoạch (KHÔNG chứa thiết kế — xem mục 2.3)
    └── specs/                           # Bản thiết kế chi tiết (Spec-First)
-       ├── 00-ARCHITECTURE.md           # Kiến trúc định hướng (Normative Architecture)
-       ├── 01-CONTRACTS.md              # Contracts, Types, Schema bất biến
-       └── SPEC-Pxx-[Name].md           # Đặc tả từng bước thực thi cụ thể
+       ├── 00-ARCHITECTURE.md           # Mục tiêu, Non-goals, Bất biến kiến trúc, Router thứ tự đọc
+       ├── 01-CONTRACTS.md              # Contracts, Types, Schema/DDL bất biến
+       ├── SPEC-Pxx-[Name].md           # Đặc tả từng mảng/bước thực thi cụ thể
+       ├── OPERATIONS.md                # Deploy, runbook, thứ tự bắt buộc, rollback
+       └── TESTING-ACCEPTANCE.md        # Ma trận test + bằng chứng nghiệm thu + Exit Gates
    \`\`\`
+   - **2.1. Bộ SPEC tối thiểu:** phải phủ đủ 4 mảng — (a) kiến trúc & bất biến, (b) contract dữ liệu/API/module, (c) vận hành-deploy-rollback, (d) kiểm thử-nghiệm thu. Dự án lớn tách thêm SPEC theo từng tính năng.
+   - **2.2. Mỗi file SPEC BẮT BUỘC có:** contract chính xác (chữ ký hàm/endpoint/schema, không mô tả chung chung); luật **BẮT BUỘC / CẤM** tường minh, kể cả **"vùng cấm"** (điều đã cân nhắc và quyết định KHÔNG làm, kèm lý do — chống việc agent sau "sửa lại cho tốt hơn"); bảng phân loại lỗi + hành vi bắt buộc của caller cho từng loại; số đo/bằng chứng nghiệm thu thật (không chỉ "test xanh").
+   - **2.3. \`plan.md\` CHỈ được chứa:** Metadata Header (mục 3); **Nhật ký quyết định có mốc thời gian** — kèm mục **"Quyết định bị thay thế"** (không xoá lịch sử, không để hai phát biểu ngược nhau cùng sống); phân công Work Packages + Model Tier; checklist thực thi; bảng trỏ sang các file SPEC. **CẤM nhét thiết kế chi tiết vào \`plan.md\`.**
+   - **2.4. Exit Gates phải đánh dấu theo môi trường** (vd \`✅ local / ⬜ server\`) — kế hoạch chỉ được đóng khi mọi gate của môi trường thật chuyển ✅.
+   - **2.5. NGOẠI LỆ DUY NHẤT:** hotfix/patch nhỏ (\`PATCH\` SemVer, ≤1 ngày công) được phép chỉ có \`plan.md\`, nhưng vẫn đủ Metadata + nhật ký quyết định + checklist. Mọi đợt \`MINOR\`/\`MAJOR\` bắt buộc đủ bộ SPEC.
+   - **2.6. Package cũ dạng phẳng** (file \`NN-*.md\` nằm thẳng trong thư mục kế hoạch, không có \`specs/\`) được GIỮ NGUYÊN theo Path Invariant — không đổi cấu trúc để tránh gãy tham chiếu; chỉ áp cấu trúc chuẩn cho kế hoạch MỚI.
 3. **Quy tắc Phân Tầng Mô Hình (Model Tiering Tagging):**
    - 🔴 **Tier Đỏ (Strongest):** Thiết kế kiến trúc nền tảng, Data Contracts, Security (Ưu tiên mô hình mạnh nhất như Claude 3.7 / Opus / GPT-4.5).
    - 🟠 **Tier Cam (Standard):** Viết logic tính năng chính, xử lý luồng, Unit tests (Mô hình cân bằng như Sonnet).
    - 🟢 **Tier Xanh (Fast/Cheap):** Tác vụ nhẹ, viết docs, fix chính tả, format code (Mô hình nhanh như Haiku / Flash).
 4. **Vòng đời Kế hoạch (Planning Lifecycle):**
-   - **Khởi tạo:** Nhúng trực tiếp Checklist thực thi vào file kế hoạch và chờ duyệt.
+   - **Khởi tạo:** Dựng ĐỦ bộ SPEC (mục 2) + nhúng Checklist thực thi vào \`plan.md\` và chờ duyệt.
    - **Thực thi:** Tự động check \`[x]\` vào checklist ngay trong file kế hoạch (không dùng file nháp IDE).
    - **Cổng Nghiệm Thu (Acceptance Gate):** Chạy kiểm tra bắt buộc (\`typecheck\`, \`lint\`, \`test\`) trước khi hoàn tất.
    - **Nghiệm thu (Sign-off):** Cập nhật trạng thái \`✅ ĐÃ HOÀN THÀNH\`, ghi thời gian hoàn tất chính xác đến từng giây.
@@ -657,6 +666,48 @@ if (!fs.existsSync(agentsMdPath)) {
         }
         agentsMdPatched = true;
         console.log('🔄 Đã tự động vá Luật J (Dual Entry-Point Invariant) vào AGENTS.md hiện có.');
+    }
+
+    // Vá luật SPEC PACKAGE (§3 mục 2) nếu AGENTS.md CŨ chưa có — dự án init trước 2026-09-01 vẫn
+    // dùng luật planning cũ (cho phép plan phẳng). Dò bằng chuỗi ổn định 'SPEC PACKAGE'.
+    if (!currentAgentsMd.includes('SPEC PACKAGE')) {
+        const specPackageRuleText = `2. **BẮT BUỘC DẠNG SPEC PACKAGE — CẤM PLAN PHẲNG/MỎNG (luật chốt 2026-09-01):**
+   Một kế hoạch KHÔNG được là một file \`plan.md\` dồn hết mọi thứ. Bắt buộc tách thành **bộ SPEC nhiều file**, mỗi file là MỘT hợp đồng độc lập:
+   \`\`\`text
+   planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]/
+   ├── plan.md                          # HỒ SƠ kế hoạch (KHÔNG chứa thiết kế — xem mục 2.3)
+   └── specs/                           # Bản thiết kế chi tiết (Spec-First)
+       ├── 00-ARCHITECTURE.md           # Mục tiêu, Non-goals, Bất biến kiến trúc, Router thứ tự đọc
+       ├── 01-CONTRACTS.md              # Contracts, Types, Schema/DDL bất biến
+       ├── SPEC-Pxx-[Name].md           # Đặc tả từng mảng/bước thực thi cụ thể
+       ├── OPERATIONS.md                # Deploy, runbook, thứ tự bắt buộc, rollback
+       └── TESTING-ACCEPTANCE.md        # Ma trận test + bằng chứng nghiệm thu + Exit Gates
+   \`\`\`
+   - **2.1. Bộ SPEC tối thiểu:** phải phủ đủ 4 mảng — (a) kiến trúc & bất biến, (b) contract dữ liệu/API/module, (c) vận hành-deploy-rollback, (d) kiểm thử-nghiệm thu. Dự án lớn tách thêm SPEC theo từng tính năng.
+   - **2.2. Mỗi file SPEC BẮT BUỘC có:** contract chính xác (chữ ký hàm/endpoint/schema, không mô tả chung chung); luật **BẮT BUỘC / CẤM** tường minh, kể cả **"vùng cấm"** (điều đã cân nhắc và quyết định KHÔNG làm, kèm lý do — chống việc agent sau "sửa lại cho tốt hơn"); bảng phân loại lỗi + hành vi bắt buộc của caller cho từng loại; số đo/bằng chứng nghiệm thu thật (không chỉ "test xanh").
+   - **2.3. \`plan.md\` CHỈ được chứa:** Metadata Header (mục 3); **Nhật ký quyết định có mốc thời gian** — kèm mục **"Quyết định bị thay thế"** (không xoá lịch sử, không để hai phát biểu ngược nhau cùng sống); phân công Work Packages + Model Tier; checklist thực thi; bảng trỏ sang các file SPEC. **CẤM nhét thiết kế chi tiết vào \`plan.md\`.**
+   - **2.4. Exit Gates phải đánh dấu theo môi trường** (vd \`✅ local / ⬜ server\`) — kế hoạch chỉ được đóng khi mọi gate của môi trường thật chuyển ✅.
+   - **2.5. NGOẠI LỆ DUY NHẤT:** hotfix/patch nhỏ (\`PATCH\` SemVer, ≤1 ngày công) được phép chỉ có \`plan.md\`, nhưng vẫn đủ Metadata + nhật ký quyết định + checklist. Mọi đợt \`MINOR\`/\`MAJOR\` bắt buộc đủ bộ SPEC.
+   - **2.6. Package cũ dạng phẳng** (file \`NN-*.md\` nằm thẳng trong thư mục kế hoạch, không có \`specs/\`) được GIỮ NGUYÊN theo Path Invariant — không đổi cấu trúc để tránh gãy tham chiếu; chỉ áp cấu trúc chuẩn cho kế hoạch MỚI.`;
+        // Ưu tiên thay khối "Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)" cũ; không có thì chèn
+        // ngay sau tiêu đề §3; không thấy §3 thì phụ lục cuối file (lần sau includes() vẫn dò được).
+        const oldStructureBlock = currentAgentsMd.match(
+            /2\. \*\*Cấu trúc Thư mục Kế hoạch Chuẩn \(Spec-First\):\*\*\n(?:.*\n)*?   ```\n/
+        );
+        if (oldStructureBlock) {
+            currentAgentsMd = currentAgentsMd.replace(oldStructureBlock[0], specPackageRuleText + '\n');
+        } else {
+            const planningHeading = currentAgentsMd.match(/## 📋 3\.[^\n]*\n/);
+            if (planningHeading) {
+                const at = currentAgentsMd.indexOf(planningHeading[0]) + planningHeading[0].length;
+                currentAgentsMd = currentAgentsMd.slice(0, at) + '\n' + specPackageRuleText + '\n' + currentAgentsMd.slice(at);
+            } else {
+                currentAgentsMd = currentAgentsMd.replace(/\s*$/, '') +
+                    '\n\n---\n\n## 📋 [PHỤ LỤC TỰ ĐỘNG VÁ] Quản Trị Kế Hoạch — SPEC PACKAGE bắt buộc\n\n' + specPackageRuleText + '\n';
+            }
+        }
+        agentsMdPatched = true;
+        console.log('🔄 Đã tự động vá luật SPEC PACKAGE (CẤM plan phẳng) vào AGENTS.md hiện có.');
     }
 
     if (agentsMdPatched) {

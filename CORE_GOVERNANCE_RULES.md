@@ -38,15 +38,25 @@ Bộ nhớ dự án trong `brain4agent/` được tổ chức theo kiến trúc 
 
 Mọi đề xuất nâng cấp tính năng lớn, tái cấu trúc hoặc thêm module mới phải được quản lý tập trung trong thư mục **[`planning/`](file:///planning)** tại root repository:
 
-### 3.1. Cấu Trúc Thư Mục Chuẩn Hóa
+### 3.1. BẮT BUỘC DẠNG SPEC PACKAGE — CẤM PLAN PHẲNG
+
+Một kế hoạch KHÔNG được là một file `plan.md` dồn hết mọi thứ. Bắt buộc tách thành **bộ SPEC nhiều file**, mỗi file là MỘT hợp đồng độc lập:
 ```text
-planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan-Kebab-Case]/
-├── plan.md                          # Master Checklist + Tier Tags + Cổng nghiệm thu
+planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]/
+├── plan.md                          # HỒ SƠ kế hoạch (KHÔNG chứa thiết kế — xem mục 2.3)
 └── specs/                           # Bản thiết kế chi tiết (Spec-First)
-    ├── 00-ARCHITECTURE.md           # Kiến trúc định hướng (Normative Architecture)
-    ├── 01-CONTRACTS.md              # Contracts, Types, Schema bất biến
-    └── SPEC-Pxx-[Name].md           # Đặc tả từng bước thực thi cụ thể
+    ├── 00-ARCHITECTURE.md           # Mục tiêu, Non-goals, Bất biến kiến trúc, Router thứ tự đọc
+    ├── 01-CONTRACTS.md              # Contracts, Types, Schema/DDL bất biến
+    ├── SPEC-Pxx-[Name].md           # Đặc tả từng mảng/bước thực thi cụ thể
+    ├── OPERATIONS.md                # Deploy, runbook, thứ tự bắt buộc, rollback
+    └── TESTING-ACCEPTANCE.md        # Ma trận test + bằng chứng nghiệm thu + Exit Gates
 ```
+- **2.1. Bộ SPEC tối thiểu:** phải phủ đủ 4 mảng — (a) kiến trúc & bất biến, (b) contract dữ liệu/API/module, (c) vận hành-deploy-rollback, (d) kiểm thử-nghiệm thu. Dự án lớn tách thêm SPEC theo từng tính năng.
+- **2.2. Mỗi file SPEC BẮT BUỘC có:** contract chính xác (chữ ký hàm/endpoint/schema, không mô tả chung chung); luật **BẮT BUỘC / CẤM** tường minh, kể cả **"vùng cấm"** (điều đã cân nhắc và quyết định KHÔNG làm, kèm lý do — chống việc agent sau "sửa lại cho tốt hơn"); bảng phân loại lỗi + hành vi bắt buộc của caller cho từng loại; số đo/bằng chứng nghiệm thu thật (không chỉ "test xanh").
+- **2.3. `plan.md` CHỈ được chứa:** Metadata Header (mục 3); **Nhật ký quyết định có mốc thời gian** — kèm mục **"Quyết định bị thay thế"** (không xoá lịch sử, không để hai phát biểu ngược nhau cùng sống); phân công Work Packages + Model Tier; checklist thực thi; bảng trỏ sang các file SPEC. **CẤM nhét thiết kế chi tiết vào `plan.md`.**
+- **2.4. Exit Gates phải đánh dấu theo môi trường** (vd `✅ local / ⬜ server`) — kế hoạch chỉ được đóng khi mọi gate của môi trường thật chuyển ✅.
+- **2.5. NGOẠI LỆ DUY NHẤT:** hotfix/patch nhỏ (`PATCH` SemVer, ≤1 ngày công) được phép chỉ có `plan.md`, nhưng vẫn đủ Metadata + nhật ký quyết định + checklist. Mọi đợt `MINOR`/`MAJOR` bắt buộc đủ bộ SPEC.
+- **2.6. Package cũ dạng phẳng** (file `NN-*.md` nằm thẳng trong thư mục kế hoạch, không có `specs/`) được GIỮ NGUYÊN theo Path Invariant — không đổi cấu trúc để tránh gãy tham chiếu; chỉ áp cấu trúc chuẩn cho kế hoạch MỚI.
 
 1. **Quy tắc đặt tên thư mục:**
    - **Định dạng chuẩn:** `planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan-Kebab-Case]/` *(Ví dụ: `planning/01_2026-08-28_ui-native-v02/`)*.

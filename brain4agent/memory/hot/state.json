@@ -1,7 +1,7 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.4.0",
-  "system_status": "healthy_and_runtime_verified",
+  "current_version": "1.5.0",
+  "system_status": "healthy_and_runtime_verified | [01/09] v1.5.0: luat SPEC PACKAGE (CAM plan phang) da vao AGENTS.md Hub + CORE_GOVERNANCE_RULES.md + template & patcher init_brain.js (khung nao 1.3.0).",
   "last_verification": {
     "timestamp": "2026-09-01",
     "scenarios_passed": [
@@ -82,7 +82,7 @@
     ],
     "not_pushed": true
   },
-  "brain_template_version": "1.2.0",
+  "brain_template_version": "1.3.0",
   "dong_bo_67_repo_2026-08-31_plan06": {
     "method": "GIT TRUOC - NAO SAU; P01->P02->P03->P04->P06->P07; 4 subagent song song cho phan dien noi dung nao; orchestrator kiem chung doc lap lai toan bo",
     "inventory_before_after": {
@@ -237,5 +237,17 @@
     ],
     "engine_untouched": true,
     "not_pushed": true
+  },
+  "spec_package_rule_2026-09-01": {
+    "trigger": "User tra lai plan #10 cua ai-news-radar 2 lan: 'can SPEC chi tiet chu khong phai plan phang'. Luat Spec-First cu CO mo ta plan.md+specs/ nhung KHONG cam plan phang, khong dinh nghia moi SPEC phai chua gi, khong cam nhet thiet ke vao plan.md.",
+    "rule_location": "AGENTS.md §3 muc 2 + CORE_GOVERNANCE_RULES.md §3.1 (Hub); template + patcher trong init_brain.js",
+    "canonical_layout": "planning/<STT>_<date>_<ten>/plan.md (ho so) + specs/ (00-ARCHITECTURE, 01-CONTRACTS, SPEC-Pxx, OPERATIONS, TESTING-ACCEPTANCE)",
+    "min_coverage": "4 mang: kien truc&bat bien / contract du lieu-API-module / van hanh-deploy-rollback / kiem thu-nghiem thu",
+    "each_spec_must_have": "contract chinh xac; luat BAT BUOC-CAM tuong minh ke ca 'vung cam' (dieu da can nhac va quyet dinh KHONG lam + ly do); bang phan loai loi + hanh vi bat buoc cua caller; so do nghiem thu that",
+    "plan_md_forbidden": "CAM nhet thiet ke chi tiet vao plan.md",
+    "exception": "hotfix PATCH <=1 ngay cong duoc phep chi co plan.md",
+    "grandfather": "package cu dang phang NN-*.md giu nguyen theo Path Invariant (vd ai-news-radar planning/01)",
+    "propagation": "init_brain.js co PATCHER do chuoi 'SPEC PACKAGE' -> vá AGENTS.md DA TON TAI. Da test that tren du an gia dung tu AGENTS.md ban HEAD: va dung, chay lan 2 khong lap (idempotent). 66 repo da nao hoa se nhan luat khi chay init_brain lan ke tiep — CHUA quet hang loat.",
+    "next": "npm run deploy de day skill sang Global AI Skills; quyet co quet lai 66 repo ngay hay de tu va dan."
   }
 }

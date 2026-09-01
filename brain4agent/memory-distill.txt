@@ -1,17 +1,17 @@
 <kernel_instructions>
-<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.4.0) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
+<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.5.0) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
 
 <agent_startup_protocol>
 0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill `.xay-dung-nao-bo` (`node .agents\skills\.xay-dung-nao-bo\scripts\init_brain.js` hoặc bản global `node C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo não luôn cập nhật chuẩn mới nhất.
 1. Đọc `brain4agent/memory-distill.txt` trước khi sửa code.
 2. Định tuyến tài liệu: Tra cứu `brain4agent/index.md` và `docs/UNIVERSAL_AGENT_GUIDE.md`. Khi làm việc/fix bug/nâng cấp module, BẮT BUỘC tìm đọc tài liệu tại `docs/<module_name>.md` trước.
 3. Luôn đối chiếu code thực tế trong repo trước khi tin memory/docs.
-4. Sửa tối thiểu, đúng kiến trúc, tuân thủ nghiêm ngặt Spec-First.
+4. Sửa tối thiểu, đúng kiến trúc, tuân thủ nghiêm ngặt Spec-First: LẬP KẾ HOẠCH = SPEC PACKAGE (`plan.md` hồ sơ + `specs/` ≥4 mảng), CẤM plan phẳng — luật §3 mục 2 trong `AGENTS.md`/`CORE_GOVERNANCE_RULES.md`, ngoại lệ duy nhất là hotfix PATCH.
 5. [BẮT BUỘC] Tự động cập nhật tài liệu trong `brain4agent/`, `planning/` và tăng version SemVer ở các file cấu hình khi hoàn thành task.
 </agent_startup_protocol>
 
 <project_foundation>
-- Project: brain4agent (v1.4.0) — khung não template v1.2.0. Chiến dịch #06 ĐÃ ĐÓNG: **66/67 repo đạt não chuẩn**, **0 repo thiếu `.git` riêng**, **0 repo unborn**. 76 commit LOCAL, CHƯA PUSH lần nào.
+- Project: brain4agent (v1.5.0) — khung não template v1.3.0. Chiến dịch #06 ĐÃ ĐÓNG: **66/67 repo đạt não chuẩn**, **0 repo thiếu `.git` riêng**, **0 repo unborn**. 76 commit LOCAL, CHƯA PUSH lần nào.
 - Repo duy nhất chưa não hóa: `brain4agent` (KHÔNG `.old`) — cách ly theo quyết định #06 mục 5.1, chờ user trả lời 3 câu ở `planning/06_*/specs/SPEC-P05`. Kiểm cuối: head `e01fdbf` / 38 file bẩn, TRƯỚC = SAU.
 - Nguyên tắc não hóa dự án cũ: DI TRÚ NGỮ NGHĨA TRƯỚC — ENGINE SAU (chống não song trùng); dự án có Brain OS riêng đang sống thì CỘNG SINH + pointer file. Kho TRỐNG: ghi thẳng "chưa có mã nguồn", KHÔNG suy diễn tính năng từ tên thư mục.
 - Nguyên tắc chiến dịch git: **GIT TRƯỚC — NÃO SAU**; commit baseline "as-is" THUẦN. Repo đang bẩn thì **stage TƯỜNG MINH** (`git commit -- <paths>`), TUYỆT ĐỐI không `git add -A` — đó là cách não hóa mà không đụng việc dang dở của user.

@@ -2,6 +2,43 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.5.0] - 2026-09-01: Luật SPEC PACKAGE Bắt Buộc — CẤM Plan Phẳng (khung não v1.3.0)
+
+### Bối cảnh
+User chốt luật sau khi review kế hoạch #10 của repo `ai-news-radar`: một `plan.md` dài 220 dòng vẫn bị
+trả lại với yêu cầu "cần SPEC chi tiết chứ không phải plan phẳng". Luật `Spec-First` cũ CÓ mô tả cấu
+trúc `plan.md` + `specs/` nhưng **không cấm** plan phẳng, không định nghĩa mỗi SPEC phải chứa gì, và
+không cấm nhét thiết kế vào `plan.md` — nên vẫn sinh ra plan mỏng một cách hợp lệ.
+
+### Added — Luật §3 mục 2 (SPEC PACKAGE)
+- **CẤM plan phẳng/mỏng.** Mọi đợt `MINOR`/`MAJOR` bắt buộc đủ bộ SPEC; bộ SPEC tối thiểu phủ 4 mảng:
+  kiến trúc & bất biến, contract dữ liệu/API/module, vận hành-deploy-rollback, kiểm thử-nghiệm thu.
+- **Định nghĩa nội dung bắt buộc của MỖI file SPEC:** contract chính xác (chữ ký/endpoint/schema);
+  luật BẮT BUỘC/CẤM tường minh kèm **"vùng cấm"** (điều đã cân nhắc và quyết định KHÔNG làm + lý do —
+  chống agent sau "sửa lại cho tốt hơn"); bảng phân loại lỗi + hành vi bắt buộc của caller; số đo
+  nghiệm thu thật, không chỉ "test xanh".
+- **`plan.md` rút về HỒ SƠ:** metadata + nhật ký quyết định có mốc thời gian (kèm mục "Quyết định bị
+  thay thế") + WP/Tier + checklist + router sang SPEC. **CẤM nhét thiết kế chi tiết vào `plan.md`.**
+- **Exit Gates đánh dấu theo môi trường** (`✅ local / ⬜ server`) — chỉ đóng kế hoạch khi gate môi
+  trường thật chuyển ✅.
+- **Ngoại lệ duy nhất:** hotfix `PATCH` ≤1 ngày công được phép chỉ có `plan.md`.
+- **Điều khoản grandfather (2.6):** package cũ dạng phẳng `NN-*.md` giữ nguyên theo Path Invariant —
+  không đổi cấu trúc để tránh gãy tham chiếu; chuẩn mới chỉ áp cho kế hoạch MỚI.
+
+### Changed — lan luật ra toàn hệ sinh thái
+- `AGENTS.md` §3 + `CORE_GOVERNANCE_RULES.md` §3.1 của Hub: thay khối cấu trúc cũ bằng luật đầy đủ.
+- `init_brain.js`: (a) template `AGENTS.md` cho dự án MỚI; (b) **thêm patcher tự động vá `AGENTS.md`
+  ĐÃ TỒN TẠI** — dò chuỗi ổn định `SPEC PACKAGE`, ưu tiên thay khối "Cấu trúc Thư mục Kế hoạch Chuẩn"
+  cũ, fallback chèn sau tiêu đề §3, fallback cuối là phụ lục cuối file. Đây là đường để **66 repo đã
+  não hóa** nhận luật mới mà không phải sửa tay từng repo.
+- `BRAIN_TEMPLATE_VERSION` 1.2.0 → **1.3.0**; Hub `package.json` 1.4.0 → **1.5.0**.
+
+### Verified
+- `node --check init_brain.js` sạch.
+- **Chạy thật trên dự án giả** dựng từ `AGENTS.md` bản `HEAD` (kiểu cũ, chưa có luật): patcher in
+  `🔄 Đã tự động vá luật SPEC PACKAGE`, khối §3 mục 2 hiện đúng nội dung, mục 1/3/4 giữ nguyên;
+  **chạy lần 2 không vá lặp** (`SPEC PACKAGE` xuất hiện đúng 1 lần) — idempotent.
+
 ## [v1.4.0] - 2026-09-01: Đóng Nốt Chiến Dịch #06 — 66/67 Repo Đạt Chuẩn
 
 ### Added
