@@ -290,7 +290,7 @@
     },
     "next_session_first_steps": [
       "chay Buoc 0, roi git log -3 cua hub xem BRAIN_TEMPLATE_VERSION co vua doi khong (bai hoc #07)",
-      "doc muc Active trong roadmap.md - uu tien cao nhat la xoay 6 khoa da lo trong lich su git",
+      "doc muc Active trong roadmap.md - (user da quyet 2026-09-02: KHONG xoay khoa) uu tien con lai: tat tien trinh nhan ban ngoai git + xu 12 cap repo long",
       "neu sua engine: BAT BUOC chay scripts/deploy_skills.ps1 roi so hash toi khi diff RONG (gotcha #12)"
     ]
   },
@@ -309,5 +309,9 @@
     ],
     "backup": "scratchpad/backup-claude-commands (7 file lenh truoc khi sua)",
     "gotcha": "#13"
+  },
+  "user_decisions_2026-09-02": {
+    "rotate_leaked_keys": "NO - user quyet khong xoay 6 khoa da lo; bo muc khoi Active. 6 repo lien quan deu PRIVATE tren GitHub (gh repo view).",
+    "push_hub_to_github": "DANG CHO XAC NHAN - hub PUBLIC, ahead 8 commit, dry-run OK, 0 secret file, 0 gia tri khoa; luu y 4-6 file moi neu ten file chua secret trong 6 repo private khac."
   }
 }

@@ -4,7 +4,7 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 
 ## 🔴 Active — chờ user (không còn vướng kỹ thuật)
 
-- [ ] **🔒 XOAY KHOÁ (ưu tiên cao nhất)** — 6 chỗ có secret nằm sẵn trong lịch sử git hoặc lộ ra client, sửa code KHÔNG đủ: danh sách 6 vị trí giữ ở hồ sơ chỉ-lưu-máy ngoài git.
+- [x] ~~**🔒 XOAY KHOÁ (ưu tiên cao nhất)**~~ — **USER QUYẾT 2026-09-02: KHÔNG xoay, bỏ mục này.** 6 vị trí (danh sách 6 vị trí giữ ở hồ sơ chỉ-lưu-máy ngoài git) giữ nguyên làm hồ sơ; cả 6 repo đều PRIVATE trên GitHub (kiểm `gh` 2026-09-02). Agent sau KHÔNG nhắc lại việc này trừ khi user mở lại.
 - [ ] **Tìm và tắt tiến trình NHÂN BẢN ngoài git** đang chép repo top-level vào các thư mục lồng (12 cặp) — xem gotcha #9. Nó làm `git status` của `openclaw-pro-studio` gãy `bad object HEAD`.
 - [ ] **Quyết cách xử 12 cặp repo lồng nhau** (hiện đã `.gitignore` để đi tiếp): submodule thật cần URL remote, hay gỡ một tầng thư mục.
 - [ ] **`aiedu4vn`** — nếu gỡ luật ⛔ từ #04 thì đạt chuẩn v1.3.0 chỉ bằng 1 lần chạy engine.

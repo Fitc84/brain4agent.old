@@ -17,7 +17,7 @@ Gỡ luật là xong trong một lần chạy engine.
 **Việc đầu tiên của phiên sau — theo đúng thứ tự:**
 1. Chạy Bước 0 (boot engine), rồi **`git log -3` của hub** xem có phiên khác vừa đổi `BRAIN_TEMPLATE_VERSION` không.
    Bài học #07: chuẩn có thể dịch chuyển ngay sau khi mình vừa phủ xong.
-2. Đọc mục **🔴 Active** trong `roadmap.md` — việc ưu tiên cao nhất là **xoay 6 khoá đã lộ trong lịch sử git**.
+2. Đọc mục **🔴 Active** trong `roadmap.md` — ~~việc ưu tiên cao nhất là xoay 6 khoá đã lộ~~ → **user đã quyết 2026-09-02: KHÔNG xoay khoá, bỏ mục đó**; ưu tiên còn lại là tiến trình nhân bản + repo lồng.
 3. Nếu sửa engine: **BẮT BUỘC** chạy `scripts/deploy_skills.ps1` rồi so hash tới khi `diff` RỖNG (gotcha #12).
 
 ---
