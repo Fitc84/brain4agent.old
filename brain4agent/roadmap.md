@@ -1,10 +1,10 @@
 # Roadmap & Active Tasks
 
-File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.5.2)**.
+File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.5.3)**.
 
 ## 🔴 Active — chờ user (không còn vướng kỹ thuật)
 
-- [x] ~~**🔒 XOAY KHOÁ (ưu tiên cao nhất)**~~ — **USER QUYẾT 2026-09-02: KHÔNG xoay, bỏ mục này.** 6 vị trí (danh sách 6 vị trí giữ ở hồ sơ chỉ-lưu-máy ngoài git) giữ nguyên làm hồ sơ; cả 6 repo đều PRIVATE trên GitHub (kiểm `gh` 2026-09-02). Agent sau KHÔNG nhắc lại việc này trừ khi user mở lại.
+- [x] ~~**🔒 XOAY KHOÁ (ưu tiên cao nhất)**~~ — **USER QUYẾT 2026-09-02: KHÔNG xoay, bỏ mục này.** Cả 6 repo liên quan đều PRIVATE trên GitHub (kiểm `gh` 2026-09-02). Bảng ánh xạ *repo → đường dẫn → loại khoá* đã được **gỡ khỏi kho công khai này** (kể cả trong lịch sử 9 commit chưa push) và chuyển sang hồ sơ chỉ-lưu-máy `..\.brain4agent-secrets-map.local.md` — nằm ngoài mọi repo, bị `.gitignore` của repo cha chặn. Agent sau KHÔNG nhắc lại việc xoay khoá trừ khi user mở lại.
 - [ ] **Tìm và tắt tiến trình NHÂN BẢN ngoài git** đang chép repo top-level vào các thư mục lồng (12 cặp) — xem gotcha #9. Nó làm `git status` của `openclaw-pro-studio` gãy `bad object HEAD`.
 - [ ] **Quyết cách xử 12 cặp repo lồng nhau** (hiện đã `.gitignore` để đi tiếp): submodule thật cần URL remote, hay gỡ một tầng thư mục.
 - [ ] **`aiedu4vn`** — nếu gỡ luật ⛔ từ #04 thì đạt chuẩn v1.3.0 chỉ bằng 1 lần chạy engine.
@@ -38,7 +38,7 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 - [ ] **Cross-OS Path Normalizer:** Chuẩn hóa đường dẫn tương đối xuyên suốt giữa môi trường Windows PowerShell và Linux Bash.
 
 ## Đã hoàn thành (Done)
-- [x] **Phủ template v1.3.0 ra toàn kho + vá bug nhân đôi luật (v1.5.2, kế hoạch #07, 2026-09-02):** 92 commit local. Não đạt chuẩn v1.3.0 **2/67 → 65/67**. Vá 3 lỗi engine/vận hành: regex `\n` trần trượt trên CRLF gây nhân đôi khối luật ở 33 repo; `isFullyStandard` không phát hiện tình trạng đó; bản engine deploy global kẹt `1.2.0` (nguy cơ thoái lui thầm lặng toàn hệ sinh thái). Sinh 2 gotcha mới (#11, #12).
+- [x] **Phủ template v1.3.0 ra toàn kho + vá bug nhân đôi luật (v1.5.3, kế hoạch #07, 2026-09-02):** 92 commit local. Não đạt chuẩn v1.3.0 **2/67 → 65/67**. Vá 3 lỗi engine/vận hành: regex `\n` trần trượt trên CRLF gây nhân đôi khối luật ở 33 repo; `isFullyStandard` không phát hiện tình trạng đó; bản engine deploy global kẹt `1.2.0` (nguy cơ thoái lui thầm lặng toàn hệ sinh thái). Sinh 2 gotcha mới (#11, #12).
 - [x] **Đóng nốt chiến dịch #06 (v1.4.0, 2026-09-01):** 20 commit nữa → tổng 76 commit local, 0 push. `PARENT_GIT 0` · `UNBORN 0` · **não chuẩn 66/67**. Điều phối 4 subagent Opus song song; orchestrator kiểm chứng độc lập lại toàn bộ (secret-scan 84 commit → 0 vi phạm). Sinh 2 gotcha mới (#9 nhân bản ngoài git, #10 não hóa repo đang bẩn bằng stage tường minh).
 - [x] **Đồng bộ cấu trúc 67 repo (v1.4.0, kế hoạch #06):** GIT TRƯỚC — NÃO SAU. Kết quả đo bằng script kiểm kê chạy 2 lần: `PARENT_GIT 9→0`, `UNBORN 13→5`, não chuẩn `21→52`, 56 commit local (0 push), 0 secret lọt vào bất kỳ commit nào (kiểm 3 lớp độc lập). Thực thi bằng 4 subagent song song cho phần điền nội dung não + orchestrator kiểm chứng độc lập lại toàn bộ. Sinh 3 gotcha mới (#6 biến PowerShell ghi đè hằng regex, #7 repo git lồng nhau, #8 phiên agent song song).
 - [x] **Não hóa Nhóm C — 6 dự án (v1.4.0, kế hoạch #05):** Spec-First 6 SPEC theo lớp di trú A/A+/B/B+/C/D, thực thi bằng 6 subagent song song 2 đợt + orchestrator kiểm chứng độc lập. Kết quả 6/6: `block-ads-fb-v2` `1c0569e`, `dreamteam4vn` `79efb93`+`cb2bcfa`, `Audit` `451f1ac`, `reverse Claude` `bf7e959`, `Agent to Product` `a7c6ce4`, `CausalAgent` GĐ1 (không commit — repo unborn, đúng thiết kế). Sinh 2 mẫu tái dùng: "di trú ngữ nghĩa trước — engine sau" và "cộng sinh + pointer file" cho dự án có Brain OS legacy. Kèm hotfix engine "vá Bước 0 giả".

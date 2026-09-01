@@ -2,6 +2,24 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.5.3] - 2026-09-02: Gỡ Bản Đồ Vị Trí Secret Khỏi Kho Công Khai (Trước Lần Push Đầu Tiên)
+
+### Security
+- Hub này là repo **PUBLIC**, nhưng tài liệu #06/#07 đang mang bảng ánh xạ *repo → đường dẫn → loại khoá* của **6 dự án PRIVATE**. Giá trị khoá không lộ, nhưng đó là chỉ dẫn sẵn cho người tấn công. Theo lệnh user, toàn bộ bảng này được **gỡ khỏi kho công khai trước khi push lần đầu**.
+- Vì 9 commit chưa push đã chứa nội dung đó trong diff, sửa ở commit mới là không đủ: đã **viết lại cả 9 commit** bằng `git filter-branch --tree-filter` (15 chỗ thay thế, 6 file). Thông điệp commit, thứ tự và cấu trúc lịch sử giữ nguyên; so với bản backup chỉ khác **13 dòng**.
+- Chi tiết được bảo toàn ở hồ sơ **ngoài git** `..\.brain4agent-secrets-map.local.md` (bị `.gitignore` của repo cha chặn) nên không mất kiến thức.
+- Nhánh backup trước khi viết lại: `backup/pre-redact-2026-09-02` (kèm tag cùng tên).
+
+### Decided
+- **User quyết 2026-09-02: KHÔNG xoay 6 khoá đã lộ.** Mục này gỡ khỏi danh sách Active; agent sau không nhắc lại trừ khi user mở lại. Cả 6 repo liên quan đều PRIVATE (kiểm `gh repo view`).
+
+### Verified
+- Duyệt **mọi file × cả 9 commit** bằng regex marker → **0 dấu vết**. `git log -p` toàn khoảng sắp push → 0.
+- `state.json` vẫn hợp lệ JSON; engine boot `NÃO ĐÃ OK`; push vẫn là **fast-forward** (không cần force).
+
+### Learned
+- Gotcha #14: kiểm `visibility` của chính repo TRƯỚC khi ghi phát hiện bảo mật vào docs; và khi phải gỡ, cặp thay thế trong `--tree-filter` bắt buộc nằm trọn một dòng vì checkout có thể đổi sang CRLF.
+
 ## [v1.5.2] - 2026-09-02: Gỡ File Lệnh Chiếm Chỗ `/compact` + Sửa Here-String Làm Hỏng Nội Dung Deploy
 
 ### Fixed

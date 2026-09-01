@@ -1,6 +1,6 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.5.2",
+  "current_version": "1.5.3",
   "system_status": "healthy_and_runtime_verified | [01/09] v1.5.0: luat SPEC PACKAGE (CAM plan phang) da vao AGENTS.md Hub + CORE_GOVERNANCE_RULES.md + template & patcher init_brain.js (khung nao 1.3.0).",
   "last_verification": {
     "timestamp": "2026-09-02",
@@ -312,6 +312,16 @@
   },
   "user_decisions_2026-09-02": {
     "rotate_leaked_keys": "NO - user quyet khong xoay 6 khoa da lo; bo muc khoi Active. 6 repo lien quan deu PRIVATE tren GitHub (gh repo view).",
-    "push_hub_to_github": "DANG CHO XAC NHAN - hub PUBLIC, ahead 8 commit, dry-run OK, 0 secret file, 0 gia tri khoa; luu y 4-6 file moi neu ten file chua secret trong 6 repo private khac."
+    "push_hub_to_github": "DA DUYET - push sau khi go ban do vi tri secret khoi 9 commit chua push (filter-branch). Fast-forward, khong force."
+  },
+  "redaction_2026-09-02": {
+    "ly_do": "hub la repo PUBLIC nhung tai lieu #06/#07 mang bang anh xa repo -> duong dan -> loai khoa cua 6 du an PRIVATE",
+    "pham_vi": "9 commit chua push, 6 file, 15 cho thay the",
+    "cong_cu": "git filter-branch --tree-filter (moi cap thay the tron MOT dong vi checkout co the ra CRLF)",
+    "backup": "nhanh + tag backup/pre-redact-2026-09-02",
+    "chi_tiet_luu_o": "..\\.brain4agent-secrets-map.local.md (ngoai moi repo, bi .gitignore repo cha chan)",
+    "nghiem_thu": "duyet moi file x moi commit bang regex marker = 0 dau vet; state.json hop le; engine NAO DA OK; push fast-forward",
+    "con_ton_tai": "danh sach 15 repo co secret o root trong planning/06_*/plan.md DA public tu lan push truoc - go bay gio khong thu hoi duoc",
+    "gotcha": "#14"
   }
 }

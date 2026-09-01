@@ -22,6 +22,29 @@ Gỡ luật là xong trong một lần chạy engine.
 
 ---
 
+## 🔐 02/09 — Gỡ Bản Đồ Secret Rồi Mới Push (lần push ĐẦU TIÊN của cả chiến dịch)
+
+User hỏi *"có thể push não mới nhất lên Git chưa?"*. Kiểm ra **hub là repo PUBLIC** trong khi tài liệu
+#06/#07 mang bảng *repo → đường dẫn → loại khoá* của 6 dự án **PRIVATE**. Báo user; user ra lệnh
+*"loại bỏ các bí mật quan trọng ra khỏi lần push này"*.
+
+**Điểm mấu chốt:** 9 commit chưa push đã chứa nội dung đó trong diff ⇒ sửa ở commit mới KHÔNG đủ,
+`git log -p` vẫn đọc được. Phải **viết lại lịch sử**. Đã làm: backup nhánh + tag → soạn 16 cặp thay thế
+**mỗi cặp trọn một dòng** (vì `--tree-filter` checkout có thể ra CRLF) → `git filter-branch` 9 commit
+(15 chỗ khớp, 6 file) → duyệt **mọi file × mọi commit** bằng regex marker ra **0**.
+
+Chi tiết không mất: chuyển sang `..\.brain4agent-secrets-map.local.md`, nằm ngoài mọi repo và bị
+`.gitignore` của repo cha chặn. Backup lịch sử cũ: nhánh và tag `backup/pre-redact-2026-09-02`.
+
+**Lưu ý cho agent sau:** nhật ký #06 phía dưới còn câu *"Phải xoay khoá"* — **đã bị thay thế**:
+user quyết 2026-09-02 KHÔNG xoay. Đọc mục 🔴 Active của `roadmap.md` làm chuẩn.
+
+**Còn tồn tại (đã báo user):** danh sách 15 repo có secret ở root nằm trong `planning/06_*/plan.md`
+**đã public từ lần push trước**, gỡ bây giờ không thu hồi được — muốn xử phải force-push viết lại lịch
+sử đã công bố, là quyết định riêng của user.
+
+---
+
 ## 🧹 Hậu Đóng Phiên 02/09 (2) — Rà Hồ Sơ #06 Trước Khi Chuyển Hẳn Sang #07
 
 User hỏi #06 đã kết thúc sạch để chuyển qua #07 chưa. Kết luận: **`plan.md` đã đóng đúng** (✅ + mốc giờ + §7 cổng

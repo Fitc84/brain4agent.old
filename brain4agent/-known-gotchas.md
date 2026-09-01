@@ -104,3 +104,12 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Khắc phục:** (1) trong script, mọi nội dung Markdown tĩnh phải dùng here-string **nháy đơn** `@'...'@` để backtick giữ nguyên nghĩa literal; (2) KHÔNG sinh file lệnh trùng tên built-in — đã gỡ hẳn khối sinh `compact.md`; (3) file cũ đổi tên thành `compact.md.disabled-by-plan07` (đuôi khác `.md` nên không được nạp) thay vì xoá, để còn đường lùi.
 - **Nguồn:** kế hoạch #07, 2026-09-02 — user tự phát hiện khi thấy `/compact` chạy sai việc.
 
+## 14. Kho CÔNG KHAI Mang Bản Đồ Vị Trí Secret Của Kho RIÊNG TƯ
+- **Triệu chứng:** hub `brain4agent.old` là repo **PUBLIC**, nhưng tài liệu chiến dịch #06/#07 ghi thẳng bảng *repo → đường dẫn → loại khoá* của 6 dự án **PRIVATE**. Bản thân giá trị khoá không lộ, nhưng đây là chỉ dẫn sẵn cho người tấn công: chỉ cần một repo private kia lỡ chuyển sang public là biết ngay phải mở file nào.
+- **Nguyên nhân gốc:** viết phát hiện bảo mật vào não/kế hoạch mà **không kiểm `visibility` của chính repo đang ghi**. Não là để chia sẻ ngữ cảnh; nhưng hub public thì mọi thứ trong đó là công bố.
+- **Luật rút ra:** trước khi ghi bất kỳ phát hiện bảo mật nào vào docs, chạy `gh repo view --json visibility`. Repo PUBLIC ⇒ chỉ được ghi **sự kiện + số đếm** (ví dụ "4 repo có secret tracked từ trước"), TUYỆT ĐỐI không ghi đường dẫn và loại khoá. Chi tiết đưa vào hồ sơ **ngoài git** rồi trỏ tới nó.
+- **Bẫy khi khắc phục:** sửa file ở commit mới là **KHÔNG đủ** — nội dung vẫn nằm trong diff của các commit trước và `git log -p` đọc được hết. Commit chưa push thì phải **viết lại lịch sử** (`git filter-branch --tree-filter`) trước khi push; commit đã push rồi thì buộc phải force-push và coi như khoá đã lộ.
+- **Bẫy kỹ thuật khi viết lại:** `--tree-filter` checkout theo `core.autocrlf` nên file có thể thành CRLF trong thư mục tạm. Vì vậy **mọi cặp thay thế phải nằm trọn MỘT dòng** — chuỗi tìm kiếm chứa ký tự xuống dòng sẽ trượt trên bản CRLF (cùng họ gotcha #11).
+- **Nghiệm thu bắt buộc:** duyệt **mọi file × mọi commit** trong khoảng sắp push bằng `git show <sha>:<path>` cộng regex marker, phải ra 0. Chỉ `git grep` ở HEAD là chưa đủ.
+- **Nguồn:** 2026-09-02, ngay trước lần push đầu tiên của chiến dịch — user ra lệnh "loại bỏ các bí mật quan trọng ra khỏi lần push này".
+
