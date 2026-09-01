@@ -39,7 +39,7 @@
 | teamworkflow | `e1fa27e` | 40 | CLEAN | `node_modules/`, `.next/` đã ignore; xử tiếp ở lô 4e → `cb33a09` |
 
 - [x] 8/13 hết unborn; 0 secret trong mọi commit mới (kiểm 2 lớp: `git show --name-only` + audit `git ls-files`; cả 8 `SECRET_HITS=NONE`, `gitlinks=0`).
-- [ ] 5/13 CÒN UNBORN — chờ user quyết (chi tiết dưới).
+- [x] ~~5/13 CÒN UNBORN — chờ user quyết~~ → **ĐÃ XỬ ở đợt đóng nốt 2026-09-01** (`plan.md` §7 Nhóm A): cả 5 hết unborn bằng `.gitignore` (không xoá/di chuyển gì) — `AI-input` `dc3e5f9`, `bi-kip-luyen-agent` `ccec14c`, `congquyengop.vn` `dba9b3e`, `manage-fitc84` `bab9d0a`, `auto-hot-key` `645baf9`. Bảng "5 repo DỪNG" dưới đây giữ nguyên làm hồ sơ đợt 1.
 
 ### 5 repo DỪNG — sai lệch khảo sát, cần user quyết
 

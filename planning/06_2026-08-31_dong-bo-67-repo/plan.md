@@ -97,6 +97,8 @@ User uỷ quyền tự quyết theo hướng an toàn nhất (tiền lệ #05). 
 
 ## 📊 6. KẾT QUẢ NGHIỆM THU TOÀN KHO (P06) — TRƯỚC vs SAU
 
+> **Số liệu ĐỢT 1 (2026-08-31) — đã bị §7 thay thế.** Hai dòng ⚠️ (`UNBORN` còn 5, não `FULL` 52 chưa đạt) và bảng "15 repo CHƯA đạt" là hiện trạng lúc đó, giữ nguyên làm hồ sơ; kết quả cuối của chiến dịch (`UNBORN 0`, não `FULL` 66/67) nằm ở §7.
+
 Đo bằng cùng một script kiểm kê read-only (`scratchpad/p06/inventory.ps1`), chạy đầu và cuối phiên.
 
 | Trục | Trạng thái | TRƯỚC | SAU | Kết luận |
@@ -206,7 +208,7 @@ Quy trình bất biến: chụp đường cơ sở `git status` → chỉ stage 
 - **Hậu quả đã chứng kiến trực tiếp:** ngay sau khi subagent commit `09728d0` ở `Token-Calcultor` top-level, tiến trình đó chép object store mới đè lên bản lồng trong `openclaw-pro-studio` ⇒ SHA gitlink cũ (`160000 8ae15d32`) mà repo cha đang ghi **biến mất khỏi object store** ⇒ `git status` của `openclaw-pro-studio` chết với `fatal: bad object HEAD ... failed in submodule Token-Calcultor`. Vẫn não hóa được nhờ `--ignore-submodules=all` + stage tường minh.
 - Quy mô: quét toàn kho thấy **12 cặp repo lồng** cùng kiểu.
 
-### Cổng nghiệm thu đợt 2
+### Cổng nghiệm thu đợt 2 — môi trường: **local** (kế hoạch này chỉ thao tác trên kho máy cục bộ, không có môi trường server/remote để nghiệm thu thêm)
 
 - [x] `PARENT_GIT = 0`, `UNBORN = 0`.
 - [x] Não chuẩn **66/67** — chỉ còn `brain4agent` (mới) cách ly theo quyết định 5.1.

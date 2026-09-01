@@ -120,4 +120,4 @@ Cả 5 repo có `AGENTS.md` cũ đều là **luật tuỳ biến người viết
 
 - [x] Bảng per-repo có SHA + cổng kiểm (ở trên).
 - [x] **31 repo** được não hóa/vá trong P04 — tất cả `NÃO ĐÃ OK` khi orchestrator chạy lại engine, `git status` rỗng, 0 secret, 0 gitlink mới.
-- [ ] **Não chuẩn 52/67, CHƯA đạt mốc ≥64/67.** 15 repo chưa đạt đều có LÝ DO GHI RÕ (5 unborn do repo lồng / build artifacts · 7 dirty là việc đang dở của user · `control-LDplayer` tham chiếu `Plan/` sống · `brain4agent` cách ly · `ViDiaNorm`). Không repo nào bị bỏ qua trong im lặng.
+- [x] **Não chuẩn: đợt 1 đạt 52/67 (chưa tới mốc ≥64) → đợt đóng nốt 2026-09-01 đạt 66/67 ✅** (`plan.md` §7; repo duy nhất còn lại là `brain4agent` mới, cách ly theo quyết định 5.1). Ghi chú đợt 1 giữ nguyên bên dưới: 15 repo chưa đạt đều có LÝ DO GHI RÕ (5 unborn do repo lồng / build artifacts · 7 dirty là việc đang dở của user · `control-LDplayer` tham chiếu `Plan/` sống · `brain4agent` cách ly · `ViDiaNorm`). Không repo nào bị bỏ qua trong im lặng.

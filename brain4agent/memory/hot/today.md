@@ -22,6 +22,17 @@ Gỡ luật là xong trong một lần chạy engine.
 
 ---
 
+## 🧹 Hậu Đóng Phiên 02/09 (2) — Rà Hồ Sơ #06 Trước Khi Chuyển Hẳn Sang #07
+
+User hỏi #06 đã kết thúc sạch để chuyển qua #07 chưa. Kết luận: **`plan.md` đã đóng đúng** (✅ + mốc giờ + §7 cổng
+nghiệm thu đủ), nhưng **2 file SPEC còn ô `[ ]` lỗi thời từ đợt 1** (`SPEC-P02` "5/13 còn unborn", `SPEC-P04`
+"52/67 chưa đạt") mâu thuẫn với §7 — đúng loại "hai phát biểu ngược nhau cùng sống" mà luật 2.3 cấm.
+Đã sửa: tick 2 ô kèm SHA/tham chiếu §7 · thêm ghi chú "đã bị §7 thay thế" trên bảng §6 · gắn nhãn môi trường
+`local` cho cổng nghiệm thu §7 (luật 2.4). KHÔNG bump version (chỉ chỉnh hồ sơ kế hoạch, không đổi code/chuẩn).
+#07 cũng đã ở trạng thái ✅ — phần còn treo của cả hai đều là việc chờ user quyết (mục 🔴 Active của roadmap).
+
+---
+
 ## 🩹 Hậu Đóng Phiên 02/09 — User Phát Hiện `/compact` Chạy Sai Việc
 
 User hỏi *"đang bị nhầm thành .compact à?"* sau khi thấy `/compact` chạy nghi thức ghi não thay vì nén
