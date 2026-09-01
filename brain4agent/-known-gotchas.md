@@ -80,3 +80,19 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Cách làm đã kiểm chứng trên 8 repo:** (1) chụp `git status --porcelain` làm ĐƯỜNG CƠ SỞ trước khi động vào gì; (2) chỉ stage bằng đường dẫn tường minh các file MỚI mình tạo; (3) commit bằng dạng **`git commit -m "..." -- <paths>`** — dạng pathspec này chỉ commit đúng path đó **kể cả khi index đã có thứ khác user stage sẵn** (ca `Token-Calcultor`: user đang có `D wikiultra` staged, commit thường sẽ cuốn luôn); (4) cuối cùng `diff` đường cơ sở với `git status` mới — phải giống hệt từng dòng.
 - **Ngoại lệ phải né engine:** nếu `AGENTS.md` hoặc `brain4agent/memory/hot/state.json` của repo ĐANG nằm trong danh sách bẩn thì **KHÔNG chạy `init_brain.js`** (nó sẽ sửa đúng 2 file đó). Thay vào đó chép tay `CLAUDE.md` + marker từ một repo đã chuẩn. Đánh đổi: `state.json` tạm thiếu field `brain_template_version` cho tới khi user commit xong và engine chạy được — phải ghi rõ ra báo cáo, đừng giấu.
 - **Nguồn:** chiến dịch #06 đợt đóng nốt (`control-gpm`, `GramPilot`, `CV`, `convert-json-...`, `ViDiaNorm`, `FITC84-WorkOs-`, `Token-Calcultor`, `openclaw-pro-studio`).
+
+## 11. Regex Vá Tài Liệu Dùng `\n` Cứng — Trượt Trên File CRLF Rồi CHÈN THÊM Thay Vì THAY THẾ
+- **Triệu chứng:** sau một đợt vá luật hàng loạt, `AGENTS.md` của 33 repo chứa **đồng thời** khối luật CŨ và khối luật MỚI — hai phát biểu ngược nhau cùng sống. Engine vẫn báo `NÃO ĐÃ OK`. Agent đời sau đọc trúng khối nào là hên xui.
+- **Nguyên nhân:** nhánh vá dò khối cũ bằng regex `/2\. \*\*...\*\*\n(?:.*\n)*?   ```\n/`. Trên Windows, git checkout với `core.autocrlf` cho ra file **CRLF**, nên `   ```\n` không khớp (thực tế là `   ```\r\n`). Regex trượt ⇒ code rơi xuống nhánh dự phòng "chèn thêm sau tiêu đề §3" ⇒ **nhân đôi luật thay vì thay thế**.
+- **Vì sao nguy hiểm gấp đôi:** nhánh dự phòng được thiết kế cho ca "không tìm thấy khối cũ vì repo chưa từng có nó" — hoàn toàn hợp lệ. Khi regex trượt vì lý do kỹ thuật, nó **im lặng đi vào nhánh hợp lệ đó**, không có lỗi, không cảnh báo.
+- **Cách vá:** (a) mọi regex chạm nội dung file phải dùng `\r?\n`, không bao giờ `\n` trần; (b) thêm **chẩn đoán hậu điều kiện** vào `isFullyStandard` — "không được tồn tại đồng thời khối cũ và khối mới" — để tình trạng này bị PHÁT HIỆN thay vì được chấp nhận âm thầm; (c) thêm nhánh dọn tàn dư cho repo đã lỡ bị nhân đôi.
+- **Cổng kiểm đúng cho một đợt vá THAY THẾ:** không phải "chỉ-thêm / 0 dòng xoá" (bản vá thay thế thì xoá dòng là ĐÚNG), mà là **"không mất thông tin"** — liệt kê các token bắt buộc và kiểm chúng vẫn còn sau khi vá.
+- **Nguồn:** kế hoạch #07, 2026-09-02.
+
+## 12. Bản Deploy Global Kẹt Phiên Bản Cũ — Nguy Cơ Thoái Lui Thầm Lặng Toàn Hệ Sinh Thái
+- **Triệu chứng:** hub đã ở template `1.3.0` nhưng bản engine tại `C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js` vẫn là `1.2.0`.
+- **Vì sao chết người:** Bước 0 được ghi vào `memory-distill.txt` của **mọi** repo trỏ tới **bản global**. Agent nào tuân thủ Bước 0 sẽ chạy engine CŨ; engine cũ coi marker `brain4agent-v1.3.0.md` là "lỗi thời", **xoá nó và ghi lại marker 1.2.0** ⇒ kéo ngược cả hệ sinh thái về chuẩn cũ, âm thầm, không báo lỗi.
+- **Cách phát hiện:** sau MỌI lần sửa engine, so hash từng file giữa `.agents/skills/.xay-dung-nao-bo/` và bản global; `diff` phải RỖNG. Đừng tin "đã chạy deploy rồi".
+- **Cách khắc phục:** backup bản global → chạy `scripts/deploy_skills.ps1` → so hash lại. Luật §5.B đã yêu cầu điều này; lỗi xảy ra vì bump version mà bỏ qua bước deploy.
+- **Nguồn:** kế hoạch #07, 2026-09-02.
+

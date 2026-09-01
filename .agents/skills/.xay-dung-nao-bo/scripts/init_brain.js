@@ -98,7 +98,15 @@ if (fs.existsSync(stateJsonDiagPath)) {
 }
 
 const isBrandNew = !hasBrainDir;
-const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker && hasRootMarkerException && hasDualEntryPointLawInAgentsMd && hasStateJsonTrailingNewline;
+// Chẩn đoán: AGENTS.md KHÔNG được chứa đồng thời khối luật planning CŨ và khối SPEC PACKAGE mới.
+// Bản vá đời trước dùng regex chỉ khớp LF nên trên file CRLF nó CHÈN THÊM thay vì THAY THẾ,
+// để lại hai phát biểu ngược nhau cùng sống (vi phạm "một nguồn chân lý").
+let hasNoDuplicatePlanningLaw = true;
+if (hasAgentsMd) {
+    const agentsMdDiag = fs.readFileSync(agentsMdPath, 'utf8');
+    hasNoDuplicatePlanningLaw = !(agentsMdDiag.includes('SPEC PACKAGE') && agentsMdDiag.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)'));
+}
+const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker && hasRootMarkerException && hasDualEntryPointLawInAgentsMd && hasStateJsonTrailingNewline && hasNoDuplicatePlanningLaw;
 
 if (isFullyStandard) {
     console.log("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
@@ -692,12 +700,12 @@ if (!fs.existsSync(agentsMdPath)) {
         // Ưu tiên thay khối "Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)" cũ; không có thì chèn
         // ngay sau tiêu đề §3; không thấy §3 thì phụ lục cuối file (lần sau includes() vẫn dò được).
         const oldStructureBlock = currentAgentsMd.match(
-            /2\. \*\*Cấu trúc Thư mục Kế hoạch Chuẩn \(Spec-First\):\*\*\n(?:.*\n)*?   ```\n/
+            /2\. \*\*Cấu trúc Thư mục Kế hoạch Chuẩn \(Spec-First\):\*\*\r?\n(?:.*\r?\n)*?   ```\r?\n/
         );
         if (oldStructureBlock) {
             currentAgentsMd = currentAgentsMd.replace(oldStructureBlock[0], specPackageRuleText + '\n');
         } else {
-            const planningHeading = currentAgentsMd.match(/## 📋 3\.[^\n]*\n/);
+            const planningHeading = currentAgentsMd.match(/## 📋 3\.[^\r\n]*\r?\n/);
             if (planningHeading) {
                 const at = currentAgentsMd.indexOf(planningHeading[0]) + planningHeading[0].length;
                 currentAgentsMd = currentAgentsMd.slice(0, at) + '\n' + specPackageRuleText + '\n' + currentAgentsMd.slice(at);
@@ -708,6 +716,18 @@ if (!fs.existsSync(agentsMdPath)) {
         }
         agentsMdPatched = true;
         console.log('🔄 Đã tự động vá luật SPEC PACKAGE (CẤM plan phẳng) vào AGENTS.md hiện có.');
+    } else {
+        // Dọn tàn dư: bản vá đời trước dùng regex chỉ khớp LF nên trên file CRLF nó rơi vào nhánh
+        // CHÈN THÊM thay vì THAY THẾ, để lại khối luật planning CŨ nằm cạnh khối SPEC PACKAGE mới
+        // => hai phát biểu ngược nhau cùng sống. Gỡ khối cũ đi, giữ khối mới.
+        const legacyStructureBlock = currentAgentsMd.match(
+            /2\. \*\*Cấu trúc Thư mục Kế hoạch Chuẩn \(Spec-First\):\*\*\r?\n(?:.*\r?\n)*?   ```\r?\n/
+        );
+        if (legacyStructureBlock) {
+            currentAgentsMd = currentAgentsMd.replace(legacyStructureBlock[0], '');
+            fs.writeFileSync(agentsMdPath, currentAgentsMd, 'utf8');
+            console.log('🧹 Đã gỡ khối luật planning CŨ còn sót cạnh khối SPEC PACKAGE (chống hai nguồn chân lý).');
+        }
     }
 
     if (agentsMdPatched) {

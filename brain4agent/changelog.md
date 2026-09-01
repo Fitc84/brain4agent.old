@@ -2,6 +2,24 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.5.1] - 2026-09-02: Phủ Template v1.3.0 Ra Toàn Kho + Vá Bug Nhân Đôi Luật
+
+### Fixed
+- **Engine — regex chỉ khớp LF:** nhánh vá luật SPEC PACKAGE dò khối cũ bằng `\n` trần nên trượt trên file CRLF, rơi vào nhánh CHÈN THÊM thay vì THAY THẾ ⇒ **33 repo có cả khối luật planning cũ lẫn mới cùng sống**. Đã đổi sang `\r?\n`, thêm nhánh dọn tàn dư, và thêm chẩn đoán `hasNoDuplicatePlanningLaw` vào `isFullyStandard` để tình trạng này bị PHÁT HIỆN thay vì được báo `NÃO ĐÃ OK` âm thầm.
+- **Bản deploy global kẹt ở `1.2.0`:** Bước 0 trong mọi `memory-distill.txt` trỏ tới bản global, nên agent tuân thủ Bước 0 sẽ chạy engine cũ và **kéo ngược repo về 1.2.0**. Đã backup + chạy `deploy_skills.ps1`, nghiệm thu `diff nguồn↔deploy = RỖNG`.
+
+### Changed
+- **92 commit local** phủ template `v1.3.0` ra hệ sinh thái (51 rollout + 33 dọn trùng + 8 repo bẩn). Não đạt chuẩn v1.3.0: **2/67 → 65/67**.
+- `BRAIN_TEMPLATE_VERSION` **giữ nguyên `1.3.0`** — đây là sửa lỗi áp dụng, không đổi chuẩn ⇒ hub chỉ bump PATCH `v1.5.0 → v1.5.1`.
+
+### Decisions
+- Cổng nghiệm thu cho một đợt vá **THAY THẾ** không phải "chỉ-thêm / 0 dòng xoá" mà là **"không mất thông tin"** (kiểm 9 token bắt buộc còn đủ). Cổng cũ đã gây báo động giả trên 35 repo.
+- `control-gpm`, `GramPilot`, `CV`: chỉ commit marker (và `state.json` với `CV`), **KHÔNG** commit `AGENTS.md` — file đó nằm trong việc đang dở của chủ dự án.
+- `aiedu4vn` (luật ⛔ từ #04) và `brain4agent` mới (cách ly #06 mục 5.1) giữ nguyên không đụng.
+
+### Learned
+- 2 gotcha mới (mục 11, 12): regex `\n` trần trượt trên CRLF rồi im lặng nhân đôi luật; bản deploy global kẹt version gây nguy cơ thoái lui thầm lặng.
+
 ## [v1.5.0] - 2026-09-01: Luật SPEC PACKAGE Bắt Buộc — CẤM Plan Phẳng (khung não v1.3.0)
 
 ### Bối cảnh

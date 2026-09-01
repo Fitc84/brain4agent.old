@@ -1,5 +1,5 @@
 <kernel_instructions>
-<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.5.0) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
+<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.5.1) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
 
 <agent_startup_protocol>
 0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill `.xay-dung-nao-bo` (`node .agents\skills\.xay-dung-nao-bo\scripts\init_brain.js` hoặc bản global `node C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo não luôn cập nhật chuẩn mới nhất.
@@ -11,16 +11,16 @@
 </agent_startup_protocol>
 
 <project_foundation>
-- Project: brain4agent (v1.5.0) — khung não template v1.3.0. Chiến dịch #06 ĐÃ ĐÓNG: **66/67 repo đạt não chuẩn**, **0 repo thiếu `.git` riêng**, **0 repo unborn**. 76 commit LOCAL, CHƯA PUSH lần nào.
-- Repo duy nhất chưa não hóa: `brain4agent` (KHÔNG `.old`) — cách ly theo quyết định #06 mục 5.1, chờ user trả lời 3 câu ở `planning/06_*/specs/SPEC-P05`. Kiểm cuối: head `e01fdbf` / 38 file bẩn, TRƯỚC = SAU.
-- Nguyên tắc não hóa dự án cũ: DI TRÚ NGỮ NGHĨA TRƯỚC — ENGINE SAU (chống não song trùng); dự án có Brain OS riêng đang sống thì CỘNG SINH + pointer file. Kho TRỐNG: ghi thẳng "chưa có mã nguồn", KHÔNG suy diễn tính năng từ tên thư mục.
-- Nguyên tắc chiến dịch git: **GIT TRƯỚC — NÃO SAU**; commit baseline "as-is" THUẦN. Repo đang bẩn thì **stage TƯỜNG MINH** (`git commit -- <paths>`), TUYỆT ĐỐI không `git add -A` — đó là cách não hóa mà không đụng việc dang dở của user.
-- Chặn engine đổi tên thư mục hoa: `init_brain.js` chỉ đổi `DOCS/`→`docs/` và `Plan/`→`planning/` khi bản viết thường CHƯA tồn tại ⇒ tạo sẵn `planning/` là vô hiệu hoá được nhánh đó.
-- Cổng an toàn phải IN BẰNG CHỨNG chứ không chỉ in PASS/FAIL, và phải được kiểm chứng lại bằng **đường đo độc lập thứ hai** (gotcha #6).
+- Project: brain4agent (v1.5.1) — khung não template **v1.3.0** (luật SPEC PACKAGE bắt buộc). Não đạt chuẩn v1.3.0: **65/67 repo**. Mọi commit LOCAL, CHƯA PUSH.
+- 2 repo chưa đạt, cả hai vì luật cấm chạm chứ không vì kỹ thuật: `aiedu4vn` (luật ⛔ thường trực từ #04) và `brain4agent` (KHÔNG `.old` — cách ly theo #06 mục 5.1, chờ user trả lời 3 câu ở `planning/06_*/specs/SPEC-P05`).
+- **BẤT BIẾN VẬN HÀNH SỐ 1 — sau MỌI lần sửa engine phải chạy `scripts/deploy_skills.ps1` và so hash tới khi `diff` RỖNG.** Bước 0 trong mọi `memory-distill.txt` trỏ tới bản engine GLOBAL; bản global kẹt version cũ sẽ **kéo ngược cả hệ sinh thái** về chuẩn cũ mà không báo lỗi (gotcha #12).
+- **Cổng nghiệm thu tuỳ loại bản vá:** vá CHỈ-THÊM → gác "0 dòng xoá"; vá THAY THẾ → gác **"không mất thông tin"** (liệt kê token bắt buộc, kiểm còn đủ sau khi vá). Dùng nhầm cổng gây báo động giả hàng loạt (#07).
+- **Mọi regex chạm nội dung file dùng `\r?\n`, không bao giờ `\n` trần** — file checkout trên Windows là CRLF; regex trượt sẽ im lặng rơi vào nhánh dự phòng (gotcha #11).
+- Não hóa repo ĐANG BẨN: stage TƯỜNG MINH + `git commit -- <paths>`, đối chiếu đường cơ sở `git status` trước/sau (gotcha #10). Cấm `git add -A`.
+- Nguyên tắc não hóa dự án cũ: DI TRÚ NGỮ NGHĨA TRƯỚC — ENGINE SAU; dự án có Brain OS riêng thì CỘNG SINH + pointer file. Kho TRỐNG: ghi thẳng "chưa có mã nguồn".
 - Tech Stack: Node.js (Brain Engine Scripts), PowerShell (Deploy Automation), Markdown (Governance & Specs).
 - Data/State: Multi-Tier Hot/Cold Memory Architecture (`memory/hot/` + 7 partitions).
-- Core Guides: `docs/UNIVERSAL_AGENT_GUIDE.md` & `CORE_GOVERNANCE_RULES.md`.
-- Planning & RFCs: `planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]` (25-35 ký tự, cố định path).
+- Planning & RFCs: `planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]` — từ 2026-09-01 BẮT BUỘC dạng **SPEC package** (`specs/` đủ 4 mảng), ngoại lệ duy nhất là PATCH ≤1 ngày công.
 </project_foundation>
 
 <brain_file_roles>

@@ -1,6 +1,30 @@
-# 📅 Nhật Ký Làm Việc Ngày 01/09/2026 (Session Memory Log)
+# 📅 Nhật Ký Làm Việc Ngày 02/09/2026 (Session Memory Log)
 
-> Cập nhật lúc: `2026-09-01` | Phiên bản: `v1.4.0` (Đóng Nốt Chiến Dịch #06 — 66/67 Repo)
+> Cập nhật lúc: `2026-09-02` | Phiên bản: `v1.5.1` (Phủ Template v1.3.0 + Vá Bug Nhân Đôi Luật — kế hoạch #07)
+
+---
+
+## ⚠️ BÀI HỌC LỚN NHẤT PHIÊN NÀY: "XONG" CHỈ ĐÚNG SO VỚI CHUẨN TẠI THỜI ĐIỂM ĐO
+
+Ngày 01/09 đóng chiến dịch #06 với 66/67 repo đạt chuẩn **v1.2.0**. Chỉ **1 tiếng sau**, một phiên
+agent KHÁC commit `529ca8a` nâng `BRAIN_TEMPLATE_VERSION` lên **1.3.0**. Sáng 02/09 đo lại theo chuẩn
+mới: **chỉ 2/67 đạt**. Bài học: trong kho nhiều phiên chạy song song, **luôn đo lại theo chuẩn HIỆN
+HÀNH trước khi khẳng định "đã xong"** — và kiểm `git log` của hub xem có ai vừa đổi luật không.
+
+## ✅ Việc Đã Làm (kế hoạch #07)
+
+1. **92 commit local** (51 rollout + 33 dọn trùng + 8 repo bẩn). Não đạt chuẩn v1.3.0: **2/67 → 65/67**.
+2. **Vá 3 lỗi thật:**
+   - **Engine regex `\n` trần trượt trên file CRLF** → rơi vào nhánh CHÈN THÊM thay vì THAY THẾ ⇒ **33 repo có cả khối luật planning cũ lẫn mới cùng sống**. Đổi sang `\r?\n` + thêm nhánh dọn tàn dư.
+   - **`isFullyStandard` không phát hiện tình trạng đó** — repo nhân đôi luật vẫn được báo `NÃO ĐÃ OK`. Thêm biến chẩn đoán `hasNoDuplicatePlanningLaw`.
+   - **Bản engine deploy global kẹt `1.2.0`** trong khi hub đã `1.3.0`. Vì Bước 0 trỏ tới bản global, agent tuân thủ Bước 0 sẽ **kéo ngược repo về 1.2.0**. Đã deploy lại, `diff nguồn↔deploy = RỖNG`.
+3. **Sai lầm của chính orchestrator, ghi lại để tự răn:** cổng "AGENTS.md phải chỉ-thêm" parse `numstat` bằng `-split` trên mảng → lấy nhầm cột → **báo động giả trên 35 repo**. Cùng họ lỗi với gotcha #6. Đã đổi sang regex có neo. Và nhận ra cổng đó SAI VỀ BẢN CHẤT cho một bản vá THAY THẾ: cổng đúng là **"không mất thông tin"** (kiểm 9 token bắt buộc còn đủ), không phải "0 dòng xoá".
+4. **Repo đang bẩn:** giữ đúng công thức gotcha #10 — stage tường minh + `git commit -- <paths>`; việc user nguyên vẹn **8/8** (`Token-Calcultor` vẫn giữ nguyên index user đã stage sẵn).
+5. **`control-gpm`, `GramPilot`, `CV`: cố ý chỉ nhận marker**, không commit `AGENTS.md`/`state.json` vì các file đó nằm trong việc đang dở của chủ dự án. Đạt chuẩn một phần, đã ghi rõ trong roadmap.
+
+## 📌 Còn Lại
+2 repo chưa đạt và **cả hai đều vì luật cấm chạm, không phải vì kỹ thuật**: `aiedu4vn` (⛔ từ #04) và
+`brain4agent` (cách ly #06 mục 5.1). Gỡ luật là xong trong một lệnh.
 
 ---
 
