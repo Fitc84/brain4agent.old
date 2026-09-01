@@ -2,6 +2,27 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.4.0] - 2026-09-01: Đóng Nốt Chiến Dịch #06 — 66/67 Repo Đạt Chuẩn
+
+### Added
+- **20 commit local** nữa (tổng chiến dịch #06: **76 commit, 0 push**). Kết quả cuối: `PARENT_GIT 0` · `UNBORN 0` · **não chuẩn 66/67** (từ 21 trước chiến dịch).
+- 5 repo cuối cùng thoát `UNBORN`: `AI-input`, `bi-kip-luyen-agent`, `congquyengop.vn`, `manage-fitc84`, `auto-hot-key`.
+- 9 repo đang bẩn được não hóa **mà không đụng việc dang dở của user**: `control-gpm`, `GramPilot`, `CV`, `convert-json-to-9router-from-keycrop`, `ViDiaNorm`, `FITC84-WorkOs-`, `Token-Calcultor`, `openclaw-pro-studio` (+ `control-LDplayer` vốn đã sạch).
+
+### Decisions
+- **Repo git lồng nhau → `.gitignore`, KHÔNG gỡ/di chuyển.** Chọn cách cộng-thêm và đảo ngược được thay vì tái cấu trúc cây thư mục của user. bản lồng bên trong còn chứa cấu hình môi trường thật ⇒ dòng ignore còn là một lớp chặn lộ khoá. (Vị trí cụ thể đã gỡ khỏi kho công khai, giữ ở hồ sơ chỉ-lưu-máy ngoài git.)
+- **`auto-hot-key`:** ignore `bin/` + `obj/` (chuẩn .NET) ⇒ commit đầu từ 1066 file / 490 MB xuống **16 file / ~105 KB**.
+- **`control-LDplayer`:** GIỮ `Plan/` viết hoa (313 file, là cây governance đang sống, có ≥8 path cứng trong `.agent/domains/`); chỉ chuẩn hoá `DOCS/` → `docs/` bằng `git mv` dạng `R100` + sửa cả 3 tham chiếu trong CÙNG commit. `git grep 'DOCS/'` sau đó = 0.
+- **Chặn engine đổi tên** bằng cách tạo sẵn `planning/` trước khi chạy (`ViDiaNorm`, `control-LDplayer`) — bảo toàn 100% thư mục `Plan/`.
+- **`control-gpm` + `GramPilot`: cố ý KHÔNG chạy engine** vì `AGENTS.md`/`state.json` của chúng đang nằm trong danh sách bẩn của user; chỉ chép tay `CLAUDE.md` + marker. Hệ quả minh bạch: `state.json` 2 repo này **tạm thiếu field `brain_template_version`** cho tới khi user commit xong.
+
+### Fixed / Learned
+- 2 gotcha mới (mục 9, 10 trong `-known-gotchas.md`): tiến trình **nhân bản ngoài git** làm gãy `git status` repo cha (nhận diện bằng chênh lệch `CreationTime` 13–71 giây trong khi `LastWriteTime` giống hệt); và quy trình **não hóa repo đang bẩn bằng stage tường minh** + `git commit -- <paths>`.
+
+### Security (báo cáo, KHÔNG tự sửa)
+- Bổ sung 2 phát hiện: một dự án frontend nhúng khoá API thẳng vào bundle client (ai mở DevTools trên bản deploy cũng đọc được); `FITC84-WorkOs-/.gitignore` có BOM UTF-8 + một dòng lưu dạng UTF-16 nên `server.pid` **thực tế không được ignore**.
+- 4 repo cần **xoay khoá** (nêu từ v1.3.0) vẫn còn nguyên — danh sách repo và đường dẫn giữ ở hồ sơ chỉ-lưu-máy ngoài git, không đưa lên kho công khai.
+
 ## [v1.3.0] - 2026-08-31: Đồng Bộ Cấu Trúc 67 Repo (Git Đúng Chỗ + Não Chuẩn v1.2.0)
 
 ### Added

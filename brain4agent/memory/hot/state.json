@@ -1,15 +1,16 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.3.0",
+  "current_version": "1.4.0",
   "system_status": "healthy_and_runtime_verified",
   "last_verification": {
-    "timestamp": "2026-08-31",
+    "timestamp": "2026-09-01",
     "scenarios_passed": [
-      "Plan #06 executed: PARENT_GIT 9->0, UNBORN 13->5, brain FULL 21->52, 56 local commits, 0 push",
-      "Secret gate verified by THREE independent layers (check-ignore, git show, git ls-files audit)",
-      "Isolation verified: brain4agent (new) and aiedu4vn byte-identical before/after (head + dirty count)",
-      "All 31 brain-onboarded repos re-run init_brain.js -> NAO DA OK, git status empty",
-      "Engine untouched this campaign -> BRAIN_TEMPLATE_VERSION stays 1.2.0"
+      "Plan #06 CLOSED: PARENT_GIT 0, UNBORN 0, brain FULL 66/67, 76 local commits, 0 push",
+      "Secret audit over all 84 commits made on 2026-09-01 across every repo: 0 violations",
+      "No new 160000 gitlink introduced by the campaign in any repository",
+      "Every brain-onboarded repo re-runs init_brain.js -> NAO DA OK",
+      "Isolation held: brain4agent (new) head e01fdbf / 38 dirty, identical before and after both waves",
+      "Engine untouched across the whole campaign -> BRAIN_TEMPLATE_VERSION stays 1.2.0"
     ],
     "benchmark_accuracy": "100%",
     "grade": "Grade A Runtime Verified"
@@ -194,6 +195,45 @@
       "#6 PowerShell khong phan biet hoa/thuong ten bien: $sec ghi de $SEC lam chet cong kiem secret trong im lang",
       "#7 audit dem 'file ban' che mat repo git long nhau -> nguy co gitlink 160000 mo coi",
       "#8 phien agent khac chay song song lam trang thai doi giua chung"
+    ],
+    "engine_untouched": true,
+    "not_pushed": true
+  },
+  "dong_bo_67_repo_2026-09-01_plan06_closing": {
+    "method": "4 subagent Opus song song theo nhom rui ro + orchestrator kiem chung doc lap lai toan bo",
+    "commits_this_wave": 20,
+    "commits_campaign_total": 76,
+    "final_inventory": {
+      "PARENT_GIT": 0,
+      "UNBORN": 0,
+      "brain_FULL": "66/67",
+      "brain_PARTIAL": 1
+    },
+    "nested_repo_repos_resolved_by_gitignore": {
+      "AI-input": "dc3e5f9 baseline + be3158b brain",
+      "bi-kip-luyen-agent": "ccec14c baseline + bf27a88 brain",
+      "congquyengop.vn": "dba9b3e baseline + d0e0c80 brain",
+      "manage-fitc84": "bab9d0a baseline (16 files) + 84c9d2c brain"
+    },
+    "auto-hot-key": "645baf9 baseline (1066 files/490MB -> 16 files/105KB after ignoring bin/ obj/) + 6a3e0e8 brain",
+    "dirty_repos_brainified_by_explicit_staging": {
+      "control-gpm": "37eb853 (CLAUDE.md + marker only; engine deliberately NOT run)",
+      "GramPilot": "47ff733 (CLAUDE.md + marker only; engine deliberately NOT run)",
+      "CV": "3b3d3b7",
+      "convert-json-to-9router-from-keycrop": "aa0ccb0",
+      "ViDiaNorm": "56794d3",
+      "FITC84-WorkOs-": "964c46d",
+      "Token-Calcultor": "09728d0 (git commit -- <paths> so the user's staged index was not swept)",
+      "openclaw-pro-studio": "4e27480"
+    },
+    "control-LDplayer": "b7467bc rename DOCS/->docs/ (R100) + fix 3 refs; 2f60400 brain. Plan/ (313 files) preserved by pre-creating planning/",
+    "known_debt": [
+      "control-gpm + GramPilot: state.json tam thieu brain_template_version (engine chua chay duoc vi file dang ban)",
+      "brain4agent (new): repo DUY NHAT chua nao hoa - cach ly cho user"
+    ],
+    "new_gotchas": [
+      "#9 tien trinh nhan ban ngoai git chep repo top-level vao thu muc long -> gay git status repo cha (nhan dien bang chenh lech CreationTime 13-71s trong khi LastWriteTime giong het)",
+      "#10 nao hoa repo dang ban bang stage tuong minh + git commit -- <paths> + doi chieu duong co so truoc/sau"
     ],
     "engine_untouched": true,
     "not_pushed": true

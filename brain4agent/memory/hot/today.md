@@ -1,6 +1,19 @@
-# 📅 Nhật Ký Làm Việc Ngày 31/08/2026 (Session Memory Log)
+# 📅 Nhật Ký Làm Việc Ngày 01/09/2026 (Session Memory Log)
 
-> Cập nhật lúc: `2026-08-31 19:02` | Phiên bản: `v1.3.0` (Đồng Bộ Cấu Trúc 67 Repo #06)
+> Cập nhật lúc: `2026-09-01` | Phiên bản: `v1.4.0` (Đóng Nốt Chiến Dịch #06 — 66/67 Repo)
+
+---
+
+## ✅ Phiên Đóng Nốt #06 (2026-09-01) — ĐÃ HOÀN THÀNH
+
+1. **Kết quả cuối:** `PARENT_GIT 0` · `UNBORN 0` · **não chuẩn 66/67**. Thêm 20 commit ⇒ tổng chiến dịch **76 commit local, 0 push**. Repo duy nhất chưa não hóa là `brain4agent` (mới) — cách ly theo quyết định 5.1, chờ user.
+2. **Điều phối 4 subagent Opus song song** theo nhóm rủi ro, orchestrator kiểm chứng độc lập lại toàn bộ: secret-scan 84 commit → **0 vi phạm**; 0 gitlink `160000` mới; mọi repo chạy lại engine đều `NÃO ĐÃ OK`.
+3. **Mẫu quan trọng nhất rút ra — não hóa repo ĐANG BẨN mà không đụng việc user:** chụp đường cơ sở `git status` → stage TƯỜNG MINH từng file mới → **`git commit -m "..." -- <paths>`** (dạng pathspec, không bị cuốn index user đã stage sẵn) → `diff` đường cơ sở trước/sau phải giống hệt. Áp cho 8 repo, cả 8 đều IDENTICAL. Ghi thành gotcha #10.
+4. **Chặn engine đổi tên thư mục hoa bằng cách tạo sẵn `planning/`** — bảo toàn 100% `Plan/` 313 file của `control-LDplayer` và `Plan/` của `ViDiaNorm`. Với `control-LDplayer` chỉ chuẩn hoá `DOCS/`→`docs/` (`git mv` dạng `R100`) + sửa cả 3 tham chiếu trong cùng commit; `git grep 'DOCS/'` sau đó = 0.
+5. **Giải được bí ẩn "repo tự nhân bản":** có tiến trình sao chép gần-thời-gian-thực chép repo top-level đè vào thư mục lồng. Nhận diện bằng **`CreationTime` bản lồng trễ 13–71 giây trong khi `LastWriteTime` giống hệt** (không phải junction/symlink/hardlink — đã loại bằng `fsutil`). Nó chính là thứ làm `git status` của `openclaw-pro-studio` gãy `bad object HEAD`. Chưa định danh được công cụ ⇒ ghi gotcha #9 + đưa vào roadmap Active.
+6. **2 đánh đổi minh bạch, không giấu:** `control-gpm` và `GramPilot` cố ý KHÔNG chạy engine (vì `AGENTS.md`/`state.json` của chúng đang bẩn) nên `state.json` 2 repo này **tạm thiếu field `brain_template_version`**; sẽ đủ khi user commit xong và chạy lại engine.
+7. **`brain4agent` (mới) vẫn không suy suyển:** head `e01fdbf` / 38 file bẩn — TRƯỚC = SAU qua cả hai đợt.
+8. **Lưu ý môi trường:** phiên agent khác vẫn chạy song song (62 commit ở `ai-news-radar`, `aiedu4vn`, `control-claude-code`, `fitc84.com`, `router4vn` trong cùng khoảng thời gian) — đã tách bạch khi đếm, không đụng vào.
 
 ---
 

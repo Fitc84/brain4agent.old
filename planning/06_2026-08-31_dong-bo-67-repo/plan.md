@@ -1,10 +1,10 @@
 # KẾ HOẠCH NÂNG CẤP: ĐỒNG BỘ CẤU TRÚC 67 REPO — GIT ĐÚNG CHỖ + NÃO CHUẨN v1.2.0 (#06)
 
 - **STT KẾ HOẠCH:** #06
-- **TRẠNG THÁI:** ✅ ĐÃ HOÀN THÀNH (một phần có chủ đích — 14 repo dừng có lý do ghi rõ, chờ user)
+- **TRẠNG THÁI:** ✅ ĐÃ HOÀN THÀNH — 66/67 repo đạt chuẩn (repo còn lại là `brain4agent` mới, cách ly theo quyết định 5.1)
 - **THỜI GIAN BẮT ĐẦU:** 2026-08-31 (lập kế hoạch)
-- **THỜI GIAN HOÀN TẤT:** 2026-08-31 19:02:00 (+07)
-- **PHIÊN BẢN MỤC TIÊU:** hub bump **v1.3.0** (docs/governance, KHÔNG đổi engine — không bug engine nào lộ ra); `BRAIN_TEMPLATE_VERSION` giữ **1.2.0**
+- **THỜI GIAN HOÀN TẤT:** đợt 1: 2026-08-31 19:02:00 (+07) · **đợt đóng nốt: 2026-09-01 21:35:00 (+07)**
+- **PHIÊN BẢN MỤC TIÊU:** hub bump **v1.3.0 → v1.4.0** (docs/governance, KHÔNG đổi engine — không bug engine nào lộ ra); `BRAIN_TEMPLATE_VERSION` giữ **1.2.0**
 
 ---
 
@@ -146,4 +146,85 @@ User uỷ quyền tự quyết theo hướng an toàn nhất (tiền lệ #05). 
 6. PowerShell không phân biệt hoa/thường tên biến — `$sec` ghi đè `$SEC` làm **chết cổng kiểm secret trong im lặng**.
 7. Audit hàng loạt đếm "file bẩn" **che mất repo git lồng nhau** — `git status` gộp cả một repo con thành 1 dòng.
 8. Kho nhiều repo — **phiên agent khác chạy song song** làm trạng thái đổi giữa chừng; phải kiểm dấu thời gian commit trước khi commit hộ.
+
+---
+
+## 🏁 7. ĐỢT ĐÓNG NỐT (2026-09-01) — ĐÓNG 14 REPO CÒN TREO
+
+Người dùng phát lệnh "điều phối subagent làm cho tới khi hoàn thành". Thi hành bằng **4 subagent Opus song song theo nhóm rủi ro**, orchestrator kiểm chứng độc lập lại toàn bộ.
+
+### Kiểm kê TRƯỚC/SAU của riêng đợt này
+
+| Trạng thái | Đầu đợt 2 | Cuối đợt 2 | Toàn chiến dịch (từ đầu) |
+| :--- | ---: | ---: | :--- |
+| `PARENT_GIT` | 0 | **0** | 9 → 0 ✅ |
+| `UNBORN` | 5 | **0** | 13 → 0 ✅ |
+| Não chuẩn (`FULL`) | 52 | **66** | 21 → 66 ✅ |
+| Não `PARTIAL`/`NONE` | 5 / 10 | **1 / 0** | — |
+| Commit local | — | +20 | **76 commit, 0 push** |
+
+### Nhóm A — 5 repo `UNBORN` (repo git lồng nhau / build artifacts)
+
+Phương án: **`.gitignore`, không xoá, không di chuyển, không đổi tên gì**.
+
+| Repo | Dòng ignore thêm | Baseline | Não hóa | Ghi chú |
+| :--- | :--- | :--- | :--- | :--- |
+| `AI-input` | `/AI-input/` | `dc3e5f9` (1 file) | `be3158b` | vỏ bọc quanh repo git cùng tên |
+| `bi-kip-luyen-agent` | `/bi-kip-luyen-agent/` | `ccec14c` (1) | `bf27a88` | như trên |
+| `congquyengop.vn` | `/congquyengop.vn/` | `dba9b3e` (1) | `d0e0c80` | bản lồng chứa cấu hình môi trường THẬT ⇒ dòng ignore còn là lớp chặn lộ khoá |
+| `manage-fitc84` | `/9router/` + `/Quản lý công ty FITC84/` | `bab9d0a` (16) | `84c9d2c` | 16 file (không phải 18): `public/` rỗng nên git bỏ qua, `.claude/settings.local.json` bị gitignore toàn cục chặn. `9router/` là repo **bên thứ ba** (`github.com/decolua/9router`) |
+| `auto-hot-key` | `bin/` + `obj/` | `645baf9` (16) | `6a3e0e8` | **1066 file / 490 MB → 16 file / ~105 KB**; 2 file >20 MB đều nằm trong vùng ignore |
+
+### Nhóm B+C — 8 repo đang bẩn, não hóa bằng **stage tường minh**
+
+Quy trình bất biến: chụp đường cơ sở `git status` → chỉ stage đường dẫn tường minh → `git commit -m "..." -- <paths>` → `diff` đường cơ sở trước/sau **phải giống hệt**. Kết quả: **8/8 IDENTICAL**.
+
+| Repo | Bẩn trước = sau | SHA | Cách làm |
+| :--- | :---: | :--- | :--- |
+| `control-gpm` | 59 = 59 | `37eb853` | **KHÔNG chạy engine** — `AGENTS.md` + `state.json` đang bẩn; chép tay `CLAUDE.md` + marker |
+| `GramPilot` | 17 = 17 | `47ff733` | như trên |
+| `CV` | 4 = 4 | `3b3d3b7` | chạy engine, nhưng KHÔNG commit `AGENTS.md`/`memory.md`/`NKC/` và không stage việc xoá `agent.md` |
+| `convert-json-to-9router-from-keycrop` | 9 = 9 | `aa0ccb0` | định vị `brain4agent/` là **lớp bổ sung**; thẩm quyền từng lượt vẫn thuộc `.agent/task-contract.md` |
+| `ViDiaNorm` | 294 = 294 | `56794d3` | tạo sẵn `planning/` để chặn engine đổi `Plan/` — kiểm sau: `Plan/` còn 313 mục, `git ls-files Plan/` = 20 |
+| `FITC84-WorkOs-` | 7 = 7 | `964c46d` | 4 repo git lồng ghi vào gotchas, không đụng |
+| `Token-Calcultor` | 3 = 3 | `09728d0` | **dùng pathspec** nên `MM .gitignore` + `D wikiultra` user đã stage sẵn KHÔNG bị cuốn vào commit |
+| `openclaw-pro-studio` | 6 = 6 | `4e27480` | orchestrator tự làm sau khi `git status` của repo gãy (xem dưới) |
+
+### Nhóm D — `control-LDplayer`: giữ `Plan/`, chỉ chuẩn hoá `DOCS/`
+
+- Tạo sẵn `planning/` ⇒ engine **không** đổi `Plan/`. Kiểm sau: `Plan` vẫn VIẾT HOA, `git ls-files Plan/` = **313 file**.
+- `git mv DOCS docs_tmp` → `git mv docs_tmp docs` (phải qua tên trung gian vì `core.ignorecase=true` + NTFS) ⇒ git ghi nhận **`R100`**, không phải xoá+thêm. Sửa cả 3 tham chiếu (`.agent/skills/control-ldplayer-operator/SKILL.md:109`, `Plan/00-INDEX.md:41`, `README.MD:51`) trong **CÙNG commit `b7467bc`**. Sau đó `git grep 'DOCS/'` (ngoài `brain4agent/`) = **0**.
+- Não hóa commit riêng `2f60400`; `AGENTS.md` numstat `17 / 0`.
+
+### 🔍 Giải được bí ẩn "repo tự nhân bản"
+
+Đợt 1 ghi nhận `openclaw-pro-studio/cross_ai_bridge` có `.git` byte-identical với repo cùng tên ở cấp trên mà không giải thích được. Đợt này điều tra ra:
+
+- **KHÔNG phải junction/symlink/hardlink** — `fsutil reparsepoint query` phủ định, `fsutil hardlink list` cho thấy mỗi file chỉ 1 link, `LinkType` rỗng ⇒ hai bản vật lý độc lập, tốn dung lượng thật.
+- **Dấu vân tay quyết định:** mọi file bản lồng có `CreationTime` **trễ hơn bản top-level 13–71 giây** trong khi `LastWriteTime` **giống hệt** — chữ ký của thao tác copy bảo toàn mtime, reset ctime. Chiều sao chép: **top-level → nested**.
+- ⇒ Có một **tiến trình nhân bản gần-thời-gian-thực đang CHẠY**. Chưa định danh được công cụ: đã loại Syncthing (config chỉ phủ `C:\Users\hoang\Documents\agent-share`), scheduled task, và mọi marker của Dropbox/Resilio/GoodSync/FreeFileSync/Backblaze. Còn ngờ: Google Drive for desktop hoặc một tiện ích IDE/agent.
+- **Hậu quả đã chứng kiến trực tiếp:** ngay sau khi subagent commit `09728d0` ở `Token-Calcultor` top-level, tiến trình đó chép object store mới đè lên bản lồng trong `openclaw-pro-studio` ⇒ SHA gitlink cũ (`160000 8ae15d32`) mà repo cha đang ghi **biến mất khỏi object store** ⇒ `git status` của `openclaw-pro-studio` chết với `fatal: bad object HEAD ... failed in submodule Token-Calcultor`. Vẫn não hóa được nhờ `--ignore-submodules=all` + stage tường minh.
+- Quy mô: quét toàn kho thấy **12 cặp repo lồng** cùng kiểu.
+
+### Cổng nghiệm thu đợt 2
+
+- [x] `PARENT_GIT = 0`, `UNBORN = 0`.
+- [x] Não chuẩn **66/67** — chỉ còn `brain4agent` (mới) cách ly theo quyết định 5.1.
+- [x] **Secret:** quét lại **toàn bộ 84 commit** tạo ra ngày 2026-09-01 trên mọi repo → **0 vi phạm**.
+- [x] **0 gitlink `160000` mới** do chiến dịch tạo ra (kiểm từng commit).
+- [x] Mọi repo não hóa chạy lại `init_brain.js` → `NÃO ĐÃ OK`.
+- [x] `brain4agent` (mới) không suy suyển: head `e01fdbf` / 38 file bẩn, TRƯỚC = SAU qua cả hai đợt.
+- [x] **KHÔNG `git push`** lần nào.
+
+### ⚠️ 2 đánh đổi minh bạch (không giấu)
+
+1. **`control-gpm` và `GramPilot` tạm thiếu field `brain_template_version`** trong `state.json` — vì cố ý không chạy engine (engine sẽ sửa `AGENTS.md`/`state.json` đang nằm trong danh sách bẩn của user). Đủ ngay khi user commit việc dang dở rồi chạy lại engine. Đã ghi vào roadmap Active.
+2. **`CV`:** engine đã cộng thêm 17 dòng vào `AGENTS.md` **trên đĩa** (0 dòng xoá) nhưng **KHÔNG commit** — file đó là việc đang dở của user. Backup bản gốc ở scratchpad.
+
+### Việc còn lại — thuần tuý chờ quyết định của user (không còn vướng kỹ thuật)
+
+1. **🔒 Xoay khoá 6 chỗ** (sửa code không đủ vì khoá đã vào lịch sử git / bundle client) — xem `brain4agent/roadmap.md` mục Active.
+2. **Tìm và tắt tiến trình nhân bản ngoài git**, rồi quyết cách xử dứt điểm 12 cặp repo lồng.
+3. **`brain4agent` (mới)** — trả lời 3 câu ở `specs/SPEC-P05-ca-dac-biet.md` mục 1.
+4. Các việc nhỏ đã liệt kê trong roadmap: `ViDiaNorm` gitignore output, `FITC84-WorkOs-` sửa `.gitignore` hỏng encoding, `manage-fitc84` cân nhắc gitignore SQLite, `CausalAgent` dọn root sau khi sửa script cho độc-lập-vị-trí.
 

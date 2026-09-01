@@ -1,5 +1,5 @@
 <kernel_instructions>
-<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.3.0) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
+<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.4.0) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
 
 <agent_startup_protocol>
 0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill `.xay-dung-nao-bo` (`node .agents\skills\.xay-dung-nao-bo\scripts\init_brain.js` hoặc bản global `node C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo não luôn cập nhật chuẩn mới nhất.
@@ -11,15 +11,16 @@
 </agent_startup_protocol>
 
 <project_foundation>
-- Project: brain4agent (v1.3.0) — khung não template v1.2.0. Phủ sóng hệ sinh thái sau chiến dịch #06: **52/67 repo đạt não chuẩn** (trước #06: 21) và **0 repo còn thiếu `.git` riêng** (trước: 9). Mọi commit LOCAL, CHƯA PUSH.
-- Còn treo chờ user (15 repo, chi tiết bảng ở `planning/06_*/plan.md` mục 6): 5 repo unborn vì **repo git lồng nhau** hoặc 490 MB build artifacts · 7 repo dirty là việc user đang dở · `control-LDplayer` có `Plan/`+`DOCS/` với tham chiếu path cứng đang sống · `brain4agent` (mới) cách ly · `ViDiaNorm`.
-- Nguyên tắc não hóa dự án cũ: DI TRÚ NGỮ NGHĨA TRƯỚC — ENGINE SAU (chống não song trùng); dự án có Brain OS riêng đang sống thì dùng CỘNG SINH + pointer file. Với kho TRỐNG: ghi thẳng "chưa có mã nguồn", KHÔNG suy diễn tính năng từ tên thư mục.
-- Nguyên tắc chiến dịch git: **GIT TRƯỚC — NÃO SAU**; commit baseline "as-is" THUẦN, không trộn thay đổi não hóa.
-- Cổng an toàn phải IN BẰNG CHỨNG chứ không chỉ in PASS/FAIL, và phải được **kiểm chứng lại bằng đường đo độc lập thứ hai** (xem gotcha #6).
+- Project: brain4agent (v1.4.0) — khung não template v1.2.0. Chiến dịch #06 ĐÃ ĐÓNG: **66/67 repo đạt não chuẩn**, **0 repo thiếu `.git` riêng**, **0 repo unborn**. 76 commit LOCAL, CHƯA PUSH lần nào.
+- Repo duy nhất chưa não hóa: `brain4agent` (KHÔNG `.old`) — cách ly theo quyết định #06 mục 5.1, chờ user trả lời 3 câu ở `planning/06_*/specs/SPEC-P05`. Kiểm cuối: head `e01fdbf` / 38 file bẩn, TRƯỚC = SAU.
+- Nguyên tắc não hóa dự án cũ: DI TRÚ NGỮ NGHĨA TRƯỚC — ENGINE SAU (chống não song trùng); dự án có Brain OS riêng đang sống thì CỘNG SINH + pointer file. Kho TRỐNG: ghi thẳng "chưa có mã nguồn", KHÔNG suy diễn tính năng từ tên thư mục.
+- Nguyên tắc chiến dịch git: **GIT TRƯỚC — NÃO SAU**; commit baseline "as-is" THUẦN. Repo đang bẩn thì **stage TƯỜNG MINH** (`git commit -- <paths>`), TUYỆT ĐỐI không `git add -A` — đó là cách não hóa mà không đụng việc dang dở của user.
+- Chặn engine đổi tên thư mục hoa: `init_brain.js` chỉ đổi `DOCS/`→`docs/` và `Plan/`→`planning/` khi bản viết thường CHƯA tồn tại ⇒ tạo sẵn `planning/` là vô hiệu hoá được nhánh đó.
+- Cổng an toàn phải IN BẰNG CHỨNG chứ không chỉ in PASS/FAIL, và phải được kiểm chứng lại bằng **đường đo độc lập thứ hai** (gotcha #6).
 - Tech Stack: Node.js (Brain Engine Scripts), PowerShell (Deploy Automation), Markdown (Governance & Specs).
 - Data/State: Multi-Tier Hot/Cold Memory Architecture (`memory/hot/` + 7 partitions).
-- Core Guides: `docs/UNIVERSAL_AGENT_GUIDE.md` (Cẩm nang A-Z) & `CORE_GOVERNANCE_RULES.md` (Hiến pháp V5.2).
-- Planning & RFCs: Thư mục `planning/` lưu các bản kế hoạch theo định dạng `[STT]_[YYYY-MM-DD]_[Ten-Ngan]` (25-35 ký tự, cố định path).
+- Core Guides: `docs/UNIVERSAL_AGENT_GUIDE.md` & `CORE_GOVERNANCE_RULES.md`.
+- Planning & RFCs: `planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]` (25-35 ký tự, cố định path).
 </project_foundation>
 
 <brain_file_roles>
