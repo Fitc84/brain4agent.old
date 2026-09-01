@@ -22,6 +22,29 @@ Gỡ luật là xong trong một lần chạy engine.
 
 ---
 
+## 🩹 Hậu Đóng Phiên 02/09 — User Phát Hiện `/compact` Chạy Sai Việc
+
+User hỏi *"đang bị nhầm thành .compact à?"* sau khi thấy `/compact` chạy nghi thức ghi não thay vì nén
+ngữ cảnh. Soi ra **3 lỗi chồng nhau, đều từ `scripts/deploy_skills.ps1`**:
+
+1. **Chiếm chỗ lệnh built-in:** script sinh `~/.claude/commands/compact.md`; Claude Code nạp mọi `*.md`
+   trong thư mục đó thành slash-command nên nó **đè lên `/compact` gốc**. Đúng nghĩa "sai lệch âm thầm":
+   không lỗi, không cảnh báo, chỉ là làm sai việc.
+2. **Thừa:** nghi thức ghi não đã có lệnh riêng `/luu-nao` — chính file đó còn ghi rõ *"KHÔNG phải lệnh
+   `/compact` nén ngữ cảnh built-in của Claude Code"*.
+3. **Nội dung file hỏng:** script dùng here-string **nháy kép** `@"..."@`, mà backtick là ký tự escape của
+   PowerShell ⇒ `` `b `` thành backspace `0x08`, `` `r `` thành CR. Soi byte thô thấy `0x5c 0x08`:
+   `` `brain4agent` `` → `\rain4agent`, ```` ```bash ```` → `\\\ash`. `xay-dung-nao-bo.md` hỏng y hệt.
+
+**Đã sửa:** gỡ hẳn khối sinh `compact.md` khỏi script · đổi toàn bộ here-string sang nháy đơn `@'...'@` ·
+đổi tên file cũ thành `compact.md.disabled-by-plan07` (giữ đường lùi thay vì xoá) · deploy lại và nghiệm
+thu: byte `0x08` = 0, `diff` nguồn↔global RỖNG, deploy không sinh lại `compact.md`. Hub bump `v1.5.2`.
+
+**Bài học chung:** trước khi đặt tên một slash-command, phải đối chiếu với danh sách lệnh **built-in**.
+Trùng tên = chiếm chỗ, và người dùng sẽ mất một tính năng mà không hề biết.
+
+---
+
 ## ⚠️ BÀI HỌC LỚN NHẤT PHIÊN NÀY: "XONG" CHỈ ĐÚNG SO VỚI CHUẨN TẠI THỜI ĐIỂM ĐO
 
 Ngày 01/09 đóng chiến dịch #06 với 66/67 repo đạt chuẩn **v1.2.0**. Chỉ **1 tiếng sau**, một phiên

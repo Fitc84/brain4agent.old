@@ -2,6 +2,19 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.5.2] - 2026-09-02: Gỡ File Lệnh Chiếm Chỗ `/compact` + Sửa Here-String Làm Hỏng Nội Dung Deploy
+
+### Fixed
+- **`deploy_skills.ps1` sinh `~/.claude/commands/compact.md` đè lên lệnh `/compact` BUILT-IN của Claude Code.** Nghi thức ghi não vốn đã có `/luu-nao` riêng ⇒ file kia vừa thừa vừa che tính năng gốc. Đã **gỡ hẳn khối sinh `compact.md`**; file đã deploy được đổi tên thành `compact.md.disabled-by-plan07` (giữ đường lùi, không xoá).
+- **Here-string nháy kép làm hỏng mọi file lệnh sinh ra.** PowerShell coi backtick là ký tự escape trong `@"..."@`, nên `` `b `` → backspace `0x08`, `` `r `` → CR: `` `brain4agent` `` thành `\rain4agent`, ```` ```bash ```` thành `\\\ash`. Đã đổi sang here-string **nháy đơn** `@'...'@` và deploy lại — `xay-dung-nao-bo.md` nay sạch, đếm byte `0x08` = 0.
+
+### Verified
+- `~/.claude/commands/` không còn file nào trùng tên lệnh built-in; deploy chạy lại KHÔNG sinh lại `compact.md`.
+- `diff` engine nguồn ↔ bản deploy global: **RỖNG**.
+
+### Learned
+- Gotcha #13: file trong `~/.claude/commands/` trùng tên lệnh built-in sẽ **chiếm chỗ trong im lặng**; và here-string nháy kép trong PowerShell làm hỏng mọi nội dung có backtick.
+
 ## [v1.5.1] - 2026-09-02: Phủ Template v1.3.0 Ra Toàn Kho + Vá Bug Nhân Đôi Luật
 
 ### Fixed

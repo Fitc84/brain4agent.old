@@ -45,45 +45,32 @@ try {
     Write-Host "✅ [1/2] Đã deploy Global Skills cho Antigravity / Gemini CLI -> $geminiSkillsRoot" -ForegroundColor Green
 
     # -------------------------------------------------------------------------
-    # Target 2: Anthropic Claude Code (Global Commands: /xay-dung-nao-bo, /compact)
+    # Target 2: Anthropic Claude Code (Global Command: /xay-dung-nao-bo)
     # -------------------------------------------------------------------------
     if (Test-Path $claudeCommandsRoot) {
         $claudeInitBrainCommand = Join-Path $claudeCommandsRoot "xay-dung-nao-bo.md"
-        $claudeCompactCommand = Join-Path $claudeCommandsRoot "compact.md"
+        # KHONG deploy "compact.md": ten do DE LEN lenh /compact built-in cua Claude Code,
 
-        $claudeInitBrainContent = @"
+        $claudeInitBrainContent = @'
 # Lệnh Tự Động Khởi Tạo / Nâng Cấp Não Bộ (Universal Brain Engine V5.2)
 
-Khởi tạo mới hoặc Tự động Chẩn đoán & Tái cấu trúc bộ nhớ \`brain4agent\` Đa Tầng cho dự án hiện tại.
+Khởi tạo mới hoặc Tự động Chẩn đoán & Tái cấu trúc bộ nhớ `brain4agent` Đa Tầng cho dự án hiện tại.
 
 ## Hướng dẫn thực thi:
 1. Đảm bảo đang đứng ở thư mục gốc của dự án hiện tại.
 2. Chạy lệnh chẩn đoán & build não bộ:
-   \`\`\`bash
+   ```bash
    node "C:/Users/hoang/.gemini/config/skills/.xay-dung-nao-bo/scripts/init_brain.js"
-   \`\`\`
+   ```
 3. Đọc kết quả:
    - Nếu báo "NÃO ĐÃ OK": Thông báo cho user bộ não đã đạt chuẩn hoàn hảo.
-   - Nếu tạo mới hoặc nâng cấp: Đọc bối cảnh repo và cập nhật thông tin thực tế vào \`project-intro.md\`, \`memory-distill.txt\`, \`index.md\`.
-"@
-
-        $claudeCompactContent = @"
-# Lệnh Nén Ngữ Cảnh & Đóng Phiên (.compact)
-
-Nén và đúc kết toàn bộ bối cảnh cuộc hội thoại, quyết định quan trọng và trạng thái máy vào \`brain4agent/memory/hot/\`.
-
-## Hướng dẫn thực thi:
-1. Xác định root dự án hiện tại (chứa \`brain4agent/\`).
-2. Ghi nhật ký làm việc của phiên vào \`brain4agent/memory/hot/today.md\`.
-3. Cập nhật snapshot máy trạng thái vào \`brain4agent/memory/hot/state.json\`.
-4. Cập nhật \`roadmap.md\` (nếu có task hoàn thành) và \`-known-gotchas.md\` (nếu có bug mới).
-5. Xóa bỏ hoặc không bao giờ tạo file \`latest_memory.md\` ngoài root để giữ chuẩn Root Clean 100%.
-"@
+   - Nếu tạo mới hoặc nâng cấp: Đọc bối cảnh repo và cập nhật thông tin thực tế vào `project-intro.md`, `memory-distill.txt`, `index.md`.
+'@
 
         Set-Content -Path $claudeInitBrainCommand -Value $claudeInitBrainContent -Encoding UTF8
-        Set-Content -Path $claudeCompactCommand -Value $claudeCompactContent -Encoding UTF8
+        # va nghi thuc ghi nao da co lenh rieng /luu-nao. Xem gotcha #13.
 
-        Write-Host "✅ [2/2] Đã deploy Global Commands cho Claude Code (/xay-dung-nao-bo, /compact) -> $claudeCommandsRoot" -ForegroundColor Green
+        Write-Host "✅ [2/2] Đã deploy Global Command cho Claude Code (/xay-dung-nao-bo) -> $claudeCommandsRoot" -ForegroundColor Green
     } else {
         Write-Host "ℹ️ Không tìm thấy thư mục Claude Code ($claudeCommandsRoot), bỏ qua target này." -ForegroundColor Gray
     }

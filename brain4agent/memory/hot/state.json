@@ -1,6 +1,6 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.5.1",
+  "current_version": "1.5.2",
   "system_status": "healthy_and_runtime_verified | [01/09] v1.5.0: luat SPEC PACKAGE (CAM plan phang) da vao AGENTS.md Hub + CORE_GOVERNANCE_RULES.md + template & patcher init_brain.js (khung nao 1.3.0).",
   "last_verification": {
     "timestamp": "2026-09-02",
@@ -278,7 +278,7 @@
   "session_closed": {
     "at": "2026-09-02",
     "hub_commit": "8cb91f0",
-    "hub_version": "1.5.1",
+    "hub_version": "1.5.2",
     "brain_template_version": "1.3.0",
     "compliant_repos": "65/67",
     "engine_source_vs_global_deploy": "hash-identical",
@@ -293,5 +293,21 @@
       "doc muc Active trong roadmap.md - uu tien cao nhat la xoay 6 khoa da lo trong lich su git",
       "neu sua engine: BAT BUOC chay scripts/deploy_skills.ps1 roi so hash toi khi diff RONG (gotcha #12)"
     ]
+  },
+  "fix_slash_command_collision_2026-09-02": {
+    "found_by": "user - thay /compact chay nghi thuc ghi nao thay vi nen ngu canh",
+    "root_cause": [
+      "deploy_skills.ps1 sinh ~/.claude/commands/compact.md -> DE LEN lenh /compact built-in cua Claude Code",
+      "nghi thuc ghi nao da co lenh rieng /luu-nao => file kia vua thua vua che tinh nang goc",
+      "here-string nhay kep @\"...\"@ lam backtick thanh ky tu escape: `b -> 0x08 backspace, `r -> CR => noi dung file hong (\\rain4agent, \\\\\\ash)"
+    ],
+    "fixed": [
+      "go han khoi sinh compact.md khoi deploy_skills.ps1",
+      "doi toan bo here-string sang nhay don @'...'@",
+      "doi ten file cu thanh compact.md.disabled-by-plan07 (giu duong lui, khong xoa)",
+      "deploy lai: byte 0x08 = 0, diff nguon<->global RONG, khong sinh lai compact.md"
+    ],
+    "backup": "scratchpad/backup-claude-commands (7 file lenh truoc khi sua)",
+    "gotcha": "#13"
   }
 }
