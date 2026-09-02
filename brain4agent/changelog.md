@@ -2,6 +2,39 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.6.0] - 2026-09-02: Engine Có Kiểm Chứng — Bộ Test 0-Dependency, Mã Thoát Thật, Deploy Fail-Closed, `brain-doctor`
+
+Kế hoạch #09. Biến hub từ *"tập tài liệu + một script 772 dòng không ai kiểm"* thành *"công cụ kỹ thuật có kiểm chứng tự động"*. `BRAIN_TEMPLATE_VERSION` **giữ nguyên `1.3.0`** ⇒ không repo vệ tinh nào bị chạm.
+
+### Added
+- **Bộ test `node:test` — 192 ca, 192 xanh, 0 dependency.** Trước đó engine vá 66 repo mà **không có một dòng test nào**. Gồm ảnh chuẩn (golden) chụp bằng engine v1.5.4 **trước khi refactor**, unit test hàm thuần, test 7 khiếm khuyết, test 11 bất biến, và test vệ sinh kiểu **bánh cóc** (file đã sạch buộc phải rời danh sách miễn trừ, bất biến chỉ siết chặt được).
+- **Engine có mã thoát thật + `--check` / `--dry-run` / `--version`.** Chẩn đoán sinh **13 mã `BRN`** có phân loại, thay cho danh sách boolean từng sót lỗi 3 lần.
+- **`brain_doctor.js`** — quét độ lệch toàn hệ sinh thái, **chỉ đọc**, **cấm đệ quy**, xuất bảng + JSON, mã thoát phân tầng. Quét 70 thư mục hết **~6 giây**.
+- **Tích hợp liên tục** (`.github/workflows/ci.yml`) matrix Windows × Linux, 13 bước, mọi cổng trả mã thoát thật.
+- **`.gitattributes`** ép LF, giữ nguyên byte cho fixture test.
+- Tài liệu module 1-1: `docs/xay-dung-nao-bo.md`, `docs/compact.md` (luật §5.C trước đó đang bị vi phạm).
+
+### Fixed
+- **Deploy fail-open (D1):** script không đặt `$ErrorActionPreference`, `Copy-Item` không `-ErrorAction Stop` ⇒ lỗi lọt qua `try/catch` mà vẫn in "HOÀN TẤT THÀNH CÔNG". Nay `#requires -Version 7.0`, dừng ở mọi lỗi, **đối chiếu SHA-256 từng file** sau khi chép.
+- **BOM trong file lệnh đã deploy (D5):** `package.json` gọi `powershell` 5.1, mà `Set-Content -Encoding UTF8` ở bản đó luôn ghi kèm BOM. Nay gọi `pwsh` và ghi bằng bộ ghi .NET không BOM. Đã deploy lại, kiểm byte: sạch.
+- **`String.replace(chuỗi, chuỗi)` diễn giải `$` (D3):** `$&`, `` $` ``, `$'`, `$$` làm hỏng văn bản thay thế. Nay dùng hàm thay thế.
+- **BOM làm `JSON.parse(state.json)` ném lỗi (D4)** ⇒ `brain_template_version` không bao giờ hội tụ. Nay strip BOM khi đọc.
+- **`restoreEol` sinh `\r\r\n`** khi đầu vào chưa chuẩn hoá. **Đây là lỗi đầu tiên của engine này do MÁY bắt được**, không phải do người phát hiện sau khi đã lan ra.
+- **Chẩn đoán bỏ sót (D7):** không kiểm `state.json.brain_template_version`, không kiểm độ dài `CLAUDE.md`, không đếm số lần xuất hiện. Đã bổ sung.
+- **Byte điều khiển trong `-known-gotchas.md`** khiến git coi cả file là **nhị phân** ⇒ không review được diff. Cùng lỗi escape mà chính gotcha đó mô tả.
+- **Đường dẫn tuyệt đối kèm mã phiên cũ** trong ký ức nóng (repo PUBLIC). Đã rút về dạng tương đối.
+- **Chỉ mục ghi sai marker khung não** (`v1.2.0` trong khi thực tế `v1.3.0`).
+
+### Verified
+- Engine sau refactor **byte-identical** với v1.5.4: cây file, stdout, stderr, mã thoát — đo trên 5 kịch bản do orchestrator tự dựng, ngoài bộ fixture của agent.
+- Quét thật hệ sinh thái: **58 sạch / 8 cảnh báo / 1 lỗi / 1 chặn / 2 bỏ qua** trên 70 thư mục. Hai ca không sạch đúng bằng hai repo đang bị luật cấm chạm.
+- Bản deploy toàn cục: hash nguồn ↔ đích **khớp 100%**, chạy engine từ chính bản toàn cục cho `brain-engine 1.6.0 template 1.3.0`.
+
+### Learned
+- Gotcha **#16**: `git checkout-index -f` KHÔNG ghi đè file đã tồn tại.
+- Gotcha **#17**: đếm token trần để dò luật nhân đôi cho **15 báo động giả** — phải đếm mệnh đề luật.
+- Gotcha **#18**: đo mã thoát qua ống dẫn (`| head`, `| tail`) trả về mã của lệnh CUỐI, không phải lệnh cần đo.
+
 ## [v1.5.4] - 2026-09-02: Đóng Kế Hoạch #04 + Lập Hồ Sơ #08 Cho Hai Bản Vá PATCH
 
 ### Fixed

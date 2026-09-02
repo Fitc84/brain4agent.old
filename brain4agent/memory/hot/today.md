@@ -22,6 +22,51 @@ Gỡ luật là xong trong một lần chạy engine.
 
 ---
 
+## 🏗️ Phiên 2026-09-02 — KẾ HOẠCH #09: ENGINE CÓ KIỂM CHỨNG (v1.6.0)
+
+User giao: *"đóng vai orchestrator, điều phối model khác, đặt scope nâng cấp lên cấp cao hơn, triển khai A-Z"*.
+
+**Scope đã chốt:** biến hub từ *"tập tài liệu + một script 772 dòng không ai kiểm"* thành *"công cụ kỹ thuật
+có kiểm chứng"*. Giữ `BRAIN_TEMPLATE_VERSION = 1.3.0` ⇒ **không chạm repo vệ tinh nào** ⇒ rủi ro thấp.
+
+**Cách làm:** 3 agent nghiên cứu song song (kiến trúc engine · khảo sát hệ sinh thái · ý tưởng nâng tầm) →
+orchestrator kiểm chứng độc lập từng khẳng định → Fable viết bộ SPEC 11 file → 6 agent thực thi theo thứ tự
+bắt buộc, mỗi gói một cổng nghiệm thu → orchestrator tự đo lại, không tin báo cáo suông.
+
+### Số đo trước → sau
+| | Trước | Sau |
+| :-- | --: | --: |
+| Test | **0** | **192** (192 xanh, 0 dependency) |
+| Mã chẩn đoán | danh sách boolean | **13 mã `BRN`** |
+| File cây làm việc lệch xuống dòng | 10 | **0** |
+| File bị git coi là nhị phân | 1 | **0** |
+| Repo sạch trong hệ sinh thái | 44* | **58** |
+
+\* con số 44 là kết quả lần quét đầu, trước khi sửa báo động giả — xem gotcha #17.
+
+### Bốn lỗi THẬT bị bắt trong lúc làm (không phải lý thuyết)
+1. **Engine cũ coi repo còn khối luật CŨ là "đã chuẩn"** rồi bỏ qua vĩnh viễn — chính căn nguyên sự cố 33 repo
+   nhân đôi luật ở #07. Tự tái hiện: trước khi vá có `SPEC PACKAGE` ×0 và khối cũ ×1; sau khi vá thành ×1 và ×0.
+2. **`restoreEol` sinh `\r\r\n`** khi đầu vào chưa chuẩn hoá — **lỗi đầu tiên của engine này do MÁY bắt được**.
+3. **Đếm token trần cho 15 báo động giả** (gotcha #17) — chính công cụ mới làm ra bị sai, phát hiện khi quét thật.
+4. **File lệnh đã deploy có BOM** do `package.json` gọi PowerShell 5.1 — tôi đã bỏ sót ở lần sửa v1.5.2.
+
+### Ba lỗi của chính orchestrator (ghi để tự răn)
+- Đo mã thoát qua ống dẫn → luôn ra `0` (gotcha **#18**), dính **3 lần**.
+- Đo EOL bằng `git show :file` thay vì `git ls-files --eol` → kết luận ngược.
+- So sánh engine cũ/mới mà **quên ghim đồng hồ** và quên chuẩn hoá tên thư mục tạm → báo "khác" nhầm.
+
+### Nghiệm thu quan trọng nhất
+Engine sau refactor **byte-identical** với v1.5.4 về cây file, stdout, stderr và mã thoát — đo bằng bộ so sánh
+orchestrator **tự dựng trên 5 kịch bản riêng**, không dùng fixture của agent. Đây là thứ bảo vệ 66 repo.
+
+**Deploy thật:** hash nguồn ↔ toàn cục khớp 100%; chạy engine từ chính bản toàn cục cho `brain-engine 1.6.0
+template 1.3.0`; file lệnh hết BOM. Backup bản cũ ở scratchpad trước khi ghi.
+
+**CHƯA push.** Kế hoạch tiếp theo là **#10** (chuyển cơ chế vá sang khối đánh dấu ẩn) — đã nạp Idea Vault.
+
+---
+
 ## 🏁 CHỐT PHIÊN 2026-09-02 — BÀN GIAO CHO PHIÊN SAU
 
 **Đã push lần đầu của cả chiến dịch.** Hub `v1.5.4`, remote `origin/main` = `main`, `git status` sạch.

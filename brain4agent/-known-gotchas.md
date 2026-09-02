@@ -120,3 +120,22 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Hệ quả phụ cần biết:** regex quét secret dễ dính **dương tính giả** vì chính tài liệu mô tả mẫu quét (ví dụ câu "quét bằng regex `api_key|bearer|token|sk-|ghp_|AIza`" sẽ khớp mẫu `ghp_`). Cổng phải **in ra dòng khớp** để phân biệt được khoá thật với văn bản mô tả, thay vì chỉ đếm.
 - **Nguồn:** kế hoạch #08, 2026-09-02 — lỗi của chính orchestrator, ghi lại để không lặp.
 
+## 16. `git checkout-index -f` KHÔNG Ghi Đè File Đã Tồn Tại
+- **Triệu chứng:** cần đưa file trong cây làm việc về đúng dạng xuống dòng của `.gitattributes`; chạy `git checkout-index --force -- <file>` xong đo lại thì file **y nguyên** (vẫn 53 CRLF).
+- **Nguyên nhân:** cờ `-f`/`--force` của `checkout-index` không có nghĩa "ghi đè file đang có" như trực giác.
+- **Cách đúng:** `rm -- <file>` rồi `git checkout -- <file>`. **BẮT BUỘC** kiểm `git status --porcelain -- <file>` rỗng trước khi xoá — chỉ làm với file không có thay đổi chưa commit.
+- **Nguồn:** kế hoạch #09, WP5a, 2026-09-02.
+
+## 17. Đếm TOKEN TRẦN Để Dò Luật Nhân Đôi — 15 Báo Động Giả
+- **Triệu chứng:** công cụ quét báo **15 repo** có "token luật lặp 2 lần", trong khi soi tay thì không repo nào nhân đôi luật thật.
+- **Nguyên nhân:** chính engine, khi vá theo **đường phụ lục**, sinh ra TIÊU ĐỀ chứa token (`## [PHỤ LỤC TỰ ĐỘNG VÁ] ... SPEC PACKAGE bắt buộc`) rồi thân luật lặp lại token. Repo vá **đúng** vẫn đếm ra 2. Ngoài ra token còn xuất hiện trong văn xuôi tham chiếu.
+- **Số đo:** đếm token trần → 2 ở 8 repo; đếm **mệnh đề luật** (`BẮT BUỘC DẠNG SPEC PACKAGE`, `NGOẠI LỆ TƯỜNG MINH — Marker...`, nguyên văn tiêu đề Luật J) → **1 ở tất cả**. Sau khi sửa: lỗi từ 15 xuống 1, repo sạch từ 44 lên 58.
+- **Luật rút ra:** dò trùng lặp phải neo vào **mệnh đề chuẩn tắc**, không neo vào từ khoá. Từ khoá còn sống trong tiêu đề tự sinh và trong văn xuôi.
+- **Nguồn:** kế hoạch #09, WP4, phát hiện khi quét thật hệ sinh thái.
+
+## 18. Đo Mã Thoát Qua Ống Dẫn Trả Về Mã Của Lệnh CUỐI
+- **Triệu chứng:** `lenh_can_do | tail -5; echo $?` luôn in `0` dù lệnh cần đo thất bại. Đã dính **ba lần** trong một phiên, một lần khiến `git push` chạy dù cổng kiểm vừa báo có vấn đề.
+- **Nguyên nhân:** trong shell, `$?` sau một ống dẫn là mã thoát của lệnh **cuối cùng** (`tail`, `head`, `cut`, `grep`), không phải lệnh đầu.
+- **Cách đúng:** chạy lệnh **không qua ống**, chuyển hướng ra `/dev/null` hoặc ra file rồi đọc `$?`; hoặc dùng `${PIPESTATUS[0]}`. Với cổng chặn thao tác khó đảo ngược thì **luôn tách thành lệnh riêng**, đọc kết quả, rồi mới gõ lệnh sau — đừng nối `&&` (xem gotcha #15).
+- **Nguồn:** kế hoạch #09, 2026-09-02 — lỗi của chính orchestrator, lặp lại 3 lần nên ghi thành luật.
+

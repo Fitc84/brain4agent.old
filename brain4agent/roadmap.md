@@ -1,6 +1,6 @@
 # Roadmap & Active Tasks
 
-File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.5.4)**.
+File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.6.0)**.
 
 ## 🔴 Active — chờ user (không còn vướng kỹ thuật)
 
@@ -15,6 +15,8 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 - [ ] **`manage-fitc84`** — cân nhắc gitignore `data/fitc84.db*` (SQLite WAL đang chạy, đã vào lịch sử git kèm dữ liệu khách hàng).
 - [ ] **`CausalAgent`** — dọn root cần sửa `scratch_*.py` cho độc-lập-vị-trí (`Path(__file__).resolve().parents[1]`) trước.
 - [ ] **`openclaw-pro-studio`** — bỏ track `admin_server.log`; cân nhắc gộp `AGENT_GUIDELINES.md` vào `AGENTS.md`.
+- [ ] **`control-linux-server`** — `brain4agent/project-intro.md` có BOM UTF-8 (`BRN-013`). Do `brain-doctor` phát hiện 2026-09-02, chưa ai biết trước đó.
+- [ ] **`ai-news-radar`** — `state.json` thiếu byte `0x0A` cuối tệp (`BRN-011`). Engine tự sửa được bằng một lần chạy chế độ ghi.
 - [ ] **Nghiệm thu môi trường thật** — mọi Exit Gate của #07 mới đạt ở mức `local`; chưa xác nhận trên máy/tài khoản khác.
 - [ ] **`Audit` (treo từ #05):** `security_platform.db` mồ côi ở root do `db.py` dùng path tương đối theo CWD; `requirements.txt` có dòng cuối mã hoá UTF-16LE. Đã nạp vào não repo đó, CHƯA sửa code.
 - [ ] **`reverse Claude` (treo từ #05):** gate `verify-documentation-integrity.js` FAIL do 2 broken link trỏ `output/target_corpus/` — lỗi có TRƯỚC đợt não hóa, chưa sửa.
@@ -34,12 +36,16 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 
 ## 💡 Kho Ý Tưởng & Backlog (Idea Vault)
 *Nơi lưu trữ các ý tưởng hay, kiến trúc mở rộng chưa ưu tiên làm ngay nhưng cần giữ lại để tham khảo.*
+- [ ] **[#10 — ưu tiên cao] Chuyển cơ chế vá sang khối đánh dấu ẩn** (`<!-- brain:rule ... -->`): vá = thay nội dung giữa hai mốc, thay cho dò tiêu đề bằng regex trên văn xuôi tiếng Việt. Diệt tận gốc họ lỗi "regex trượt". **Điều kiện cần:** đã có lưới test (xong ở #09). **Chi phí:** kéo theo một đợt ghi vào ~66 repo ⇒ phải có người bấm nút.
+- [ ] **Hợp nhất 2 file hiến pháp.** `AGENTS.md` (luật A–J) và `CORE_GOVERNANCE_RULES.md` (LUẬT 1–9) gần như song ánh, phải sửa tay đồng thời — mâu thuẫn với chính tuyên bố "nguồn chân lý DUY NHẤT". #09 đã thêm test tự phát hiện khi hai file lệch; việc hợp nhất để sau.
+- [ ] **`--check` thành mặc định của Bước 0**, chế độ ghi phải nêu tường minh — biến boot protocol thành thao tác chỉ đọc.
 - [ ] **AI Multi-Model Benchmark Suite:** Script tự động đánh giá chất lượng khôi phục ngữ cảnh của Claude vs GPT vs Gemini khi nạp `today.md`.
 - [ ] **Cross-OS Path Normalizer:** Chuẩn hóa đường dẫn tương đối xuyên suốt giữa môi trường Windows PowerShell và Linux Bash.
 
 ## Đã hoàn thành (Done)
-- [x] **Đóng #04 + lập hồ sơ #08 cho 2 bản vá PATCH (v1.5.4, 2026-09-02):** kiểm chứng bằng máy 6 repo treo của #04 đã xong ở #06/#07 → chuyển #04 sang ✅; lập bù `planning/08_*` cho `v1.5.2` (gỡ lệnh chiếm chỗ `/compact`) và `v1.5.3` (gỡ bản đồ vị trí secret khỏi 9 commit chưa push bằng `filter-branch`, rồi push lần đầu của cả chiến dịch). Sinh 3 gotcha mới (#13 lệnh trùng tên built-in, #14 kho public mang bản đồ secret, #15 cổng an toàn không chặn).
-- [x] **Phủ template v1.3.0 ra toàn kho + vá bug nhân đôi luật (v1.5.4, kế hoạch #07, 2026-09-02):** 92 commit local. Não đạt chuẩn v1.3.0 **2/67 → 65/67**. Vá 3 lỗi engine/vận hành: regex `\n` trần trượt trên CRLF gây nhân đôi khối luật ở 33 repo; `isFullyStandard` không phát hiện tình trạng đó; bản engine deploy global kẹt `1.2.0` (nguy cơ thoái lui thầm lặng toàn hệ sinh thái). Sinh 2 gotcha mới (#11, #12).
+- [x] **Engine có kiểm chứng (v1.6.0, kế hoạch #09, 2026-09-02):** biến hub từ *"tập tài liệu + một script 772 dòng không ai kiểm"* thành công cụ có kiểm chứng. **0 → 192 test** (0 dependency, dùng `node:test`), engine có mã thoát thật + `--check`/`--dry-run`, chẩn đoán **13 mã `BRN`**, deploy **fail-closed** đối chiếu SHA-256, công cụ **`brain-doctor`** quét 70 thư mục trong ~6 giây, CI matrix Windows × Linux, `.gitattributes`. Sửa 7 khiếm khuyết đã đo (deploy nuốt lỗi · `$` trong `replace` · BOM làm `JSON.parse` throw · BOM file lệnh deploy · thiếu `.gitattributes` · chẩn đoán bỏ sót · engine không test được). Engine sau refactor **byte-identical** với bản cũ, kiểm bằng bộ so sánh riêng của orchestrator. Sinh 3 gotcha mới (#16, #17, #18).
+- [x] **Đóng #04 + lập hồ sơ #08 cho 2 bản vá PATCH (v1.6.0, 2026-09-02):** kiểm chứng bằng máy 6 repo treo của #04 đã xong ở #06/#07 → chuyển #04 sang ✅; lập bù `planning/08_*` cho `v1.5.2` (gỡ lệnh chiếm chỗ `/compact`) và `v1.5.3` (gỡ bản đồ vị trí secret khỏi 9 commit chưa push bằng `filter-branch`, rồi push lần đầu của cả chiến dịch). Sinh 3 gotcha mới (#13 lệnh trùng tên built-in, #14 kho public mang bản đồ secret, #15 cổng an toàn không chặn).
+- [x] **Phủ template v1.3.0 ra toàn kho + vá bug nhân đôi luật (v1.6.0, kế hoạch #07, 2026-09-02):** 92 commit local. Não đạt chuẩn v1.3.0 **2/67 → 65/67**. Vá 3 lỗi engine/vận hành: regex `\n` trần trượt trên CRLF gây nhân đôi khối luật ở 33 repo; `isFullyStandard` không phát hiện tình trạng đó; bản engine deploy global kẹt `1.2.0` (nguy cơ thoái lui thầm lặng toàn hệ sinh thái). Sinh 2 gotcha mới (#11, #12).
 - [x] **Đóng nốt chiến dịch #06 (v1.4.0, 2026-09-01):** 20 commit nữa → tổng 76 commit local, 0 push. `PARENT_GIT 0` · `UNBORN 0` · **não chuẩn 66/67**. Điều phối 4 subagent Opus song song; orchestrator kiểm chứng độc lập lại toàn bộ (secret-scan 84 commit → 0 vi phạm). Sinh 2 gotcha mới (#9 nhân bản ngoài git, #10 não hóa repo đang bẩn bằng stage tường minh).
 - [x] **Đồng bộ cấu trúc 67 repo (v1.4.0, kế hoạch #06):** GIT TRƯỚC — NÃO SAU. Kết quả đo bằng script kiểm kê chạy 2 lần: `PARENT_GIT 9→0`, `UNBORN 13→5`, não chuẩn `21→52`, 56 commit local (0 push), 0 secret lọt vào bất kỳ commit nào (kiểm 3 lớp độc lập). Thực thi bằng 4 subagent song song cho phần điền nội dung não + orchestrator kiểm chứng độc lập lại toàn bộ. Sinh 3 gotcha mới (#6 biến PowerShell ghi đè hằng regex, #7 repo git lồng nhau, #8 phiên agent song song).
 - [x] **Não hóa Nhóm C — 6 dự án (v1.4.0, kế hoạch #05):** Spec-First 6 SPEC theo lớp di trú A/A+/B/B+/C/D, thực thi bằng 6 subagent song song 2 đợt + orchestrator kiểm chứng độc lập. Kết quả 6/6: `block-ads-fb-v2` `1c0569e`, `dreamteam4vn` `79efb93`+`cb2bcfa`, `Audit` `451f1ac`, `reverse Claude` `bf7e959`, `Agent to Product` `a7c6ce4`, `CausalAgent` GĐ1 (không commit — repo unborn, đúng thiết kế). Sinh 2 mẫu tái dùng: "di trú ngữ nghĩa trước — engine sau" và "cộng sinh + pointer file" cho dự án có Brain OS legacy. Kèm hotfix engine "vá Bước 0 giả".

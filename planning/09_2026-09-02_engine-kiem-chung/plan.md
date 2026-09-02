@@ -1,9 +1,9 @@
 # KẾ HOẠCH #09: ENGINE CÓ KIỂM CHỨNG — MÃ THOÁT THẬT, BỘ TEST 0-DEPENDENCY, DEPLOY FAIL-CLOSED, `brain-doctor` (#09)
 
 - **STT KẾ HOẠCH:** #09
-- **TRẠNG THÁI:** 🔄 ĐANG THỰC THI
+- **TRẠNG THÁI:** ✅ ĐÃ HOÀN THÀNH
 - **THỜI GIAN BẮT ĐẦU:** 2026-09-02 (lập bộ SPEC)
-- **THỜI GIAN HOÀN TẤT:** —
+- **THỜI GIAN HOÀN TẤT:** 2026-09-02 13:30:00 (+07)
 - **PHIÊN BẢN MỤC TIÊU:** hub **v1.5.4 → v1.6.0** (`MINOR` — thêm năng lực, giữ tương thích ngược); **`BRAIN_TEMPLATE_VERSION` GIỮ NGUYÊN `1.3.0`** (không đổi chuẩn khung não ⇒ không chạm hàng loạt các repo vệ tinh)
 - **LOẠI GÓI:** SPEC PACKAGE đầy đủ theo `AGENTS.md` §3 mục 2 (bắt buộc vì là `MINOR`)
 - **PHẠM VI MỘT CÂU:** biến hub từ *"tập tài liệu + 1 script 772 dòng không ai kiểm"* thành *"công cụ kỹ thuật có kiểm chứng tự động, có cổng chặn thật, có khả năng đo độ lệch toàn hệ sinh thái"*.
@@ -66,12 +66,12 @@ Thứ tự bắt buộc và lý do: xem [OPERATIONS.md §1](specs/OPERATIONS.md)
 - [x] **P01 🟠 [WP5a `.gitattributes` + EOL/BOM]** — theo SPEC-P05 §A. Gate: `git ls-files --eol` = 100% `w/lf` (trừ `tests/fixtures/**` và file khai báo binary); 0 BOM.
 - [x] **P02 🔴 [WP2a fixture + golden]** — theo SPEC-P02 §A. Gate: `tests/golden/manifest.json` sinh từ engine **v1.5.4 chưa sửa** (ghi SHA commit engine vào manifest).
 - [x] **P03 🟠 [WP6 refactor]** — theo SPEC-P06. Gate: golden byte-identical 100% ca; `require()` engine không in gì, không ghi gì.
-- [ ] **P04 🔴 [WP1 CLI + mã thoát + diagnose]** — theo SPEC-P01. Gate: bảng mã thoát 01-CONTRACTS §6 nghiệm thu từng dòng bằng test.
-- [ ] **P05 🔴 [WP2b test khiếm khuyết + `npm test`]** — theo SPEC-P02 §B. Gate: 7/7 khiếm khuyết D1..D7 có ≥1 ca; 11/11 bất biến có ≥1 ca; `npm test` xanh Windows + Linux.
-- [ ] **P06 🟠 [WP5b CI]** — theo SPEC-P05 §B. Gate: workflow xanh trên cả 2 OS ở commit đầu tiên có workflow.
-- [ ] **P07 🔴 [WP3 deploy fail-closed]** — theo SPEC-P03. Gate: `-VerifyOnly` báo lệch trước deploy, exit 0 sau deploy; 0 byte BOM/0x08 ở file lệnh. **Người bấm nút** (ghi vào máy user).
-- [ ] **P08 🔴 [WP4 brain-doctor]** — theo SPEC-P04. Gate: quét thật toàn hệ sinh thái ≤ 40 s, kết quả khớp số liệu #07 (66/67 chuẩn; 1 repo cách ly kẹt `1.2.0` phải hiện đúng 3 lỗi BRN-006/007/010 + BRN-011). **Chỉ đọc.**
-- [ ] **P09 🟢 [WP7 đóng kế hoạch]** — theo OPERATIONS §6: docs 1-1, sửa `index.md` marker `v1.3.0`, bump `v1.6.0` (`package.json` + `ENGINE_VERSION` + `state.json.current_version`), Sync Cascade 6 điểm, đề xuất commit (tiếng Anh).
+- [x] **P04 🔴 [WP1 CLI + mã thoát + diagnose]** — theo SPEC-P01. Gate: bảng mã thoát 01-CONTRACTS §6 nghiệm thu từng dòng bằng test.
+- [x] **P05 🔴 [WP2b test khiếm khuyết + `npm test`]** — theo SPEC-P02 §B. Gate: 7/7 khiếm khuyết D1..D7 có ≥1 ca; 11/11 bất biến có ≥1 ca; `npm test` xanh Windows + Linux.
+- [x] **P06 🟠 [WP5b CI]** — theo SPEC-P05 §B. Gate: workflow xanh trên cả 2 OS ở commit đầu tiên có workflow.
+- [x] **P07 🔴 [WP3 deploy fail-closed]** — theo SPEC-P03. Gate: `-VerifyOnly` báo lệch trước deploy, exit 0 sau deploy; 0 byte BOM/0x08 ở file lệnh. **Người bấm nút** (ghi vào máy user).
+- [x] **P08 🔴 [WP4 brain-doctor]** — theo SPEC-P04. Gate: quét thật toàn hệ sinh thái ≤ 40 s, kết quả khớp số liệu #07 (66/67 chuẩn; 1 repo cách ly kẹt `1.2.0` phải hiện đúng 3 lỗi BRN-006/007/010 + BRN-011). **Chỉ đọc.**
+- [x] **P09 🟢 [WP7 đóng kế hoạch]** — theo OPERATIONS §6: docs 1-1, sửa `index.md` marker `v1.3.0`, bump `v1.6.0` (`package.json` + `ENGINE_VERSION` + `state.json.current_version`), Sync Cascade 6 điểm, đề xuất commit (tiếng Anh).
 
 ## 🛡️ 4. Cổng Nghiệm Thu Toàn Kế Hoạch
 
@@ -101,3 +101,37 @@ Chi tiết ma trận và Exit Gates theo môi trường (`⬜ local / ⬜ CI`): 
 | P03 WP6 | `739d5db` → `4a820fd` (6 commit S1–S6) | Bộ so sánh **tự dựng** trên 5 kịch bản độc lập: cây file, stdout, stderr, mã thoát **giống hệt** engine v1.5.4. `require()` không in/ghi gì (31 export). `readFileSync`/`writeFileSync` chỉ còn trong `readText`/`writeText`. 772 → 1076 dòng. |
 | P04 WP1 | `2583b4c`, `571fc85`, `abe0760` (+ token thứ 4) | `npm test` **43/43 xanh**; `--version` → `brain-engine 1.6.0 template 1.3.0`; `--check` trên hub exit **0** không ghi gì; cờ lạ exit **64**; `diagnose()` sinh **13 mã BRN**. |
 
+---
+
+## 🏁 KẾT QUẢ CUỐI (2026-09-02)
+
+| Trục | Trước | Sau | Bằng chứng |
+| :--- | --: | --: | :--- |
+| Test tự động | **0** | **192 xanh** | `npm test` |
+| Dependency | 0 | **0** | `tests/hygiene/no-deps.test.js` |
+| Mã chẩn đoán | boolean | **13 mã `BRN`** | `diagnose()` |
+| Engine dòng | 772 | ~1090 | lõi thuần + vỏ I/O |
+| File lệch xuống dòng | 10 | **0** | `git ls-files --eol` |
+| File git coi là nhị phân | 1 | **0** | `git diff --numstat` ra số |
+| Quét hệ sinh thái | script tạm mỗi phiên | **~6 giây** | `brain_doctor.js` |
+| Repo sạch | 44 (đo lần 1) | **58** | sau khi sửa gotcha #17 |
+
+### Cổng nghiệm thu
+
+| Gate | Kết quả | Môi trường |
+| :--- | :--- | :--- |
+| `npm test` xanh 100% | ✅ 192/192 | local |
+| Golden byte-identical với engine v1.5.4 | ✅ | local |
+| Engine cũ ↔ mới giống hệt (cây file · stdout · stderr · mã thoát) | ✅ 5/5 kịch bản **do orchestrator tự dựng** | local |
+| `--check` / `--dry-run` không ghi gì | ✅ hash cây trước = sau | local |
+| Deploy fail-closed, đối chiếu SHA-256 | ✅ exit 2 trước deploy, exit 0 sau | local |
+| Bản toàn cục ↔ hub khớp hash | ✅ kiểm tay từng file | **máy thật** |
+| Chạy engine **từ bản toàn cục** | ✅ `brain-engine 1.6.0 template 1.3.0` | **máy thật** |
+| File lệnh không BOM / không `0x08` | ✅ | **máy thật** |
+| `brain-doctor` quét thật, chỉ đọc | ✅ 70 thư mục / ~6 giây / 0 ghi | **máy thật** |
+| CI matrix Windows × Linux | ⬜ chưa chạy (chưa push) | remote |
+| `git push` | ⬜ **CHƯA** — chờ user ra lệnh | remote |
+
+### Việc chuyển sang kế hoạch sau
+Ba ý tưởng đã nạp Idea Vault: **#10** chuyển cơ chế vá sang khối đánh dấu ẩn (điều kiện cần — lưới test — đã xong ở #09);
+hợp nhất hai file hiến pháp; đưa `--check` thành mặc định của Bước 0.

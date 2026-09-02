@@ -20,7 +20,9 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 | **Kiến trúc dữ liệu & Data Flow** | [`-data-architecture.md`](file:///brain4agent/-data-architecture.md) | Cấu trúc phân vùng Não bộ, luồng deploy sang Global AI Skills. |
 | **Lộ trình nâng cấp & Ý tưởng** | [`roadmap.md`](file:///brain4agent/roadmap.md) | Active tasks, Kho Ý Tưởng (Idea Vault) và các mốc đã hoàn thành. |
 | **Lịch sử cập nhật** | [`changelog.md`](file:///brain4agent/changelog.md) | Lịch sử Semantic Releases (vX.Y.Z). |
-| **Tài liệu kỹ thuật module** | [`docs/`](file:///docs) | Thư mục chứa tài liệu chuyên trách 1-1 cho từng module. |
+| **Tài liệu kỹ thuật module** | [`docs/`](file:///docs) | Tài liệu 1-1 cho từng module: `xay-dung-nao-bo.md`, `compact.md`. |
+| **Kiểm chứng tự động** | [`tests/`](file:///tests) | 192 ca `node:test`, 0 dependency. `npm test` · `npm run test:golden`. |
+| **Đo độ lệch hệ sinh thái** | `brain_doctor.js` | `node .agents/skills/.xay-dung-nao-bo/scripts/brain_doctor.js --root <kho>` — chỉ đọc. |
 
 ---
 
@@ -47,7 +49,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 ```text
 brain4agent/
-├── package.json                      # [VERSION TRUTH] Phiên bản v1.5.4
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.6.0
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
 ├── brain4agent-v1.3.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
@@ -72,7 +74,8 @@ brain4agent/
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
-│   │   └── scripts/init_brain.js
+│   │   └── scripts/init_brain.js     # engine: lõi thuần + vỏ I/O, có --check/--dry-run/--version
+│   │   └── scripts/brain_doctor.js   # quét độ lệch hệ sinh thái, CHỈ ĐỌC, cấm đệ quy
 │   └── .compact/                     # Skill nén ngữ cảnh đa tầng
 │       └── SKILL.md
 ├── archive/                          # [LƯU TRỮ LỊCH SỬ] Các phiên bản cũ để tra cứu
@@ -81,6 +84,11 @@ brain4agent/
 │   ├── UNIVERSAL_AGENT_GUIDE.md      # [A-Z GUIDE] Cẩm nang vận hành toàn diện cho AI Agent
 │   ├── BRAIN_ARCHITECTURE_GUIDE.md
 │   └── MODULE_DOCUMENTATION_SPEC.md
-└── scripts/
-    └── deploy_skills.ps1             # [DEPLOY SCRIPT] Script đồng bộ an toàn sang Global AI Skills
+├── scripts/
+│   └── deploy_skills.ps1             # [DEPLOY] pwsh ≥7, fail-closed, đối chiếu SHA-256 nguồn↔đích
+├── tests/                            # [KIỂM CHỨNG] 192 ca `node:test`, 0 dependency
+│   ├── helpers/ · fixtures/ · golden/manifest.json
+│   ├── unit/ · cli/ · defects/ · invariants/ · doctor/ · hygiene/ · golden.test.js
+├── .github/workflows/ci.yml          # [CI] matrix windows × ubuntu, 13 bước, mọi cổng trả mã thoát thật
+└── .gitattributes                    # [EOL] ép LF; `tests/fixtures/** -text` giữ nguyên byte
 ```
