@@ -94,7 +94,7 @@ test('P01-E5: F07-bom-state — sau khi ghi: không BOM, đúng version, giữ c
     assert.ok(!(buf[0] === 0xef && buf[1] === 0xbb && buf[2] === 0xbf), 'state.json vẫn còn BOM');
     assert.equal(buf[buf.length - 1], 0x0a, 'state.json phải kết thúc bằng 0x0A');
     const after = JSON.parse(buf.toString('utf8'));
-    assert.equal(after.brain_template_version, '1.3.0');
+    assert.equal(after.brain_template_version, '1.4.0');
     assert.equal(after.current_version, before.current_version, 'CẤM đụng current_version');
   } finally {
     tmp.cleanup();

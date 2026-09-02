@@ -4,10 +4,10 @@ const path = require('path');
 // Phiên bản khung não (brain4agent template) — DUY NHẤT MỘT NƠI khai báo.
 // Mọi chỗ khác trong script này đọc từ hằng số này, KHÔNG hardcode rải rác.
 // Đây là version của KHUNG (template engine), khác với version DỰ ÁN (package.json/current_version).
-const BRAIN_TEMPLATE_VERSION = '1.3.0';
+const BRAIN_TEMPLATE_VERSION = '1.4.0';
 
 // Phiên bản ENGINE (mã nguồn công cụ) — KHÁC BRAIN_TEMPLATE_VERSION (phiên bản KHUNG não).
-const ENGINE_VERSION = '1.6.0';
+const ENGINE_VERSION = '1.7.0';
 
 const REQUIRED_FILES = [
     'memory-distill.txt',

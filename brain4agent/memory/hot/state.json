@@ -82,7 +82,7 @@
     ],
     "not_pushed": true
   },
-  "brain_template_version": "1.3.0",
+  "brain_template_version": "1.4.0",
   "dong_bo_67_repo_2026-08-31_plan06": {
     "method": "GIT TRUOC - NAO SAU; P01->P02->P03->P04->P06->P07; 4 subagent song song cho phan dien noi dung nao; orchestrator kiem chung doc lap lai toan bo",
     "inventory_before_after": {

@@ -51,7 +51,7 @@ test('T-H03b · G16: state.json.current_version === package.json.version (versio
 });
 
 test('T-H03c · A8/I3: version KHUNG NÃO đồng bộ 3 nơi (hằng số · state.json · marker ở root)', () => {
-  assert.equal(engine.BRAIN_TEMPLATE_VERSION, '1.3.0', 'khung não của đợt #09 là 1.3.0');
+  assert.equal(engine.BRAIN_TEMPLATE_VERSION, '1.4.0', 'khung não của đợt #10 là 1.4.0');
   assert.equal(state.brain_template_version, engine.BRAIN_TEMPLATE_VERSION,
     'I3: state.json của chính hub phải mang đúng version khung');
 
