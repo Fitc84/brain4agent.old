@@ -946,10 +946,13 @@ function computePlan(s, version, now) {
     } else {
         try {
             const res = patchStateJson(s.files.stateJson.text, version);
-            if (res.changed) {
+            // hadBom: nội dung JSON có thể đã đúng nhưng file vẫn còn BOM ⇒ writeText ghi
+            // lại KHÔNG BOM. Không có nhánh này thì BRN-013 (fixable) không bao giờ hội tụ.
+            if (res.changed || s.files.stateJson.hadBom) {
                 const lines = [];
                 if (res.patches.indexOf('version') !== -1) lines.push(`🔄 Đã vá brain_template_version=${version} vào memory/hot/state.json (giữ nguyên các field khác).`);
                 if (res.patches.indexOf('trailing-newline') !== -1) lines.push('🔄 Đã bổ sung newline cuối file cho memory/hot/state.json (chuẩn POSIX, sạch git diff).');
+                if (s.files.stateJson.hadBom) lines.push('🔄 Đã ghi lại memory/hot/state.json dạng UTF-8 KHÔNG BOM.');
                 ops.push({ op: 'write', rel: stateRel, text: res.content, eol: 'lf', create: false, reason: 'va brain_template_version', log: lines });
             } else {
                 say('📄 Đã có sẵn: memory/hot/state.json (brain_template_version đúng chuẩn, giữ nguyên dữ liệu).');
@@ -1006,6 +1009,121 @@ function computePlan(s, version, now) {
     }
 
     return { ops, notes, stateJsonError };
+}
+
+// snapshotTextOf — tra TextFile gốc của một rel trong Snapshot (THUẦN, không fs).
+function snapshotTextOf(s, rel) {
+    if (rel === 'AGENTS.md') return s.files.agentsMd;
+    if (rel === 'CLAUDE.md') return s.files.claudeMd;
+    if (rel === 'latest_memory.md') return s.files.legacyLatest;
+    if (rel === 'brain4agent/memory/hot/state.json') return s.files.stateJson;
+    if (rel === 'brain4agent/memory/hot/today.md') return s.files.todayMd;
+    if (rel.indexOf('brain4agent/') === 0) {
+        const name = rel.slice('brain4agent/'.length);
+        return Object.prototype.hasOwnProperty.call(s.files.brain, name) ? s.files.brain[name] : null;
+    }
+    return null;
+}
+
+// diffLines — LCS O(n·m) trên mảng dòng. AGENTS.md ≤ ~200 dòng nên đủ nhanh;
+// CẤM kéo thư viện diff (bất biến 0-dependency).
+function diffLines(oldLines, newLines) {
+    const n = oldLines.length;
+    const m = newLines.length;
+    const lcs = [];
+    for (let i = 0; i <= n; i++) lcs.push(new Array(m + 1).fill(0));
+    for (let i = n - 1; i >= 0; i--) {
+        for (let j = m - 1; j >= 0; j--) {
+            lcs[i][j] = oldLines[i] === newLines[j]
+                ? lcs[i + 1][j + 1] + 1
+                : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+        }
+    }
+    const out = [];
+    let i = 0;
+    let j = 0;
+    while (i < n && j < m) {
+        if (oldLines[i] === newLines[j]) { out.push({ t: ' ', text: oldLines[i] }); i++; j++; }
+        else if (lcs[i + 1][j] >= lcs[i][j + 1]) { out.push({ t: '-', text: oldLines[i] }); i++; }
+        else { out.push({ t: '+', text: newLines[j] }); j++; }
+    }
+    while (i < n) { out.push({ t: '-', text: oldLines[i] }); i++; }
+    while (j < m) { out.push({ t: '+', text: newLines[j] }); j++; }
+    return out;
+}
+
+// Gom các đoạn thay đổi thành hunk unified với 3 dòng ngữ cảnh.
+function toHunks(diff, context) {
+    const changed = [];
+    for (let k = 0; k < diff.length; k++) if (diff[k].t !== ' ') changed.push(k);
+    if (changed.length === 0) return [];
+    const ranges = [];
+    let s = changed[0];
+    let e = changed[0];
+    for (const k of changed.slice(1)) {
+        if (k - e <= context * 2) e = k;
+        else { ranges.push([s, e]); s = k; e = k; }
+    }
+    ranges.push([s, e]);
+
+    const hunks = [];
+    let oldNo = 1;
+    let newNo = 1;
+    const oldAt = [];
+    const newAt = [];
+    for (const d of diff) {
+        oldAt.push(oldNo);
+        newAt.push(newNo);
+        if (d.t !== '+') oldNo++;
+        if (d.t !== '-') newNo++;
+    }
+    for (const r of ranges) {
+        const from = Math.max(0, r[0] - context);
+        const to = Math.min(diff.length - 1, r[1] + context);
+        let oldCount = 0;
+        let newCount = 0;
+        const body = [];
+        for (let k = from; k <= to; k++) {
+            if (diff[k].t !== '+') oldCount++;
+            if (diff[k].t !== '-') newCount++;
+            body.push(diff[k].t + diff[k].text);
+        }
+        hunks.push('@@ -' + oldAt[from] + ',' + oldCount + ' +' + newAt[from] + ',' + newCount + ' @@');
+        for (const line of body) hunks.push(line);
+    }
+    return hunks;
+}
+
+// renderDiff — THUẦN. Mô tả từng op sẽ thực hiện; file MỚI chỉ in số dòng (không
+// đổ nguyên 150 dòng template ra màn hình — quy ước cố định SPEC-P01 a.4).
+function renderDiff(plan, s) {
+    const real = plan.ops.filter((op) => op.op !== 'log');
+    const out = ['=== DRY-RUN: ' + real.length + ' thao tác sẽ thực hiện (không ghi) ==='];
+    for (const op of real) {
+        if (op.op === 'mkdir') {
+            out.push('[mkdir]  ' + op.rel + '/');
+        } else if (op.op === 'rename') {
+            out.push('[rename] ' + op.from + ' -> ' + op.to + ' (qua ' + op.via + ')');
+        } else if (op.op === 'delete') {
+            out.push('[delete] ' + op.rel + '      # lý do: ' + op.reason);
+        } else if (op.op === 'write') {
+            const before = snapshotTextOf(s, op.rel);
+            const newLines = op.text.split('\n');
+            if (op.create || !before) {
+                out.push('[write]  ' + op.rel + '  (mới, ' + newLines.length + ' dòng)  # lý do: ' + op.reason);
+                continue;
+            }
+            const oldLines = before.text.split('\n');
+            const diff = diffLines(oldLines, newLines);
+            const plus = diff.filter((d) => d.t === '+').length;
+            const minus = diff.filter((d) => d.t === '-').length;
+            out.push('[write]  ' + op.rel + '  (eol=' + op.eol + ', +' + plus + ' dòng, -' + minus + ' dòng)  # lý do: ' + op.reason);
+            out.push('--- a/' + op.rel);
+            out.push('+++ b/' + op.rel);
+            for (const line of toHunks(diff, 3)) out.push(line);
+        }
+    }
+    return out.join('\n') + '\n';
 }
 
 // applyPlan — LỚP I/O GHI DUY NHẤT. Thi hành đúng thứ tự ops, không sắp xếp lại.
@@ -1157,6 +1275,7 @@ module.exports = {
     collectSnapshot,
     diagnose,
     formatFindings,
+    renderDiff,
     planCaseRenames,
     planMarkerOps,
     computePlan,
