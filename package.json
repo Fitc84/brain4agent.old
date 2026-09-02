@@ -5,6 +5,7 @@
   "main": ".agents/skills/.xay-dung-nao-bo/scripts/init_brain.js",
   "scripts": {
     "init-brain": "node .agents/skills/.xay-dung-nao-bo/scripts/init_brain.js",
+    "doctor": "node .agents/skills/.xay-dung-nao-bo/scripts/brain_doctor.js",
     "test": "node --test \"tests/**/*.test.js\"",
     "test:golden": "node --test tests/golden.test.js",
     "golden:make": "node tests/helpers/make-golden.js --engine .agents/skills/.xay-dung-nao-bo/scripts/init_brain.js --out tests/golden/manifest.json",
