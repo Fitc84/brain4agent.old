@@ -63,7 +63,12 @@ orchestrator **tự dựng trên 5 kịch bản riêng**, không dùng fixture c
 **Deploy thật:** hash nguồn ↔ toàn cục khớp 100%; chạy engine từ chính bản toàn cục cho `brain-engine 1.6.0
 template 1.3.0`; file lệnh hết BOM. Backup bản cũ ở scratchpad trước khi ghi.
 
-**CHƯA push.** Kế hoạch tiếp theo là **#10** (chuyển cơ chế vá sang khối đánh dấu ẩn) — đã nạp Idea Vault.
+**ĐÃ push (user ra lệnh):** `a624882..dd7967e` (29 commit #09) rồi `dd7967e..fc03be5` (hotfix), fast-forward, không force.
+Nhánh/tag backup KHÔNG lên remote. **CI lần đầu đỏ cả 2 OS** — bước `doctor-fixture-run` trỏ `tests/fixtures/fleet`
+mà SPEC-P05 quy định nhưng chưa ai tạo (local xanh vì test doctor dựng fleet trong tmp — gotcha **#19**). Sửa `fc03be5`:
+tạo fixture (1 sạch / 1 lỗi BRN-003 / 1 SKIP ⇒ doctor thoát đúng 2) + test T-H06 chốt tồn tại. Run 33609371929:
+**ubuntu ✅ + windows ✅ đủ 13 bước** — mọi gate remote của #09 đã ✅, vòng nâng cấp v1.6.0 ĐÓNG HOÀN TOÀN.
+Kế hoạch tiếp theo là **#10** (chuyển cơ chế vá sang khối đánh dấu ẩn) — đã nạp Idea Vault.
 
 ---
 

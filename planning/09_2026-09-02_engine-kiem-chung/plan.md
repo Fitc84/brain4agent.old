@@ -129,8 +129,22 @@ Chi tiết ma trận và Exit Gates theo môi trường (`⬜ local / ⬜ CI`): 
 | Chạy engine **từ bản toàn cục** | ✅ `brain-engine 1.6.0 template 1.3.0` | **máy thật** |
 | File lệnh không BOM / không `0x08` | ✅ | **máy thật** |
 | `brain-doctor` quét thật, chỉ đọc | ✅ 70 thư mục / ~6 giây / 0 ghi | **máy thật** |
-| CI matrix Windows × Linux | ⬜ chưa chạy (chưa push) | remote |
-| `git push` | ⬜ **CHƯA** — chờ user ra lệnh | remote |
+| CI matrix Windows × Linux | ✅ run 33609371929: ubuntu ✅ + windows ✅, đủ 13 bước | remote |
+| `git push` | ✅ 2026-09-02, user ra lệnh; fast-forward `a624882..dd7967e` rồi `dd7967e..fc03be5` | remote |
+
+### Sai lệch phát hiện KHI mở gate remote (2026-09-02, sau push)
+
+Run CI đầu tiên (33608846259) **đỏ cả 2 OS** tại đúng một bước `doctor-fixture-check`:
+bước `doctor-fixture-run` trỏ vào `tests/fixtures/fleet` — fixture mà SPEC-P05 bước 9
+quy định nhưng **chưa từng được tạo**. Local xanh 192/192 vì bộ test doctor dựng fleet
+trong thư mục tạm, không đụng đường dẫn đó. Đây chính là loại lỗi mà gate remote sinh ra
+để bắt — và nó đã bắt được ngay lần chạy đầu.
+
+**Sửa (`fc03be5`):** tạo `tests/fixtures/fleet/` gồm `00-chuan` (bản sao F02, CLEAN),
+`01-nhan-doi-luat` (bản sao F06, sinh BRN-003 = error ⇒ doctor thoát đúng mã 2),
+`02-thu-muc-thuong` (doctor phải SKIP). Thêm test hygiene **T-H06** chốt fixture này vào
+lưới local: xoá nó thì `npm test` đỏ trước khi CI kịp đỏ. Ghi thành gotcha **#19**.
+Run thứ hai (33609371929): ubuntu ✅ + windows ✅.
 
 ### Việc chuyển sang kế hoạch sau
 Ba ý tưởng đã nạp Idea Vault: **#10** chuyển cơ chế vá sang khối đánh dấu ẩn (điều kiện cần — lưới test — đã xong ở #09);

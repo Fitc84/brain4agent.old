@@ -138,4 +138,8 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Nguyên nhân:** trong shell, `$?` sau một ống dẫn là mã thoát của lệnh **cuối cùng** (`tail`, `head`, `cut`, `grep`), không phải lệnh đầu.
 - **Cách đúng:** chạy lệnh **không qua ống**, chuyển hướng ra `/dev/null` hoặc ra file rồi đọc `$?`; hoặc dùng `${PIPESTATUS[0]}`. Với cổng chặn thao tác khó đảo ngược thì **luôn tách thành lệnh riêng**, đọc kết quả, rồi mới gõ lệnh sau — đừng nối `&&` (xem gotcha #15).
 - **Nguồn:** kế hoạch #09, 2026-09-02 — lỗi của chính orchestrator, lặp lại 3 lần nên ghi thành luật.
-
+## 19. Bước CI Trỏ Tài Nguyên Chưa Commit — Local Xanh 100% Không Chứng Minh Bước CI Chạy Được
+- **Triệu chứng:** local 192/192 test xanh, mọi cổng tự kiểm đạt; push lần đầu thì CI **đỏ cả 2 OS** tại bước `doctor-fixture-check` — doctor thoát mã 3 (`root không tồn tại`) thay vì 2.
+- **Nguyên nhân:** bước CI `doctor-fixture-run` trỏ vào `tests/fixtures/fleet` (SPEC-P05 bước 9 quy định) nhưng fixture **chưa từng được tạo**; bộ test doctor dựng fleet trong thư mục tạm nên không test nào đụng tới đường dẫn đó — tài nguyên chỉ CI dùng thì chỉ CI mới phát hiện thiếu.
+- **Luật rút ra:** mọi tài nguyên mà một bước CI tham chiếu (fixture, script, đường dẫn) phải có **test local chốt sự tồn tại** (dạng T-H06), để `npm test` đỏ trước khi CI kịp đỏ. Khi viết workflow, đối chiếu từng đường dẫn trong `ci.yml` với `git ls-files`.
+- **Nguồn:** kế hoạch #09, run CI đầu tiên 33608846259, 2026-09-02. Sửa tại `fc03be5`.

@@ -30,6 +30,9 @@ Kế hoạch #09. Biến hub từ *"tập tài liệu + một script 772 dòng k
 - Quét thật hệ sinh thái: **58 sạch / 8 cảnh báo / 1 lỗi / 1 chặn / 2 bỏ qua** trên 70 thư mục. Hai ca không sạch đúng bằng hai repo đang bị luật cấm chạm.
 - Bản deploy toàn cục: hash nguồn ↔ đích **khớp 100%**, chạy engine từ chính bản toàn cục cho `brain-engine 1.6.0 template 1.3.0`.
 
+### Addendum (sau push, 2026-09-02)
+- Run CI đầu tiên đỏ cả 2 OS: thiếu `tests/fixtures/fleet` mà SPEC-P05 bước 9 quy định — chính gate remote bắt được lỗi mà 192 test local không thể thấy. Sửa tại `fc03be5` (fixture + test T-H06 chốt tồn tại). Run 33609371929: ubuntu ✅ + windows ✅. Gotcha **#19**.
+
 ### Learned
 - Gotcha **#16**: `git checkout-index -f` KHÔNG ghi đè file đã tồn tại.
 - Gotcha **#17**: đếm token trần để dò luật nhân đôi cho **15 báo động giả** — phải đếm mệnh đề luật.

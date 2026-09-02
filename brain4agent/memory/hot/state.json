@@ -291,16 +291,17 @@
       "09"
     ],
     "next_plan_number": "10",
-    "tests": "192 xanh",
+    "tests": "193 xanh (192 + T-H06)",
     "engine_source_vs_global_deploy": "hash-identical (kiem tay, khong tin script)",
-    "pushed": false,
-    "push_note": "CHUA push #09. Nhanh/tag backup/pre-redact-2026-09-02 va refs/original/ TUYET DOI khong push.",
+    "pushed": true,
+    "push_note": "DA push #09 (user ra lenh 2026-09-02): a624882..dd7967e roi dd7967e..fc03be5, fast-forward. Nhanh/tag backup/pre-redact-2026-09-02 va refs/original/ TUYET DOI khong push.",
     "next_session_first_steps": [
       "chay Buoc 0, roi git log -3 cua hub xem BRAIN_TEMPLATE_VERSION co vua doi khong",
       "chay `npm test` (192 ca) va `npm run deploy:verify` truoc khi sua bat cu thu gi",
       "muon biet repo nao lech chuan: `node .agents/skills/.xay-dung-nao-bo/scripts/brain_doctor.js --root <kho>` - CHI DOC, ~6 giay",
       "ke hoach #10 da co san trong Idea Vault: chuyen co che va sang khoi danh dau an"
-    ]
+    ],
+    "ci_remote": "run 33609371929: ubuntu OK + windows OK du 13 buoc. Run dau 33608846259 DO ca 2 OS vi thieu tests/fixtures/fleet (gotcha #19, sua o fc03be5 kem test T-H06). Tests local: 193."
   },
   "fix_slash_command_collision_2026-09-02": {
     "found_by": "user - thay /compact chay nghi thuc ghi nao thay vi nen ngu canh",
