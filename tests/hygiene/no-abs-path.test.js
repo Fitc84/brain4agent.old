@@ -21,10 +21,9 @@
  *        planning/02_* · planning/03_* · planning/04_* · planning/06_*
  *   4. scripts/deploy_skills.ps1 — đích deploy global còn hardcode. WP3 sẽ tham số hoá;
  *      khi đó hạ số này về 0 và gỡ khỏi allowlist (T-H05b sẽ nhắc).
- *   5. brain4agent/memory/hot/state.json — ⚠️ RÒ RỈ THẬT: một đường dẫn thư mục tạm của
- *      phiên làm việc cũ lọt vào ký ức nóng. Đây KHÔNG phải template. Việc dọn thuộc về
- *      orchestrator (WP2b bị cấm sửa brain4agent/); allowlist ở đây chỉ để ghim con số 1
- *      lại, không cho tăng thêm.
+ *   5. (ĐÃ DỌN 2026-09-02, orchestrator) brain4agent/memory/hot/state.json từng chứa một
+ *      đường dẫn thư mục tạm tuyệt đối kèm mã phiên cũ — RÒ RỈ THẬT, không phải template.
+ *      Đã rút về dạng tương đối và GỠ khỏi allowlist, đúng theo cơ chế bánh cóc của T-H05b.
  */
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -61,7 +60,6 @@ const ALLOWLIST = {
   // (4) WP3 sẽ tham số hoá đích deploy ⇒ hạ về 0
   'scripts/deploy_skills.ps1': 3,
   // (5) ⚠️ rò rỉ thật, chờ orchestrator dọn (WP2b bị cấm sửa brain4agent/)
-  'brain4agent/memory/hot/state.json': 1
 };
 
 const SKIP_PREFIXES = ['archive/', 'tests/hygiene/no-abs-path.test.js'];

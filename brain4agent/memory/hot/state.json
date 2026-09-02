@@ -36,7 +36,7 @@
         "control-syncthing",
         "control-tailscale"
       ],
-      "backup_dir": "C:\\Users\\hoang\\AppData\\Local\\Temp\\claude\\d--Data-Repositories--My-Repositories-brain4agent-old\\5688a6c6-dd21-4a7d-bf7c-818dd6760012\\scratchpad\\backup-nogit-2026-08-31",
+      "backup_dir": "scratchpad/backup-nogit-2026-08-31",
       "verification": "subsequence check vs backup: onlyAdditions=True ca 4; lostStateKeys=0; marker/shim/tail0a OK",
       "no_git_init": true
     },
