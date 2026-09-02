@@ -301,8 +301,7 @@ tối thượng của dự án, giữ **\`AGENTS.md\` là nguồn chân lý DUY 
 `;
 }
 
-function renderFullAgentsMd() {
-    return `# AGENTS.md — Quy Tắc Quản Trị & Giao Thức Khởi Động Cho AI Agent
+const AGENTS_SKELETON = `# AGENTS.md — Quy Tắc Quản Trị & Giao Thức Khởi Động Cho AI Agent
 
 Tệp này là kim chỉ nam tối thượng của dự án. Mọi AI Agent khi bước vào workspace này **BẮT BUỘC** phải tuân thủ nghiêm ngặt các quy tắc và giao thức dưới đây.
 
@@ -312,7 +311,8 @@ Tệp này là kim chỉ nam tối thượng của dự án. Mọi AI Agent khi 
 
 Khi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:
 
-1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\Users\\hoang\\.gemini\\config\\skills\\.xay-dung-nao-bo\\scripts\\init_brain.js\`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.
+<!-- brain:rule:boot -->
+<!-- /brain:rule:boot -->
 2. **Bước 1 (Đọc Kernel Hiện Trạng):** Mở và đọc tệp [\`brain4agent/memory-distill.txt\`](file:///brain4agent/memory-distill.txt) để nắm bắt kernel hiện trạng, tech stack và quy tắc bất biến.
 3. **Bước 2 (Định tuyến thông minh & Đọc Codebase Map):** Đọc [\`brain4agent/index.md\`](file:///brain4agent/index.md) để:
    - Nắm toàn bộ **Bản đồ cấu trúc mã nguồn (Codebase Map)**, khu vực kế hoạch [\`planning/\`](file:///planning) và các Entry Points.
@@ -323,11 +323,12 @@ Khi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện 
 
 ## 🧠 2. MA TRẬN PHÂN VÙNG NÃO BỘ BẤT BIẾN (Brain Partitioning Matrix)
 
-Bộ nhớ dự án trong \`brain4agent/\` được tổ chức theo kiến trúc **Đa tầng (Hot/Cold Memory)** gồm **7 phân vùng chức năng cố định** và **Phân khu Ký ức Nóng (\`memory/hot/\`)**. Tuyệt đối **KHÔNG TỰ Ý TẠO THÊM FILE TÙY TIỆN NGOÀI ROOT HAY TRONG \`brain4agent/\`**:
+Bộ nhớ dự án trong \`brain4agent/\` được tổ chức theo kiến trúc **Đa tầng (Hot/Cold Memory)** gồm **7 phân vùng chức năng cố định**, **Phân khu Ký ức Nóng (\`memory/hot/\`)** và **Phân khu Ký ức Lạnh (\`memory/archive/\`)**. Tuyệt đối **KHÔNG TỰ Ý TẠO THÊM FILE TÙY TIỆN NGOÀI ROOT HAY TRONG \`brain4agent/\`**:
 
 | Tên File / Thư Mục | Vai trò đơn nhất (Single Responsibility) | Khi nào cần đọc / cập nhật? |
 | :--- | :--- | :--- |
 | **\`memory/hot/\`** (\`today.md\`, \`state.json\`) | **Ký ức nóng phiên gần nhất**. Trạng thái máy (JSON) & nhật ký phiên làm việc trong ngày. | Đọc khi cần nắm bắt nhanh bối cảnh phiên trước; Cập nhật vào cuối mỗi phiên làm việc. |
+| **\`memory/archive/\`** (\`YYYY-MM-DD.md\`) | **Ký ức lạnh**: nhật ký đã xoay vòng khỏi \`today.md\`. | Đọc khi cần tra phiên cũ; luật ghi xem khối ngay dưới bảng. |
 | **\`memory-distill.txt\`** | **Kernel hiện trạng** (< 100 dòng). Bản cô đọng cao cấp nhất về tech stack, vai trò và protocol. | Đọc đầu tiên mọi phiên làm việc; Cập nhật khi đổi kiến trúc nền tảng. |
 | **\`index.md\`** | **Master Index Map & Router**. Chứa Bản đồ Codebase, Luồng giao tiếp, Bảng Entry Points & Router tài liệu. | Đọc ở Bước 2 để định tuyến; Cập nhật khi thêm thư mục/module/entry point mới. |
 | **\`project-intro.md\`** | **Tổng quan dự án**. Mục tiêu nghiệp vụ, tech stack, triết lý thiết kế. | Đọc khi cần hiểu bối cảnh tổng quan của sản phẩm. |
@@ -335,6 +336,9 @@ Bộ nhớ dự án trong \`brain4agent/\` được tổ chức theo kiến trú
 | **\`-known-gotchas.md\`** | **Bẫy kỹ thuật & Bugs**. Tổng hợp lỗi khó và các lưu ý dị biệt. | Đọc khi gặp lỗi lạ; Cập nhật ngay khi giải quyết xong một bug dị biệt. |
 | **\`roadmap.md\`** | **Tiến độ, Nhiệm vụ & Kho Ý Tưởng**. Danh sách Active tasks, Idea Vault (Backlog) và việc đã hoàn thành. | Đọc/Cập nhật khi bắt đầu/hoàn thành tính năng hoặc nảy ra ý tưởng mới. |
 | **\`changelog.md\`** | **Lịch sử quyết định & Semantic Releases**. Ghi nhận các quyết định thay đổi kiến trúc và các mốc phiên bản \`vX.Y.Z\`. | Cập nhật sau mỗi đợt nâng cấp hoặc phát hành phiên bản mới. |
+
+<!-- brain:rule:cold-memory -->
+<!-- /brain:rule:cold-memory -->
 
 ---
 
@@ -347,24 +351,8 @@ Mọi đề xuất nâng cấp tính năng lớn, tái cấu trúc hoặc thêm 
    - **Quy tắc STT:** 2 chữ số (\`01\`, \`02\`, ..., \`99\`) tăng dần theo thời gian thực tế.
    - **Quy tắc tên ngắn (2-3 từ):** Giữ độ dài thư mục trong khoảng 25 - 35 ký tự.
    - **Cố định đường dẫn (Path Invariant):** Không đổi tên thư mục khi hoàn thành.
-2. **BẮT BUỘC DẠNG SPEC PACKAGE — CẤM PLAN PHẲNG/MỎNG (luật chốt 2026-09-01):**
-   Một kế hoạch KHÔNG được là một file \`plan.md\` dồn hết mọi thứ. Bắt buộc tách thành **bộ SPEC nhiều file**, mỗi file là MỘT hợp đồng độc lập:
-   \`\`\`text
-   planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]/
-   ├── plan.md                          # HỒ SƠ kế hoạch (KHÔNG chứa thiết kế — xem mục 2.3)
-   └── specs/                           # Bản thiết kế chi tiết (Spec-First)
-       ├── 00-ARCHITECTURE.md           # Mục tiêu, Non-goals, Bất biến kiến trúc, Router thứ tự đọc
-       ├── 01-CONTRACTS.md              # Contracts, Types, Schema/DDL bất biến
-       ├── SPEC-Pxx-[Name].md           # Đặc tả từng mảng/bước thực thi cụ thể
-       ├── OPERATIONS.md                # Deploy, runbook, thứ tự bắt buộc, rollback
-       └── TESTING-ACCEPTANCE.md        # Ma trận test + bằng chứng nghiệm thu + Exit Gates
-   \`\`\`
-   - **2.1. Bộ SPEC tối thiểu:** phải phủ đủ 4 mảng — (a) kiến trúc & bất biến, (b) contract dữ liệu/API/module, (c) vận hành-deploy-rollback, (d) kiểm thử-nghiệm thu. Dự án lớn tách thêm SPEC theo từng tính năng.
-   - **2.2. Mỗi file SPEC BẮT BUỘC có:** contract chính xác (chữ ký hàm/endpoint/schema, không mô tả chung chung); luật **BẮT BUỘC / CẤM** tường minh, kể cả **"vùng cấm"** (điều đã cân nhắc và quyết định KHÔNG làm, kèm lý do — chống việc agent sau "sửa lại cho tốt hơn"); bảng phân loại lỗi + hành vi bắt buộc của caller cho từng loại; số đo/bằng chứng nghiệm thu thật (không chỉ "test xanh").
-   - **2.3. \`plan.md\` CHỈ được chứa:** Metadata Header (mục 3); **Nhật ký quyết định có mốc thời gian** — kèm mục **"Quyết định bị thay thế"** (không xoá lịch sử, không để hai phát biểu ngược nhau cùng sống); phân công Work Packages + Model Tier; checklist thực thi; bảng trỏ sang các file SPEC. **CẤM nhét thiết kế chi tiết vào \`plan.md\`.**
-   - **2.4. Exit Gates phải đánh dấu theo môi trường** (vd \`✅ local / ⬜ server\`) — kế hoạch chỉ được đóng khi mọi gate của môi trường thật chuyển ✅.
-   - **2.5. NGOẠI LỆ DUY NHẤT:** hotfix/patch nhỏ (\`PATCH\` SemVer, ≤1 ngày công) được phép chỉ có \`plan.md\`, nhưng vẫn đủ Metadata + nhật ký quyết định + checklist. Mọi đợt \`MINOR\`/\`MAJOR\` bắt buộc đủ bộ SPEC.
-   - **2.6. Package cũ dạng phẳng** (file \`NN-*.md\` nằm thẳng trong thư mục kế hoạch, không có \`specs/\`) được GIỮ NGUYÊN theo Path Invariant — không đổi cấu trúc để tránh gãy tham chiếu; chỉ áp cấu trúc chuẩn cho kế hoạch MỚI.
+<!-- brain:rule:spec-package -->
+<!-- /brain:rule:spec-package -->
 3. **Quy tắc Phân Tầng Mô Hình (Model Tiering Tagging):**
    - 🔴 **Tier Đỏ (Strongest):** Thiết kế kiến trúc nền tảng, Data Contracts, Security (Ưu tiên mô hình mạnh nhất như Claude 3.7 / Opus / GPT-4.5).
    - 🟠 **Tier Cam (Standard):** Viết logic tính năng chính, xử lý luồng, Unit tests (Mô hình cân bằng như Sonnet).
@@ -412,6 +400,8 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (\`MAJOR.MINOR.PATCH\`)**:
    - **Lịch Sử Phiên Bản (\`brain4agent/changelog.md\`):** Ghi nhận mục phát hành phiên bản mới theo chuẩn SemVer 2.0.0.
    - **Ký Ức Nóng (\`brain4agent/memory/hot/\`):** Ghi nhận nhật ký phiên (\`today.md\`) và benchmark thực chiến (\`state.json\`).
    - **Kernel Hiện Trạng (\`brain4agent/memory-distill.txt\`):** Cập nhật ngắn gọn vào kernel (duy trì $< 100\\text{ dòng}$).
+<!-- brain:rule:structural-extension -->
+<!-- /brain:rule:structural-extension -->
 
 ### C. Quy tắc Quản Lý Tài Liệu Module 1-1 Trong \`docs/\`
 1. **Tên tệp chuẩn hóa trùng tên thư mục Module (1-to-1 Match):** Mọi tài liệu kỹ thuật của một module phải được đặt trong thư mục \`docs/\` với tên tệp **trùng khớp 100% với tên thư mục của module** (\`module-tools/<module_name>/\` $\\rightarrow$ \`docs/<module_name>.md\`).
@@ -437,33 +427,24 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (\`MAJOR.MINOR.PATCH\`)**:
 ### G. Quy tắc Kỷ Luật Root Clean 100% (Zero Root Clutter Invariant)
 1. Thư mục root của dự án phải luôn giữ trạng thái sạch sẽ tuyệt đối.
 2. **CẤM** tạo các file nháp tạm thời (\`latest_memory.md\`, \`task.md\`, script test tạm) trực tiếp ngoài root. Ký ức phiên đưa toàn bộ vào \`brain4agent/memory/hot/\`.
-3. **NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não:** Root được phép có **ĐÚNG MỘT** file \`brain4agent-v<x.y.z>.md\` (vd \`brain4agent-v1.2.0.md\`) do \`init_brain.js\` tự sinh và quản lý — đây là bản soi CHO NGƯỜI để nhìn thấy ngay ở root dự án đang chạy khung não phiên bản nào. **CẤM sửa tay** file này; **CẤM để tồn tại 2 file marker** trở lên (bump version thì script tự xoá bản cũ, sinh bản mới). Nguồn chân lý MÁY ĐỌC là \`brain4agent/memory/hot/state.json\` → field \`brain_template_version\`; file \`.md\` chỉ là bản dẫn xuất, KHÔNG được coi là nguồn chân lý. Field này khác với version DỰ ÁN (\`current_version\` trong \`state.json\`, hoặc \`package.json\`) — tuyệt đối không trộn/ghi đè lẫn nhau.
+<!-- brain:rule:root-marker -->
+<!-- /brain:rule:root-marker -->
 
 ### H. Quy tắc Giám Sát Tác Vụ Ngầm & Heartbeat Tiết Kiệm Token
 1. **Cấm Polling File Log liên tục theo giây:** Tuyệt đối **CẤM** gọi vòng lặp \`view_file\` lên các tệp log liên tục theo chu kỳ ngắn (1-5s).
 2. **Cơ chế Reactive Wakeup:** Để hệ thống tự đánh thức khi task ngầm hoàn tất; nếu cần heartbeat dùng \`schedule\` với chu kỳ $\\ge 45\\text{s} - 60\\text{s}$.
 
-### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)
-1. Root repo BẮT BUỘC đủ 2 file: \`AGENTS.md\` = nguồn chân lý DUY NHẤT chứa toàn bộ luật; \`CLAUDE.md\` = shim mỏng ≤10 dòng, chỉ 1 dòng \`@AGENTS.md\` + ghi chú ngắn, TUYỆT ĐỐI không chứa luật.
-2. Lý do: mỗi hãng agent đọc tên file khác nhau. Claude Code CHỈ auto-load \`CLAUDE.md\`; Gemini/Codex và agent theo chuẩn \`agents.md\` đọc \`AGENTS.md\`. Hai điểm nạp, MỘT nguồn chân lý.
-3. CẤM: (a) chép/nhân bản luật sang \`CLAUDE.md\` → sinh 2 nguồn chân lý lệch nhau; (b) đổi tên \`AGENTS.md\` (các tài liệu trong repo + agent khác tham chiếu đúng tên này).
-4. Khi khởi tạo dự án MỚI hoặc chạy skill \`xay-dung-nao-bo\`: PHẢI sinh ĐỦ CẢ HAI file, không sinh mỗi một cái.
-5. Mở rộng: agent mới đọc tên file riêng (\`GEMINI.md\`, \`.cursorrules\`) → thêm shim mỏng trỏ về \`AGENTS.md\`, KHÔNG nhân bản luật.
-6. Giới hạn \`@import\`: tối đa 4 hop lồng nhau, file ≤4 MiB mới được nạp.
-7. Cách kiểm: sửa luật KHÔNG cần đụng \`CLAUDE.md\`; \`CLAUDE.md\` phình >10 dòng hoặc chứa câu luật là vi phạm. Kiểm nạp thật bằng \`/context\` ở phiên MỚI.
+<!-- brain:rule:dual-entry -->
+<!-- /brain:rule:dual-entry -->
 `;
+
+// Đòn bẩy Đ5: MỘT bản thân luật. AGENTS.md chuẩn = skeleton (6 cặp mốc rỗng) đi qua chính lớp vá.
+function renderFullAgentsMd() {
+    return patchAgentsMd(AGENTS_SKELETON).content;
 }
 
 // LỚP VÁ THUẦN — chuỗi vào, chuỗi ra. Không fs, không Date, không console, không process.
 // Mọi String.replace() ở đây dùng replacement là HÀM (sửa lỗi D3).
-const AGENTS_PATCH_LOGS = {
-    'step0': '🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào AGENTS.md tại root.',
-    'marker-exception': '🔄 Đã tự động vá ngoại lệ "Marker Phiên Bản Khung Não" (§5.G mục 3) vào AGENTS.md hiện có.',
-    'law-j': '🔄 Đã tự động vá Luật J (Dual Entry-Point Invariant) vào AGENTS.md hiện có.',
-    'spec-package': '🔄 Đã tự động vá luật SPEC PACKAGE (CẤM plan phẳng) vào AGENTS.md hiện có.',
-    'remove-legacy-planning': '🧹 Đã gỡ khối luật planning CŨ còn sót cạnh khối SPEC PACKAGE (chống hai nguồn chân lý).'
-};
-
 function patchDistill(content) {
     const patches = [];
     let patchedDistill = content;
@@ -505,62 +486,10 @@ function patchStateJson(lfText, version) {
     return { content: JSON.stringify(currentState, null, 2) + '\n', patches, changed: true };
 }
 
-function patchAgentsMd(content, version) {
-    let currentAgentsMd = content;
-    const patches = [];
-
-    // Vá Bước 0 (Boot Não) nếu thiếu
-    if (!currentAgentsMd.includes('xay-dung-nao-bo')) {
-        currentAgentsMd = currentAgentsMd.replace(
-            /## ⚡ 1\. GIAO THỨC KHỞI ĐỘNG \(Agent Startup Protocol\)\s*\n\s*Khi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:\s*\n/i,
-            () => `## ⚡ 1. GIAO THỨC KHỞI ĐỘNG (Agent Startup Protocol)\n\nKhi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:\n\n1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\\\Users\\\\hoang\\\\.gemini\\\\config\\\\skills\\\\.xay-dung-nao-bo\\\\scripts\\\\init_brain.js\`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.\n`
-        );
-        patches.push('step0');
-    }
-
-    // Vá Ngoại Lệ Root Clean §5.G mục 3 (Marker Phiên Bản Khung Não) nếu AGENTS.md CŨ chưa có.
-    // Dò bằng chuỗi ổn định 'Marker Phiên Bản Khung Não' (không dò theo số dòng/thứ tự mục).
-    if (!currentAgentsMd.includes('Marker Phiên Bản Khung Não')) {
-        const rootMarkerExceptionText = `3. **NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não:** Root được phép có **ĐÚNG MỘT** file \`brain4agent-v<x.y.z>.md\` (vd \`brain4agent-v${version}.md\`) do \`init_brain.js\` tự sinh và quản lý — đây là bản soi CHO NGƯỜI để nhìn thấy ngay ở root dự án đang chạy khung não phiên bản nào. **CẤM sửa tay** file này; **CẤM để tồn tại 2 file marker** trở lên (bump version thì script tự xoá bản cũ, sinh bản mới). Nguồn chân lý MÁY ĐỌC là \`brain4agent/memory/hot/state.json\` → field \`brain_template_version\`; file \`.md\` chỉ là bản dẫn xuất, KHÔNG được coi là nguồn chân lý. Field này khác với version DỰ ÁN (\`current_version\` trong \`state.json\`, hoặc \`package.json\`) — tuyệt đối không trộn/ghi đè lẫn nhau.`;
-        const gSectionMatch = currentAgentsMd.match(/### G\.[^\n]*\n[\s\S]*?(?=\n### |\n## |$)/);
-        if (gSectionMatch) {
-            const originalSection = gSectionMatch[0];
-            const patchedSection = originalSection.replace(/\s*$/, '') + '\n' + rootMarkerExceptionText + '\n';
-            currentAgentsMd = currentAgentsMd.replace(originalSection, () => patchedSection);
-        } else {
-            // Fallback: AGENTS.md không theo đúng cấu trúc chuẩn §5.G -> phụ lục cuối file, vẫn dò được qua includes() lần sau.
-            currentAgentsMd = currentAgentsMd.replace(/\s*$/, '') + `\n\n---\n\n## 🛡️ [PHỤ LỤC TỰ ĐỘNG VÁ] Ngoại Lệ Root Clean — Marker Phiên Bản Khung Não\n\n${rootMarkerExceptionText}\n`;
-        }
-        patches.push('marker-exception');
-    }
-
-    // Vá Luật J — Dual Entry-Point Invariant nếu AGENTS.md CŨ chưa có (dự án init trước khi Luật J
-    // ra đời ở v1.1.0 nhưng AGENTS.md không được vá lại — cùng lớp lỗi với marker exception ở trên).
-    if (!currentAgentsMd.includes('Dual Entry-Point Invariant')) {
-        const dualEntryPointLawText = `### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)
-1. Root repo BẮT BUỘC đủ 2 file: \`AGENTS.md\` = nguồn chân lý DUY NHẤT chứa toàn bộ luật; \`CLAUDE.md\` = shim mỏng ≤10 dòng, chỉ 1 dòng \`@AGENTS.md\` + ghi chú ngắn, TUYỆT ĐỐI không chứa luật.
-2. Lý do: mỗi hãng agent đọc tên file khác nhau. Claude Code CHỈ auto-load \`CLAUDE.md\`; Gemini/Codex và agent theo chuẩn \`agents.md\` đọc \`AGENTS.md\`. Hai điểm nạp, MỘT nguồn chân lý.
-3. CẤM: (a) chép/nhân bản luật sang \`CLAUDE.md\` → sinh 2 nguồn chân lý lệch nhau; (b) đổi tên \`AGENTS.md\` (các tài liệu trong repo + agent khác tham chiếu đúng tên này).
-4. Khi khởi tạo dự án MỚI hoặc chạy skill \`xay-dung-nao-bo\`: PHẢI sinh ĐỦ CẢ HAI file, không sinh mỗi một cái.
-5. Mở rộng: agent mới đọc tên file riêng (\`GEMINI.md\`, \`.cursorrules\`) → thêm shim mỏng trỏ về \`AGENTS.md\`, KHÔNG nhân bản luật.
-6. Giới hạn \`@import\`: tối đa 4 hop lồng nhau, file ≤4 MiB mới được nạp.
-7. Cách kiểm: sửa luật KHÔNG cần đụng \`CLAUDE.md\`; \`CLAUDE.md\` phình >10 dòng hoặc chứa câu luật là vi phạm. Kiểm nạp thật bằng \`/context\` ở phiên MỚI.`;
-        const hSectionMatch = currentAgentsMd.match(/### H\.[^\n]*\n[\s\S]*?(?=\n### |\n## |$)/);
-        if (hSectionMatch) {
-            const originalSection = hSectionMatch[0];
-            const patchedSection = originalSection.replace(/\s*$/, '') + '\n\n' + dualEntryPointLawText + '\n';
-            currentAgentsMd = currentAgentsMd.replace(originalSection, () => patchedSection);
-        } else {
-            // Fallback: không tìm thấy section H theo cấu trúc chuẩn -> phụ lục cuối file.
-            currentAgentsMd = currentAgentsMd.replace(/\s*$/, '') + `\n\n---\n\n${dualEntryPointLawText}\n`;
-        }
-        patches.push('law-j');
-    }
-
-    // Vá luật SPEC PACKAGE (§3 mục 2) nếu AGENTS.md CŨ chưa có — dự án init trước 2026-09-01 vẫn
-    // dùng luật planning cũ (cho phép plan phẳng). Dò bằng chuỗi ổn định 'SPEC PACKAGE'.
-    if (!currentAgentsMd.includes('SPEC PACKAGE')) {
-        const specPackageRuleText = `2. **BẮT BUỘC DẠNG SPEC PACKAGE — CẤM PLAN PHẲNG/MỎNG (luật chốt 2026-09-01):**
+// BẢNG LUẬT KHUNG (01-CONTRACTS §5) — thân luật chỉ tồn tại MỘT bản, ở đây.
+// legacy = thân luật cũ mà chính engine từng viết ra, khớp NGUYÊN VĂN; mảng đoạn = lỗ SemVer (Đ7).
+const BOOT_V130 = `1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\Users\\hoang\\.gemini\\config\\skills\\.xay-dung-nao-bo\\scripts\\init_brain.js\`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.`;
+const SPEC_BODY = `2. **BẮT BUỘC DẠNG SPEC PACKAGE — CẤM PLAN PHẲNG/MỎNG (luật chốt 2026-09-01):**
    Một kế hoạch KHÔNG được là một file \`plan.md\` dồn hết mọi thứ. Bắt buộc tách thành **bộ SPEC nhiều file**, mỗi file là MỘT hợp đồng độc lập:
    \`\`\`text
    planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]/
@@ -578,38 +507,100 @@ function patchAgentsMd(content, version) {
    - **2.4. Exit Gates phải đánh dấu theo môi trường** (vd \`✅ local / ⬜ server\`) — kế hoạch chỉ được đóng khi mọi gate của môi trường thật chuyển ✅.
    - **2.5. NGOẠI LỆ DUY NHẤT:** hotfix/patch nhỏ (\`PATCH\` SemVer, ≤1 ngày công) được phép chỉ có \`plan.md\`, nhưng vẫn đủ Metadata + nhật ký quyết định + checklist. Mọi đợt \`MINOR\`/\`MAJOR\` bắt buộc đủ bộ SPEC.
    - **2.6. Package cũ dạng phẳng** (file \`NN-*.md\` nằm thẳng trong thư mục kế hoạch, không có \`specs/\`) được GIỮ NGUYÊN theo Path Invariant — không đổi cấu trúc để tránh gãy tham chiếu; chỉ áp cấu trúc chuẩn cho kế hoạch MỚI.`;
-        // Ưu tiên thay khối "Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)" cũ; không có thì chèn
-        // ngay sau tiêu đề §3; không thấy §3 thì phụ lục cuối file (lần sau includes() vẫn dò được).
-        const oldStructureBlock = currentAgentsMd.match(
-            /2\. \*\*Cấu trúc Thư mục Kế hoạch Chuẩn \(Spec-First\):\*\*\r?\n(?:.*\r?\n)*?   ```\r?\n/
-        );
-        if (oldStructureBlock) {
-            currentAgentsMd = currentAgentsMd.replace(oldStructureBlock[0], () => specPackageRuleText + '\n');
-        } else {
-            const planningHeading = currentAgentsMd.match(/## 📋 3\.[^\r\n]*\r?\n/);
-            if (planningHeading) {
-                const at = currentAgentsMd.indexOf(planningHeading[0]) + planningHeading[0].length;
-                currentAgentsMd = currentAgentsMd.slice(0, at) + '\n' + specPackageRuleText + '\n' + currentAgentsMd.slice(at);
-            } else {
-                currentAgentsMd = currentAgentsMd.replace(/\s*$/, '') +
-                    '\n\n---\n\n## 📋 [PHỤ LỤC TỰ ĐỘNG VÁ] Quản Trị Kế Hoạch — SPEC PACKAGE bắt buộc\n\n' + specPackageRuleText + '\n';
-            }
-        }
-        patches.push('spec-package');
-    } else {
-        // Dọn tàn dư: bản vá đời trước dùng regex chỉ khớp LF nên trên file CRLF nó rơi vào nhánh
-        // CHÈN THÊM thay vì THAY THẾ, để lại khối luật planning CŨ nằm cạnh khối SPEC PACKAGE mới
-        // => hai phát biểu ngược nhau cùng sống. Gỡ khối cũ đi, giữ khối mới.
-        const legacyStructureBlock = currentAgentsMd.match(
-            /2\. \*\*Cấu trúc Thư mục Kế hoạch Chuẩn \(Spec-First\):\*\*\r?\n(?:.*\r?\n)*?   ```\r?\n/
-        );
-        if (legacyStructureBlock) {
-            currentAgentsMd = currentAgentsMd.replace(legacyStructureBlock[0], '');
-            patches.push('remove-legacy-planning');
-        }
-    }
+const DUAL_BODY = `### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)
+1. Root repo BẮT BUỘC đủ 2 file: \`AGENTS.md\` = nguồn chân lý DUY NHẤT chứa toàn bộ luật; \`CLAUDE.md\` = shim mỏng ≤10 dòng, chỉ 1 dòng \`@AGENTS.md\` + ghi chú ngắn, TUYỆT ĐỐI không chứa luật.
+2. Lý do: mỗi hãng agent đọc tên file khác nhau. Claude Code CHỈ auto-load \`CLAUDE.md\`; Gemini/Codex và agent theo chuẩn \`agents.md\` đọc \`AGENTS.md\`. Hai điểm nạp, MỘT nguồn chân lý.
+3. CẤM: (a) chép/nhân bản luật sang \`CLAUDE.md\` → sinh 2 nguồn chân lý lệch nhau; (b) đổi tên \`AGENTS.md\` (các tài liệu trong repo + agent khác tham chiếu đúng tên này).
+4. Khi khởi tạo dự án MỚI hoặc chạy skill \`xay-dung-nao-bo\`: PHẢI sinh ĐỦ CẢ HAI file, không sinh mỗi một cái.
+5. Mở rộng: agent mới đọc tên file riêng (\`GEMINI.md\`, \`.cursorrules\`) → thêm shim mỏng trỏ về \`AGENTS.md\`, KHÔNG nhân bản luật.
+6. Giới hạn \`@import\`: tối đa 4 hop lồng nhau, file ≤4 MiB mới được nạp.
+7. Cách kiểm: sửa luật KHÔNG cần đụng \`CLAUDE.md\`; \`CLAUDE.md\` phình >10 dòng hoặc chứa câu luật là vi phạm. Kiểm nạp thật bằng \`/context\` ở phiên MỚI.`;
+const RM_A = `3. **NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não:** Root được phép có **ĐÚNG MỘT** file \`brain4agent-v<x.y.z>.md\` (vd \`brain4agent-v`;
+const RM_B = `.md\`) do \`init_brain.js\` tự sinh và quản lý — đây là bản soi CHO NGƯỜI để nhìn thấy ngay ở root dự án đang chạy khung não phiên bản nào. **CẤM sửa tay** file này; **CẤM để tồn tại 2 file marker** trở lên (bump version thì script tự xoá bản cũ, sinh bản mới). Nguồn chân lý MÁY ĐỌC là \`brain4agent/memory/hot/state.json\` → field \`brain_template_version\`; file \`.md\` chỉ là bản dẫn xuất, KHÔNG được coi là nguồn chân lý. Field này khác với version DỰ ÁN (\`current_version\` trong \`state.json\`, hoặc \`package.json\`) — tuyệt đối không trộn/ghi đè lẫn nhau.`;
 
-    return { content: currentAgentsMd, patches, changed: patches.length > 0 };
+const RULE_BLOCKS = [
+    { id: 'boot', token: 'xay-dung-nao-bo', probe: 'Bước 0 (Bắt buộc tiên quyết',
+        body: `1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy \`node C:\\Users\\hoang\\.gemini\\config\\skills\\.xay-dung-nao-bo\\scripts\\init_brain.js --check\` (skill \`.xay-dung-nao-bo\`, CHỈ ĐỌC) để kiểm tra não bộ đã đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào. Chỉ khi kết quả là \`CẦN NÂNG CẤP\` mới chạy lại **không cờ** (chế độ GHI) và nêu tường minh trong phiên; mã thoát \`2\` = cần người xử — KHÔNG tự sửa tay vùng luật do engine quản lý.`, legacy: [BOOT_V130] },
+    { id: 'cold-memory', token: 'Ký ức lạnh (Cold Memory)', probe: 'Ký ức lạnh (Cold Memory) — `memory/archive/`',
+        body: `**Ký ức lạnh (Cold Memory) — \`memory/archive/\`:** phân khu chứa các mục nhật ký đã xoay vòng khỏi \`memory/hot/today.md\`, mỗi file tên \`YYYY-MM-DD.md\`. CHỈ script xoay ký ức được ghi (append); CẤM sửa tay; CẤM coi là nguồn chân lý hiện trạng (kernel \`memory-distill.txt\` và \`index.md\` mới là). Engine chỉ tạo thư mục, KHÔNG sinh \`.gitkeep\`, KHÔNG quản lý script xoay; file không đúng mẫu tên bị \`brain-doctor\` báo \`BRN-017\`.`, legacy: [] },
+    { id: 'spec-package', token: 'SPEC PACKAGE', probe: 'BẮT BUỘC DẠNG SPEC PACKAGE', body: SPEC_BODY, legacy: [SPEC_BODY] },
+    { id: 'structural-extension', token: 'Structural Extension', probe: 'Structural Extension',
+        body: `2. **Mở Rộng Bắt Buộc Khi Đổi Nền Cấu Trúc (Structural Extension):** Kế hoạch nào thêm **THƯ MỤC TOP-LEVEL mới** (vd \`app/\`, \`legacy/\`, \`.claude/agents/\`) hoặc đưa vào **NGÔN NGỮ / KHUNG mới** (vd Rust, Tauri, React, Node ESM) thì BẮT BUỘC rà thêm **2 file ngoài Ma Trận 6 Điểm**: [\`brain4agent/project-intro.md\`](file:///brain4agent/project-intro.md) (mục tiêu, bản chất repo, tech stack) và [\`brain4agent/-data-architecture.md\`](file:///brain4agent/-data-architecture.md) (tầng lưu trữ, data flow). Lý do: hai file này KHÔNG thuộc 6 điểm nên dễ mô tả sai repo trong thời gian dài mà mọi kiểm tra tự động vẫn xanh; bản chất repo và tech stack chỉ con người rà được.`, legacy: [] },
+    { id: 'root-marker', token: 'Marker Phiên Bản Khung Não', probe: 'NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não',
+        body: `3. **NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não:** Root được phép có **ĐÚNG MỘT** file \`brain4agent-v<x.y.z>.md\` do \`init_brain.js\` tự sinh và quản lý — đây là bản soi CHO NGƯỜI để nhìn thấy ngay ở root dự án đang chạy khung não phiên bản nào. **CẤM sửa tay** file này; **CẤM để tồn tại 2 file marker** trở lên (bump version thì script tự xoá bản cũ, sinh bản mới). Nguồn chân lý MÁY ĐỌC là \`brain4agent/memory/hot/state.json\` → field \`brain_template_version\`; file \`.md\` chỉ là bản dẫn xuất, KHÔNG được coi là nguồn chân lý. Field này khác với version DỰ ÁN (\`current_version\` trong \`state.json\`, hoặc \`package.json\`) — tuyệt đối không trộn/ghi đè lẫn nhau.`, legacy: [[RM_A, RM_B]] },
+    { id: 'dual-entry', token: 'Dual Entry-Point Invariant', probe: '### J. Quy tắc Tương Thích Đa Agent', body: DUAL_BODY, legacy: [DUAL_BODY] }
+];
+
+// LÕI MARKER (SPEC-P01). Mốc so khớp THEO DÒNG trên văn bản LF; 0 literal regex ở lớp này.
+const OPEN = (id) => '<!-- brain:rule:' + id + ' -->';
+const CLOSE = (id) => '<!-- /brain:rule:' + id + ' -->';
+const SEMVER_HOLE = '\\d+\\.\\d+\\.\\d+';
+const APPENDIX_HEADING = '## 🔒 Luật khung do engine quản lý (tự sinh)';
+const RE_SPECIALS = '.*+?^${}()|[]\\';
+const escapeRe = (s) => s.split('').map((ch) => (RE_SPECIALS.indexOf(ch) === -1 ? ch : '\\' + ch)).join('');
+const rtrimText = (s) => { let n = s.length; while (n > 0 && ' \t\n'.indexOf(s[n - 1]) !== -1) n--; return s.slice(0, n); };
+
+// findBlock — ĐÚNG 4 nhánh trả về. Không có nhánh thứ 5, KHÔNG diễn giải "mốc mở → EOF" (Đ2).
+function findBlock(lines, id) {
+    const o = [], c = [];
+    lines.forEach((l, i) => { if (l === OPEN(id)) o.push(i); else if (l === CLOSE(id)) c.push(i); });
+    if (o.length === 0 && c.length === 0) return null;
+    if (o.length !== 1 || c.length !== 1 || c[0] < o[0]) return 'malformed';
+    return { open: o[0], close: c[0], inner: lines.slice(o[0] + 1, c[0]).join('\n') };
+}
+
+function findLegacy(text, legacy) {
+    for (const item of legacy) {
+        if (typeof item === 'string') {
+            const at = text.indexOf(item);
+            if (at !== -1) return { start: at, end: at + item.length };
+            continue;
+        }
+        const m = new RegExp(item.map(escapeRe).join(SEMVER_HOLE)).exec(text);
+        if (m) return { start: m.index, end: m.index + m[0].length };
+    }
+    return null;
+}
+
+// classifyRuleBlocks — ĐỊNH NGHĨA DUY NHẤT "thế nào là thiếu luật" (M-9). Thứ tự kiểm là hợp đồng: malformed → khối → legacy → probe → absent.
+function classifyRuleBlocks(text) {
+    const lines = text.split('\n');
+    const covered = lines.map(() => false);
+    const blocks = RULE_BLOCKS.map((blk) => findBlock(lines, blk.id));
+    for (const b of blocks) if (b && b !== 'malformed') for (let i = b.open; i <= b.close; i++) covered[i] = true;
+    const outside = lines.filter((l, i) => !covered[i]).join('\n');
+    return RULE_BLOCKS.map((blk, k) => {
+        const b = blocks[k], seen = outside.indexOf(blk.probe) !== -1;
+        if (b === 'malformed') return { id: blk.id, state: 'malformed', extra: false };
+        if (b) return { id: blk.id, state: b.inner === blk.body ? 'ok' : 'stale', extra: seen, block: b };
+        const span = findLegacy(text, blk.legacy);
+        if (span) return { id: blk.id, state: 'legacy', extra: false, span };
+        return { id: blk.id, state: seen ? 'edited' : 'absent', extra: false };
+    });
+}
+
+// patchAgentsMd — vùng GIỮA hai mốc là lãnh địa máy; ngoài mốc là lãnh địa người dùng.
+function patchAgentsMd(content) {
+    let text = content;
+    const patches = [], broken = [], added = [];
+    for (const blk of RULE_BLOCKS) {
+        const st = classifyRuleBlocks(text).filter((s) => s.id === blk.id)[0];
+        const wrapped = OPEN(blk.id) + '\n' + blk.body + '\n' + CLOSE(blk.id);
+        if (st.state === 'stale') {
+            const lines = text.split('\n');
+            text = lines.slice(0, st.block.open + 1).concat(blk.body.split('\n'), lines.slice(st.block.close)).join('\n');
+            patches.push('sync:' + blk.id);
+        } else if (st.state === 'legacy') {
+            text = text.slice(0, st.span.start) + wrapped + text.slice(st.span.end);
+            patches.push('adopt:' + blk.id);
+        } else if (st.state === 'absent') { added.push(wrapped); patches.push('add:' + blk.id); }
+        else if (st.state !== 'ok') broken.push(blk.id);
+    }
+    if (added.length > 0) {
+        const head = text.split('\n').indexOf(APPENDIX_HEADING) !== -1 ? '\n\n' : '\n\n---\n\n' + APPENDIX_HEADING + '\n\n';
+        text = rtrimText(text) + head + added.join('\n\n') + '\n';
+    }
+    return { content: text, patches, broken, changed: patches.length > 0 };
 }
 
 function patchClaudeMd(content) {
@@ -742,30 +733,6 @@ function diagnose(s, templateVersion) {
         if (missingTokens.length > 0) add('BRN-002', 'AGENTS.md thiếu token mốc bắt buộc', { missing: missingTokens });
         if (agentsText.includes('SPEC PACKAGE') && agentsText.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)')) {
             add('BRN-003');
-        }
-        // I6: ĐẾM số lần MỆNH ĐỀ LUẬT xuất hiện, KHÔNG đếm token trần.
-        //
-        // Vì sao không đếm token trần: chính engine, khi vá theo đường PHỤ LỤC (dòng 532, 595),
-        // sinh ra TIÊU ĐỀ có chứa token — ví dụ '## [PHỤ LỤC TỰ ĐỘNG VÁ] ... SPEC PACKAGE bắt buộc'
-        // — rồi thân luật lặp lại token đó. Một repo được vá ĐÚNG vì thế vẫn đếm ra 2.
-        // Đo thật trên toàn hệ sinh thái 2026-09-02: đếm token trần cho 2 ở 8 repo (đều là
-        // báo động giả), đếm mệnh đề luật cho 1 ở TẤT CẢ. Chỉ mệnh đề lặp mới là trùng thật.
-        const RULE_ANCHORS = {
-            'SPEC PACKAGE': 'BẮT BUỘC DẠNG SPEC PACKAGE',
-            'Marker Phiên Bản Khung Não': 'NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não',
-            'Dual Entry-Point Invariant': '### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp'
-        };
-        const counts = {};
-        for (const [label, anchor] of Object.entries(RULE_ANCHORS)) {
-            const c = agentsText.split(anchor).length - 1;
-            if (c > 1) counts[label] = c;
-        }
-        const dupTokens = Object.keys(counts);
-        if (dupTokens.length > 0) {
-            add('BRN-003',
-                'AGENTS.md có mệnh đề luật lặp lại: ' + dupTokens.map((t) => t + ' ×' + counts[t]).join(', '),
-                { counts },
-                { fixable: false, fix: 'Soi tay AGENTS.md, gỡ bản thừa (engine KHÔNG tự sửa nội dung người dùng)' });
         }
     }
 
@@ -999,14 +966,13 @@ function computePlan(s, version, now) {
         ops.push({ op: 'write', rel: 'AGENTS.md', text: renderFullAgentsMd(), eol: 'lf', create: true, reason: 'sinh AGENTS.md chuan', log: ['✅ Đã tạo mới: AGENTS.md với ĐẦY ĐỦ CÁC BỘ LUẬT QUẢN TRỊ TINH HOA!'] });
     } else {
         const f = s.files.agentsMd;
-        const res = patchAgentsMd(f.text, version);
-        const lines = res.patches.map((p) => AGENTS_PATCH_LOGS[p]);
+        const res = patchAgentsMd(f.text);
+        const lines = res.patches.map((p) => '🔄 AGENTS.md [' + p + ']');
         if (res.changed) {
             ops.push({ op: 'write', rel: 'AGENTS.md', text: res.content, eol: f.eol, create: false, reason: 'va luat vao AGENTS.md', log: lines.concat(mixedWarn('AGENTS.md', f.eol)) });
         } else {
-            for (const line of lines) say(line);
+            say('📄 Đã có sẵn: AGENTS.md (đầy đủ luật, giữ nguyên).');
         }
-        if (!res.patches.some((p) => p !== 'remove-legacy-planning')) say('📄 Đã có sẵn: AGENTS.md (đầy đủ luật, giữ nguyên).');
     }
 
     // 9) CLAUDE.md
@@ -1421,6 +1387,14 @@ module.exports = {
     renderFullAgentsMd,
     patchDistill,
     patchStateJson,
+    RULE_BLOCKS,
+    AGENTS_SKELETON,
+    APPENDIX_HEADING,
+    OPEN,
+    CLOSE,
+    findBlock,
+    findLegacy,
+    classifyRuleBlocks,
     patchAgentsMd,
     patchClaudeMd,
     BRN,
