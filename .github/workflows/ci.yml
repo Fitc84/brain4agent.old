@@ -1,0 +1,187 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BRAIN_TEST_REQUIRE_TOOLS: '1'
+  BRAIN_NOW: '2026-01-15T03:04:05.000Z'
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: autocrlf-off
+        run: git config --global core.autocrlf false
+
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: versions
+        run: |
+          node --version
+          git --version
+          pwsh --version
+
+      - name: test
+        run: npm test
+
+      - name: self-check
+        run: node .agents/skills/.xay-dung-nao-bo/scripts/init_brain.js --check .
+
+      - name: eol-gate
+        run: |
+          node - <<'EOF'
+          const { execFileSync } = require('node:child_process');
+          const out = execFileSync('git', ['ls-files', '--eol'], { encoding: 'utf8' });
+          const FIXTURES_PREFIX = 'tests/fixtures/';
+          const BINARY_RE = /\.(png|jpg|jpeg|gif|ico|pdf|zip|woff2?|ttf)$/i;
+          const bad = [];
+          for (const line of out.split('\n').filter(Boolean)) {
+            const tab = line.indexOf('\t');
+            const info = line.slice(0, tab);
+            const rel = line.slice(tab + 1).replace(/\\/g, '/');
+            if (rel.startsWith(FIXTURES_PREFIX) || BINARY_RE.test(rel)) continue;
+            if (/w\/crlf|w\/mixed|i\/crlf|i\/mixed/.test(info)) bad.push(rel + ' -> ' + info.trim());
+            if (/i\/-text|attr\/-text/.test(info)) bad.push(rel + ' -> -text ngoai tests/fixtures/');
+          }
+          if (bad.length) {
+            console.error('EOL GATE FAIL:\n' + bad.join('\n'));
+            process.exit(1);
+          }
+          console.log('OK: eol-gate 0 vi pham');
+          EOF
+
+      - name: bom-gate
+        run: |
+          node - <<'EOF'
+          const { execFileSync } = require('node:child_process');
+          const fs = require('node:fs');
+          const FIXTURES_PREFIX = 'tests/fixtures/';
+          const BINARY_RE = /\.(png|jpg|jpeg|gif|ico|pdf|zip|woff2?|ttf)$/i;
+          const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+          const bad = [];
+          for (const rel of files) {
+            if (rel.startsWith(FIXTURES_PREFIX) || BINARY_RE.test(rel)) continue;
+            let buf;
+            try { buf = fs.readFileSync(rel); } catch (e) { continue; }
+            if (buf.length >= 3 && buf[0] === 0xef && buf[1] === 0xbb && buf[2] === 0xbf) bad.push(rel);
+          }
+          if (bad.length) {
+            console.error('BOM GATE FAIL:\n' + bad.join('\n'));
+            process.exit(1);
+          }
+          console.log('OK: bom-gate 0 vi pham');
+          EOF
+
+      - name: abs-path-gate
+        run: |
+          node - <<'EOF'
+          const { execFileSync } = require('node:child_process');
+          const fs = require('node:fs');
+          const ABS_PATH_RE = new RegExp(
+            ['[A-Za-z]:[\\\\/]{1,2}' + 'Users' + '[\\\\/]', '/home/[a-z][a-z0-9_-]*/', '/' + 'Users' + '/[a-z][a-z0-9_-]*/'].join('|')
+          );
+          const SKIP_PREFIXES = ['archive/', 'tests/hygiene/no-abs-path.test.js'];
+          const BINARY_RE = /\.(png|jpg|jpeg|gif|ico|pdf|zip|woff2?|ttf)$/i;
+          // Nguon su that: cung mot ALLOWLIST dang duoc npm test dung o tests/hygiene/no-abs-path.test.js
+          // (T-H05). Giu dong bo thu cong: sua o mot noi thi sua ca hai.
+          const ALLOWLIST = {
+            '.agents/skills/.xay-dung-nao-bo/scripts/init_brain.js': 2,
+            '.agents/skills/.xay-dung-nao-bo/SKILL.md': 1,
+            'AGENTS.md': 1,
+            'CORE_GOVERNANCE_RULES.md': 1,
+            'brain4agent/memory-distill.txt': 1,
+            'README.md': 2,
+            'docs/UNIVERSAL_AGENT_GUIDE.md': 3,
+            'brain4agent/project-intro.md': 1,
+            'brain4agent/-data-architecture.md': 3,
+            'brain4agent/-known-gotchas.md': 3,
+            'planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md': 3,
+            'planning/03_2026-08-31_brain-version-marker/plan.md': 4,
+            'planning/04_2026-08-31_rollout-ecosystem/plan.md': 1,
+            'planning/06_2026-08-31_dong-bo-67-repo/plan.md': 1,
+            'scripts/deploy_skills.ps1': 3,
+          };
+          const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+          const violations = [];
+          for (const rel of files) {
+            if (SKIP_PREFIXES.some((p) => rel.startsWith(p))) continue;
+            if (BINARY_RE.test(rel)) continue;
+            let src;
+            try { src = fs.readFileSync(rel, 'utf8'); } catch (e) { continue; }
+            const n = src.split('\n').filter((l) => ABS_PATH_RE.test(l)).length;
+            if (n === 0) continue;
+            const allowed = ALLOWLIST[rel];
+            if (allowed === undefined) violations.push(rel + ': ' + n + ' dong (khong co trong allowlist)');
+            else if (n > allowed) violations.push(rel + ': ' + n + ' dong > ' + allowed + ' duoc phep');
+          }
+          if (violations.length) {
+            console.error('ABS-PATH GATE FAIL:\n' + violations.join('\n'));
+            process.exit(1);
+          }
+          console.log('OK: abs-path-gate 0 vi pham moi');
+          EOF
+
+      - name: doctor-fixture-run
+        id: doctor
+        run: |
+          set +e
+          node .agents/skills/.xay-dung-nao-bo/scripts/brain_doctor.js --root tests/fixtures/fleet --json "$RUNNER_TEMP/fleet-report.json"
+          code=$?
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      - name: doctor-fixture-check
+        env:
+          DOCTOR_EXIT: ${{ steps.doctor.outputs.code }}
+        run: |
+          node -e "
+          const code = process.env.DOCTOR_EXIT;
+          if (code !== '2') {
+            console.error('FAIL: doctor exit=' + code + ' (ky vong 2)');
+            process.exit(1);
+          }
+          console.log('OK: doctor exit 2 as expected');
+          "
+
+      - name: deploy-dry
+        run: |
+          pwsh -NoProfile -File scripts/deploy_skills.ps1 -DryRun -GeminiSkillsRoot "$RUNNER_TEMP/g" -ClaudeCommandsRoot "$RUNNER_TEMP/c"
+
+      - name: version-sync
+        run: |
+          node - <<'EOF'
+          const pkg = require('./package.json');
+          const engine = require('./.agents/skills/.xay-dung-nao-bo/scripts/init_brain.js');
+          if (pkg.version !== engine.ENGINE_VERSION) {
+            console.error('FAIL: package.json.version=' + pkg.version + ' != ENGINE_VERSION=' + engine.ENGINE_VERSION);
+            process.exit(1);
+          }
+          console.log('OK: version-sync ' + pkg.version);
+          EOF
