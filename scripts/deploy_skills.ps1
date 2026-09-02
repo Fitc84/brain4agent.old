@@ -1,57 +1,98 @@
 # ==============================================================================
 # Script Triển Khai Đồng Bộ Kỹ Năng Đa Trình Agent (Multi-Agent Ecosystem)
 # Hỗ trợ: Antigravity IDE, Gemini CLI, Claude Code, Codex, Cursor & Windsurf
+# FAIL-CLOSED theo SPEC-P03 (kế hoạch #09): đối chiếu SHA-256 nguồn <-> đích,
+# ghi file văn bản UTF-8 KHÔNG BOM bằng bộ ghi .NET, bắt buộc pwsh 7.
 # ==============================================================================
+#requires -Version 7.0
+[CmdletBinding()]
+param(
+    [switch]$DryRun,
+    [switch]$VerifyOnly,
+    [string]$GeminiSkillsRoot = (Join-Path $HOME '.gemini/config/skills'),
+    [string]$ClaudeCommandsRoot = (Join-Path $HOME '.claude/commands')
+)
 
-$hubRoot = Split-Path -Parent $PSScriptRoot
-$sourceSkill = Join-Path $hubRoot ".agents\skills\.xay-dung-nao-bo"
-$sourceCompact = Join-Path $hubRoot ".agents\skills\.compact"
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false) } catch { $null = $_ }
 
-$geminiSkillsRoot = "C:\Users\hoang\.gemini\config\skills"
-$claudeCommandsRoot = "C:\Users\hoang\.claude\commands"
+# Mặc định là TỰ LỖI (3). Chỉ được hạ xuống 0 sau khi đi hết bước đối chiếu B5.
+$exit = 3
 
-Write-Host "`n===========================================================" -ForegroundColor Cyan
-Write-Host "🚀 ĐANG TRIỂN KHAI SKILLS SANG TOÀN BỘ HỆ SINH THÁI AI AGENT..." -ForegroundColor Cyan
-Write-Host "===========================================================" -ForegroundColor Cyan
-Write-Host "📁 Source: $hubRoot\.agents\skills\" -ForegroundColor DarkGray
-
-# 1. Kiểm tra an toàn trước khi deploy (Safety Validation Gate)
-if (-not (Test-Path $sourceSkill)) {
-    Write-Error "❌ Không tìm thấy thư mục nguồn: $sourceSkill"
-    exit 1
+function Write-Row {
+    param([string]$Status, [string]$Hash, [string]$Rel, [string]$Note = '')
+    $line = '{0,-8} {1,-9} {2}' -f $Status, $Hash, $Rel
+    if ($Note) { $line = "$line  $Note" }
+    Write-Host $line
 }
-if (-not (Test-Path $sourceCompact)) {
-    Write-Error "❌ Không tìm thấy thư mục nguồn: $sourceCompact"
-    exit 1
+
+function Write-Utf8NoBom {
+    param([string]$Path, [string]$Content)
+    [System.IO.File]::WriteAllText($Path, $Content, (New-Object System.Text.UTF8Encoding $false))
 }
 
 try {
     # -------------------------------------------------------------------------
-    # Target 1: Google Antigravity & Gemini CLI (Global Skills)
+    # B1. NGUỒN — thiếu thư mục nguồn => mã thoát 1
     # -------------------------------------------------------------------------
-    $destSkillGemini = Join-Path $geminiSkillsRoot ".xay-dung-nao-bo"
-    $destCompactGemini = Join-Path $geminiSkillsRoot ".compact"
+    $hubRoot = Split-Path -Parent $PSScriptRoot
 
-    if (-not (Test-Path $destSkillGemini)) {
-        New-Item -Path $destSkillGemini -ItemType Directory -Force | Out-Null
+    Write-Host "`n===========================================================" -ForegroundColor Cyan
+    Write-Host "🚀 ĐANG TRIỂN KHAI SKILLS SANG TOÀN BỘ HỆ SINH THÁI AI AGENT..." -ForegroundColor Cyan
+    Write-Host "===========================================================" -ForegroundColor Cyan
+    $mode = if ($DryRun) { 'DRY-RUN (không ghi)' } elseif ($VerifyOnly) { 'VERIFY-ONLY (không ghi)' } else { 'DEPLOY' }
+    Write-Host "📁 Source : $hubRoot\.agents\skills\" -ForegroundColor DarkGray
+    Write-Host "📦 Gemini : $GeminiSkillsRoot" -ForegroundColor DarkGray
+    Write-Host "📦 Claude : $ClaudeCommandsRoot" -ForegroundColor DarkGray
+    Write-Host "⚙️  Mode   : $mode" -ForegroundColor DarkGray
+    Write-Host ''
+
+    $sources = [ordered]@{
+        '.xay-dung-nao-bo' = (Join-Path $hubRoot '.agents/skills/.xay-dung-nao-bo')
+        '.compact'         = (Join-Path $hubRoot '.agents/skills/.compact')
     }
-    Copy-Item -Path "$sourceSkill\*" -Destination $destSkillGemini -Recurse -Force
-
-    if (-not (Test-Path $destCompactGemini)) {
-        New-Item -Path $destCompactGemini -ItemType Directory -Force | Out-Null
+    foreach ($name in $sources.Keys) {
+        if (-not (Test-Path -LiteralPath $sources[$name] -PathType Container)) {
+            $exit = 1
+            Write-Error "❌ Không tìm thấy thư mục nguồn: $($sources[$name])"
+        }
     }
-    Copy-Item -Path "$sourceCompact\*" -Destination $destCompactGemini -Recurse -Force
-
-    Write-Host "✅ [1/2] Đã deploy Global Skills cho Antigravity / Gemini CLI -> $geminiSkillsRoot" -ForegroundColor Green
 
     # -------------------------------------------------------------------------
-    # Target 2: Anthropic Claude Code (Global Command: /xay-dung-nao-bo)
+    # B2. KẾ HOẠCH — liệt kê đệ quy mọi file nguồn + hash nguồn
     # -------------------------------------------------------------------------
-    if (Test-Path $claudeCommandsRoot) {
-        $claudeInitBrainCommand = Join-Path $claudeCommandsRoot "xay-dung-nao-bo.md"
-        # KHONG deploy "compact.md": ten do DE LEN lenh /compact built-in cua Claude Code,
+    $plan = [System.Collections.Generic.List[object]]::new()
+    foreach ($name in $sources.Keys) {
+        $srcDir = (Resolve-Path -LiteralPath $sources[$name]).Path
+        $destDir = Join-Path $GeminiSkillsRoot $name
+        foreach ($file in (Get-ChildItem -LiteralPath $srcDir -File -Recurse -Force -ErrorAction Stop)) {
+            $rel = ($file.FullName.Substring($srcDir.Length).TrimStart('\', '/')) -replace '\\', '/'
+            $plan.Add([pscustomobject]@{
+                    Rel     = "$name/$rel"
+                    Src     = $file.FullName
+                    Dest    = (Join-Path $destDir $rel)
+                    SrcHash = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256 -ErrorAction Stop).Hash
+                })
+        }
+    }
+    $planRels = @($plan.Rel)
 
-        $claudeInitBrainContent = @'
+    # File lệnh Claude Code — CẤM trùng tên lệnh built-in (gotcha #13)
+    $reservedCommandNames = @(
+        'compact', 'clear', 'help', 'model', 'init', 'context', 'config', 'cost', 'doctor',
+        'login', 'logout', 'memory', 'review', 'status', 'terminal-setup', 'vim', 'bug',
+        'pr-comments', 'release-notes'
+    )
+    $cmdName = 'xay-dung-nao-bo'
+    if ($reservedCommandNames -contains $cmdName) {
+        throw "Tên file lệnh '$cmdName' trùng lệnh built-in của Claude Code — CẤM deploy (gotcha #13)."
+    }
+    $cmdPath = Join-Path $ClaudeCommandsRoot "$cmdName.md"
+    # Đường dẫn engine trong bản global — dẫn xuất từ -GeminiSkillsRoot, KHÔNG hardcode
+    # đường dẫn máy người dùng vào repo PUBLIC (SPEC-P03 (b) BẮT BUỘC 6).
+    $enginePathForCmd = ((Join-Path (Join-Path $GeminiSkillsRoot '.xay-dung-nao-bo') 'scripts/init_brain.js') -replace '\\', '/')
+    $cmdTemplate = @'
 # Lệnh Tự Động Khởi Tạo / Nâng Cấp Não Bộ (Universal Brain Engine V5.2)
 
 Khởi tạo mới hoặc Tự động Chẩn đoán & Tái cấu trúc bộ nhớ `brain4agent` Đa Tầng cho dự án hiện tại.
@@ -60,25 +101,139 @@ Khởi tạo mới hoặc Tự động Chẩn đoán & Tái cấu trúc bộ nh�
 1. Đảm bảo đang đứng ở thư mục gốc của dự án hiện tại.
 2. Chạy lệnh chẩn đoán & build não bộ:
    ```bash
-   node "C:/Users/hoang/.gemini/config/skills/.xay-dung-nao-bo/scripts/init_brain.js"
+   node "__ENGINE_PATH__"
    ```
 3. Đọc kết quả:
    - Nếu báo "NÃO ĐÃ OK": Thông báo cho user bộ não đã đạt chuẩn hoàn hảo.
    - Nếu tạo mới hoặc nâng cấp: Đọc bối cảnh repo và cập nhật thông tin thực tế vào `project-intro.md`, `memory-distill.txt`, `index.md`.
 '@
+    $cmdContent = $cmdTemplate.Replace('__ENGINE_PATH__', $enginePathForCmd)
 
-        Set-Content -Path $claudeInitBrainCommand -Value $claudeInitBrainContent -Encoding UTF8
-        # va nghi thuc ghi nao da co lenh rieng /luu-nao. Xem gotcha #13.
-
-        Write-Host "✅ [2/2] Đã deploy Global Command cho Claude Code (/xay-dung-nao-bo) -> $claudeCommandsRoot" -ForegroundColor Green
-    } else {
-        Write-Host "ℹ️ Không tìm thấy thư mục Claude Code ($claudeCommandsRoot), bỏ qua target này." -ForegroundColor Gray
+    # -------------------------------------------------------------------------
+    # B4. GHI — bỏ qua hoàn toàn khi -DryRun / -VerifyOnly
+    # -------------------------------------------------------------------------
+    if (-not $DryRun -and -not $VerifyOnly) {
+        foreach ($name in $sources.Keys) {
+            $destDir = Join-Path $GeminiSkillsRoot $name
+            if (-not (Test-Path -LiteralPath $destDir -PathType Container)) {
+                New-Item -Path $destDir -ItemType Directory -Force -ErrorAction Stop | Out-Null
+            }
+            Copy-Item -Path (Join-Path $sources[$name] '*') -Destination $destDir -Recurse -Force -ErrorAction Stop
+        }
+        if (-not (Test-Path -LiteralPath $ClaudeCommandsRoot -PathType Container)) {
+            New-Item -Path $ClaudeCommandsRoot -ItemType Directory -Force -ErrorAction Stop | Out-Null
+        }
+        Write-Utf8NoBom -Path $cmdPath -Content $cmdContent
+    }
+    elseif ($DryRun) {
+        Write-Host "DRY-RUN sẽ chép $($plan.Count) file vào '$GeminiSkillsRoot' và ghi file lệnh '$cmdPath'." -ForegroundColor DarkGray
+        Write-Host ''
     }
 
-    Write-Host "`n===========================================================" -ForegroundColor Yellow
-    Write-Host "🎉 HOÀN TẤT ĐỒNG BỘ TOÀN BỘ CÁC TRÌNH AI AGENT THÀNH CÔNG!" -ForegroundColor Yellow
-    Write-Host "===========================================================`n" -ForegroundColor Yellow
-} catch {
-    Write-Error "❌ Lỗi trong quá trình deploy: $_"
-    exit 1
+    # -------------------------------------------------------------------------
+    # B5. ĐỐI CHIẾU — LUÔN chạy (kể cả -DryRun / -VerifyOnly)
+    # -------------------------------------------------------------------------
+    Write-Row 'STATUS' 'SHA256(8)' 'REL'
+    $match = 0; $diff = 0; $missing = 0
+    foreach ($item in $plan) {
+        $short = $item.SrcHash.Substring(0, 8).ToLower()
+        if (-not (Test-Path -LiteralPath $item.Dest -PathType Leaf)) {
+            $missing++
+            Write-Row 'MISSING' $short $item.Rel
+            continue
+        }
+        $destHash = (Get-FileHash -LiteralPath $item.Dest -Algorithm SHA256 -ErrorAction Stop).Hash
+        if ($destHash -eq $item.SrcHash) {
+            $match++
+            Write-Row 'MATCH' $short $item.Rel
+        }
+        else {
+            $diff++
+            Write-Row 'DIFF' $short $item.Rel ('dest=' + $destHash.Substring(0, 8).ToLower())
+        }
+    }
+
+    # File lệnh: không BOM, không byte 0x08, có đủ chuỗi mốc
+    $cmdState = 'missing'
+    if (Test-Path -LiteralPath $cmdPath -PathType Leaf) {
+        $bytes = [System.IO.File]::ReadAllBytes($cmdPath)
+        if ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF) {
+            $cmdState = 'bom'
+        }
+        elseif ($bytes -contains 0x08) {
+            $cmdState = 'ctrl'
+        }
+        else {
+            $text = [System.Text.Encoding]::UTF8.GetString($bytes)
+            if (($text -notmatch 'NÃO ĐÃ OK') -or ($text -notmatch 'init_brain\.js')) { $cmdState = 'missing-token' }
+            else { $cmdState = 'ok' }
+        }
+    }
+    if ($cmdState -eq 'ok') {
+        Write-Row 'CMD-OK' '-' "$cmdName.md" "(no-BOM, no-0x08, has 'NÃO ĐÃ OK')"
+    }
+    else {
+        Write-Row 'CMD-BAD' '-' "$cmdName.md" "($cmdState)"
+    }
+
+    # File THỪA ở đích — chỉ CẢNH BÁO, tuyệt đối KHÔNG xoá
+    $extras = [System.Collections.Generic.List[string]]::new()
+    foreach ($name in $sources.Keys) {
+        $destDir = Join-Path $GeminiSkillsRoot $name
+        if (Test-Path -LiteralPath $destDir -PathType Container) {
+            $destDirFull = (Resolve-Path -LiteralPath $destDir).Path
+            foreach ($file in (Get-ChildItem -LiteralPath $destDirFull -File -Recurse -Force -ErrorAction Stop)) {
+                $rel = "$name/" + ((($file.FullName.Substring($destDirFull.Length)).TrimStart('\', '/')) -replace '\\', '/')
+                if ($planRels -notcontains $rel) { $extras.Add($rel) }
+            }
+        }
+    }
+    if (Test-Path -LiteralPath $ClaudeCommandsRoot -PathType Container) {
+        # Chỉ soi các file do chính deploy này từng sinh ra (kể cả bản đã bị vô hiệu hoá),
+        # KHÔNG liệt kê toàn bộ kho lệnh cá nhân của người dùng.
+        foreach ($file in (Get-ChildItem -LiteralPath $ClaudeCommandsRoot -File -Force -ErrorAction Stop)) {
+            if ($file.FullName -eq $cmdPath) { continue }
+            if ($file.Name -like 'compact*' -or $file.Name -like "$cmdName*") { $extras.Add($file.Name) }
+        }
+    }
+    foreach ($extra in $extras) {
+        Write-Row 'EXTRA' '-' $extra '# WARNING: có ở đích, không có ở nguồn — giữ nguyên'
+    }
+
+    $mismatch = $diff + $missing
+    if ($cmdState -ne 'ok') { $mismatch++ }
+
+    if ($DryRun) { $exit = 0 }
+    elseif ($mismatch -gt 0) { $exit = 2 }
+    else { $exit = 0 }
+
+    Write-Host ('SUMMARY  files={0} match={1} diff={2} missing={3} extra={4} cmd={5} exit={6}' -f $plan.Count, $match, $diff, $missing, $extras.Count, $cmdState, $exit)
+
+    # -------------------------------------------------------------------------
+    # B6. Banner thành công — CHỈ khi thực sự đã chép VÀ đối chiếu khớp
+    # -------------------------------------------------------------------------
+    if ($exit -eq 0) {
+        if ($DryRun) {
+            Write-Host "`nℹ️ DRY-RUN: không ghi bất kỳ file nào." -ForegroundColor Gray
+        }
+        elseif ($VerifyOnly) {
+            Write-Host "`n✅ ĐỐI CHIẾU KHỚP 100% — bản global đang đúng bằng bản hub." -ForegroundColor Green
+        }
+        else {
+            Write-Host "`n===========================================================" -ForegroundColor Yellow
+            Write-Host "🎉 HOÀN TẤT ĐỒNG BỘ TOÀN BỘ CÁC TRÌNH AI AGENT THÀNH CÔNG!" -ForegroundColor Yellow
+            Write-Host "===========================================================`n" -ForegroundColor Yellow
+        }
+    }
+    else {
+        Write-Host "`n⛔ LỆCH: bản global KHÔNG bằng bản hub (exit=$exit). Xem SPEC-P03 (c) để xử lý." -ForegroundColor Red
+    }
 }
+catch {
+    $msg = $_.Exception.Message
+    if (-not $msg.StartsWith('❌')) { $msg = "❌ $msg" }
+    Write-Error $msg -ErrorAction Continue
+    if ($exit -eq 0) { $exit = 3 }
+}
+
+exit $exit

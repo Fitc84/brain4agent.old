@@ -19,8 +19,9 @@
  *        brain4agent/-data-architecture.md · brain4agent/-known-gotchas.md
  *   3. Hồ sơ kế hoạch ĐÃ ĐÓNG (Path Invariant — CẤM sửa lịch sử):
  *        planning/02_* · planning/03_* · planning/04_* · planning/06_*
- *   4. scripts/deploy_skills.ps1 — đích deploy global còn hardcode. WP3 sẽ tham số hoá;
- *      khi đó hạ số này về 0 và gỡ khỏi allowlist (T-H05b sẽ nhắc).
+ *   4. (ĐÃ DỌN 2026-09-02, WP3) scripts/deploy_skills.ps1 từng hardcode đích deploy global.
+ *      SPEC-P03 đã tham số hoá (-GeminiSkillsRoot/-ClaudeCommandsRoot, mặc định từ $HOME)
+ *      ⇒ 0 dòng khớp, đã GỠ khỏi allowlist đúng cơ chế bánh cóc của T-H05b.
  *   5. (ĐÃ DỌN 2026-09-02, orchestrator) brain4agent/memory/hot/state.json từng chứa một
  *      đường dẫn thư mục tạm tuyệt đối kèm mã phiên cũ — RÒ RỈ THẬT, không phải template.
  *      Đã rút về dạng tương đối và GỠ khỏi allowlist, đúng theo cơ chế bánh cóc của T-H05b.
@@ -57,8 +58,9 @@ const ALLOWLIST = {
   'planning/03_2026-08-31_brain-version-marker/plan.md': 4,
   'planning/04_2026-08-31_rollout-ecosystem/plan.md': 1,
   'planning/06_2026-08-31_dong-bo-67-repo/plan.md': 1,
-  // (4) WP3 sẽ tham số hoá đích deploy ⇒ hạ về 0
-  'scripts/deploy_skills.ps1': 3,
+  // (4) (ĐÃ DỌN 2026-09-02, WP3/SPEC-P03) scripts/deploy_skills.ps1 nay nhận đích qua
+  //     -GeminiSkillsRoot / -ClaudeCommandsRoot (mặc định dựng từ $HOME) và sinh đường dẫn
+  //     engine trong file lệnh từ chính tham số đó ⇒ 0 dòng, đã GỠ khỏi allowlist.
   // (5) ⚠️ rò rỉ thật, chờ orchestrator dọn (WP2b bị cấm sửa brain4agent/)
 };
 

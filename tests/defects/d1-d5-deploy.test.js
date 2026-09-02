@@ -7,11 +7,11 @@
  *   D5 — file lệnh sinh bởi `powershell` 5.1 + `Set-Content -Encoding UTF8` mang BOM
  *        `EF BB BF` ⇒ Claude Code đọc lệch.
  *
- * Bộ test hộp đen đầy đủ (T-Y01..T-Y10, cần `pwsh` và 2 root tạm) là hợp đồng của
- * SPEC-P02 §1.5 và sẽ do WP3 viết cùng bản sửa. Ở đây chỉ giữ **cổng phân tích tĩnh**:
- * nó mô tả chính xác điều kiện nghiệm thu WP3 phải đạt, và được đánh dấu `todo` để không
- * làm đỏ `npm test` khi WP3 chưa tới — Node vẫn CHẠY thân test và in kết quả thật, nên
- * ngày WP3 xong thì bỏ cờ `todo` là có ngay cổng chặn.
+ * TRẠNG THÁI: WP3 (SPEC-P03) ĐÃ THỰC THI — script đã fail-closed, ghi UTF-8 không BOM
+ * bằng `[IO.File]::WriteAllText`, có `-GeminiSkillsRoot`/`-ClaudeCommandsRoot`, và
+ * `npm run deploy` gọi `pwsh`. Cờ `todo` đã được gỡ: 4 ca dưới đây là **cổng chặn cứng**
+ * (phân tích tĩnh). Bộ test hộp đen đầy đủ (T-Y01..T-Y10, cần `pwsh` + 2 root tạm) vẫn
+ * là hợp đồng của SPEC-P02 §1.5.
  */
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -24,7 +24,6 @@ const SCRIPT_REL = 'scripts/deploy_skills.ps1';
 const readScript = () => fs.readFileSync(path.join(REPO_ROOT, SCRIPT_REL), 'utf8');
 
 test('D1: deploy_skills.ps1 phải FAIL-CLOSED ($ErrorActionPreference Stop + Copy-Item -ErrorAction Stop)',
-  { todo: 'WP3 (SPEC-P03) chưa thực thi — script vẫn là bản v1.5.4 fail-open' },
   () => {
     const src = readScript();
     assert.match(src, /\$ErrorActionPreference\s*=\s*['"]Stop['"]/,
@@ -38,7 +37,6 @@ test('D1: deploy_skills.ps1 phải FAIL-CLOSED ($ErrorActionPreference Stop + Co
   });
 
 test('D5: file lệnh do deploy sinh ra CẤM có BOM (không dùng Set-Content -Encoding UTF8 của 5.1)',
-  { todo: 'WP3 (SPEC-P03) chưa thực thi — script còn ghi file lệnh bằng Set-Content' },
   () => {
     const src = readScript();
     const bad = src.split('\n')
@@ -50,7 +48,6 @@ test('D5: file lệnh do deploy sinh ra CẤM có BOM (không dùng Set-Content 
   });
 
 test('D5b: script deploy không hardcode đường dẫn máy user (phải nhận qua tham số)',
-  { todo: 'WP3 (SPEC-P03) sẽ thêm -GeminiSkillsRoot / -ClaudeCommandsRoot' },
   () => {
     const src = readScript();
     assert.match(src, /param\s*\(/i, 'D1/A9: script phải có khối param() để test truyền root tạm vào');
@@ -59,7 +56,6 @@ test('D5b: script deploy không hardcode đường dẫn máy user (phải nhậ
   });
 
 test('D1c: `npm run deploy` phải gọi pwsh 7 (5.1 bị chặn), giữ -NoProfile',
-  { todo: 'WP3 (SPEC-P03) sẽ đổi script deploy trong package.json' },
   () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
     assert.ok(pkg.scripts && pkg.scripts.deploy, 'thiếu script deploy');
