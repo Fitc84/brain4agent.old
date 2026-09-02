@@ -16,3 +16,8 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+
+# Báo cáo doctor: chứa tên repo vệ tinh — KHÔNG commit (repo PUBLIC)
+fleet-report*.json
+# Thư mục tạm của test
+tests/.tmp/

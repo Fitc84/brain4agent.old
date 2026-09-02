@@ -1,0 +1,21 @@
+# Chuẩn hoá EOL: index luôn LF; checkout luôn LF trên mọi OS (đè core.autocrlf)
+*            text=auto eol=lf
+*.md         text eol=lf
+*.js         text eol=lf
+*.json       text eol=lf
+*.ps1        text eol=lf
+*.yml        text eol=lf
+*.txt        text eol=lf
+.gitattributes text eol=lf
+.gitignore   text eol=lf
+
+# Fixture test: giữ NGUYÊN BYTE (CRLF/BOM/UTF-16 là dữ liệu thử nghiệm, không được chuẩn hoá)
+tests/fixtures/** -text
+
+# Nhị phân
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
