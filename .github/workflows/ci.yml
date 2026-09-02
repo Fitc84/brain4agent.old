@@ -33,12 +33,12 @@ jobs:
         run: git config --global core.autocrlf false
 
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
       - name: node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24'
 
@@ -109,25 +109,9 @@ jobs:
           );
           const SKIP_PREFIXES = ['archive/', 'tests/hygiene/no-abs-path.test.js'];
           const BINARY_RE = /\.(png|jpg|jpeg|gif|ico|pdf|zip|woff2?|ttf)$/i;
-          // Nguon su that: cung mot ALLOWLIST dang duoc npm test dung o tests/hygiene/no-abs-path.test.js
-          // (T-H05). Giu dong bo thu cong: sua o mot noi thi sua ca hai.
-          const ALLOWLIST = {
-            '.agents/skills/.xay-dung-nao-bo/scripts/init_brain.js': 2,
-            '.agents/skills/.xay-dung-nao-bo/SKILL.md': 1,
-            'AGENTS.md': 1,
-            'CORE_GOVERNANCE_RULES.md': 1,
-            'brain4agent/memory-distill.txt': 1,
-            'README.md': 2,
-            'docs/UNIVERSAL_AGENT_GUIDE.md': 3,
-            'brain4agent/project-intro.md': 1,
-            'brain4agent/-data-architecture.md': 3,
-            'brain4agent/-known-gotchas.md': 3,
-            'planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md': 3,
-            'planning/03_2026-08-31_brain-version-marker/plan.md': 4,
-            'planning/04_2026-08-31_rollout-ecosystem/plan.md': 1,
-            'planning/06_2026-08-31_dong-bo-67-repo/plan.md': 1,
-            'scripts/deploy_skills.ps1': 3,
-          };
+          // Đọc allowlist từ file JSON (nguồn chân lý duy nhất cho cả CI và test, WP5 #10)
+          const allowlistData = JSON.parse(fs.readFileSync('tests/hygiene/abs-path-allowlist.json', 'utf8'));
+          const ALLOWLIST = allowlistData.entries;
           const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0').filter(Boolean);
           const violations = [];
           for (const rel of files) {

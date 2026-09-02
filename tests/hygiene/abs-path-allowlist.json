@@ -1,0 +1,25 @@
+{
+  "comment": "Allowlist file để cho phép đường dẫn tuyệt đối trong một số file đặc biệt. Nguồn chân lý duy nhất cho cả CI và test. WP5 #10",
+  "groups": {
+    "boot_step_0": "Nhóm 1: Bước 0 khởi động (template engine ghi nguyên văn vào dự án đích)",
+    "user_docs": "Nhóm 2: Tài liệu hướng dẫn người dùng gọi skill global",
+    "closed_plans": "Nhóm 3: Hồ sơ kế hoạch đã đóng (Path Invariant — CẤM sửa lịch sử)"
+  },
+  "entries": {
+    ".agents/skills/.xay-dung-nao-bo/scripts/init_brain.js": 3,
+    ".agents/skills/.xay-dung-nao-bo/SKILL.md": 1,
+    "AGENTS.md": 1,
+    "CORE_GOVERNANCE_RULES.md": 1,
+    "brain4agent/memory-distill.txt": 1,
+    "README.md": 2,
+    "docs/UNIVERSAL_AGENT_GUIDE.md": 3,
+    "brain4agent/project-intro.md": 1,
+    "brain4agent/-data-architecture.md": 3,
+    "brain4agent/-known-gotchas.md": 3,
+    "planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md": 3,
+    "planning/03_2026-08-31_brain-version-marker/plan.md": 4,
+    "planning/04_2026-08-31_rollout-ecosystem/plan.md": 1,
+    "planning/06_2026-08-31_dong-bo-67-repo/plan.md": 1
+  },
+  "note": "WP5 (#10): engine init_brain.js = 3 (template distill + BOOT_V130 + body boot); scripts/deploy_skills.ps1 đã 0 dòng → xoá khỏi allowlist (bánh cóc T-H05b)"
+}

@@ -39,30 +39,9 @@ const ABS_PATH_RE = new RegExp(
 );
 const SECRET_RE = /(sk-[A-Za-z0-9]{16,}|ghp_[A-Za-z0-9]{20,}|AIza[A-Za-z0-9_-]{20,}|Bearer\s+[A-Za-z0-9._-]{20,})/;
 
-// file → số dòng khớp TỐI ĐA được phép (siết chặt: nhiều hơn là FAIL).
-const ALLOWLIST = {
-  // (1) template "Bước 0" — engine ghi nguyên văn vào dự án đích
-  '.agents/skills/.xay-dung-nao-bo/scripts/init_brain.js': 2,
-  '.agents/skills/.xay-dung-nao-bo/SKILL.md': 1,
-  'AGENTS.md': 1,
-  'CORE_GOVERNANCE_RULES.md': 1,
-  'brain4agent/memory-distill.txt': 1,
-  // (2) tài liệu hướng dẫn người dùng gọi bản skill global
-  'README.md': 2,
-  'docs/UNIVERSAL_AGENT_GUIDE.md': 3,
-  'brain4agent/project-intro.md': 1,
-  'brain4agent/-data-architecture.md': 3,
-  'brain4agent/-known-gotchas.md': 3,
-  // (3) hồ sơ kế hoạch đã đóng — Path Invariant, CẤM sửa lịch sử
-  'planning/02_2026-08-31_dual-entry-point-claude-shim/plan.md': 3,
-  'planning/03_2026-08-31_brain-version-marker/plan.md': 4,
-  'planning/04_2026-08-31_rollout-ecosystem/plan.md': 1,
-  'planning/06_2026-08-31_dong-bo-67-repo/plan.md': 1,
-  // (4) (ĐÃ DỌN 2026-09-02, WP3/SPEC-P03) scripts/deploy_skills.ps1 nay nhận đích qua
-  //     -GeminiSkillsRoot / -ClaudeCommandsRoot (mặc định dựng từ $HOME) và sinh đường dẫn
-  //     engine trong file lệnh từ chính tham số đó ⇒ 0 dòng, đã GỠ khỏi allowlist.
-  // (5) ⚠️ rò rỉ thật, chờ orchestrator dọn (WP2b bị cấm sửa brain4agent/)
-};
+// Đọc allowlist từ file JSON — nguồn chân lý duy nhất (WP5 #10, SPEC-P06 §1).
+const allowlistData = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'tests/hygiene/abs-path-allowlist.json'), 'utf8'));
+const ALLOWLIST = allowlistData.entries;
 
 const SKIP_PREFIXES = ['archive/', 'tests/hygiene/no-abs-path.test.js'];
 
