@@ -1173,7 +1173,20 @@ function applyPlan(rootDir, plan, log, errorLog) {
 }
 
 // ĐIỂM VÀO LẬP TRÌNH — không process.exit, không console.*,
-// không bắt exception của chính nó (main() là nơi duy nhất bắt).
+// không bắt exception của chính nó (main() là nơi DUY NHẤT bắt ⇒ mã 3).
+// Phân loại mã thoát (01-CONTRACTS §6): xem exitCodeForDiagnosis().
+const VALID_MODES = ['write', 'check', 'dry-run'];
+
+// Mã thoát của nhánh CHỈ ĐỌC (--check/--dry-run):
+//   2 nếu còn finding KHÔNG fixable ở mức error/blocker (người phải xử) — ưu tiên cao nhất
+//   1 nếu có finding fixable (chế độ ghi SẼ sửa)
+//   0 nếu chỉ còn warning không fixable
+function exitCodeForDiagnosis(d) {
+    if (d.findings.some((f) => !f.fixable && (f.level === 'error' || f.level === 'blocker'))) return 2;
+    if (d.findings.some((f) => f.fixable)) return 1;
+    return 0;
+}
+
 function runBrainEngine(opts) {
     const rootDir = opts.rootDir;
     const logger = opts.logger || function () {};
@@ -1181,24 +1194,29 @@ function runBrainEngine(opts) {
     const mode = opts.mode || 'write';
     const now = opts.now || new Date();
     const templateVersion = opts.templateVersion || BRAIN_TEMPLATE_VERSION;
-    if (mode !== 'write') {
-        throw new RangeError('[brain-engine] mode ' + mode + ' chua duoc hien thuc (WP1).');
+    if (VALID_MODES.indexOf(mode) === -1) {
+        throw new RangeError('[brain-engine] mode khong hop le: ' + mode);
+    }
+    const emitFindings = (d) => {
+        const text = formatFindings(d);
+        logger(text.replace(/\n$/, () => ''));
+    };
+
+    const snapshot = collectSnapshot(rootDir);
+    const diagnosis = diagnose(snapshot, templateVersion);
+
+    // File dự án không đọc được (UTF-16 / UTF-8 hỏng) là lỗi CỦA DỰ ÁN ⇒ 2, KHÔNG BAO GIỜ 3.
+    if (snapshot.fileErrors.length > 0) {
+        for (const fe of snapshot.fileErrors) {
+            errorLogger('[brain-engine] Không đọc được ' + fe.rel + ' (' + fe.code + '): ' + fe.message);
+        }
+        return { exitCode: 2, diagnosis, plan: null, applied: 0, diagnosisAfter: null };
     }
 
     logger("\n===========================================================");
     logger("🧠 UNIVERSAL BRAIN GOVERNANCE ENGINE — CHUẨN ĐA TẦNG V5.2");
     logger("===========================================================");
-    logger(`📁 Project Root: ${rootDir}\n`);
-
-    const snapshot = collectSnapshot(rootDir);
-    const diagnosis = diagnose(snapshot, templateVersion);
-
-    if (snapshot.fileErrors.length > 0) {
-        for (const fe of snapshot.fileErrors) {
-            errorLogger(`[brain-engine] Không đọc được ${fe.rel} (${fe.code}): ${fe.message}`);
-        }
-        return { exitCode: 2, diagnosis, plan: null, applied: 0, diagnosisAfter: null };
-    }
+    logger("📁 Project Root: " + rootDir + "\n");
 
     if (diagnosis.isStandard) {
         logger("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
@@ -1209,42 +1227,162 @@ function runBrainEngine(opts) {
         logger("✅ Giao thức khởi động có Bước 0 (.xay-dung-nao-bo boot) trong AGENTS.md & memory-distill.txt.");
         logger("✅ Bất Biến Hai Điểm Nạp: AGENTS.md (nguồn chân lý) + CLAUDE.md (shim) đều tồn tại.");
         logger("✅ AGENTS.md chứa đủ Luật J (Dual Entry-Point Invariant) và Ngoại Lệ Marker (§5.G mục 3).");
-        logger(`✅ Marker Phiên Bản Khung Não: brain4agent-v${templateVersion}.md đúng chuẩn tại root.`);
+        logger("✅ Marker Phiên Bản Khung Não: brain4agent-v" + templateVersion + ".md đúng chuẩn tại root.");
         logger("✅ Thư mục root sạch sẽ 100% (Root Clean Invariant).");
         logger("-----------------------------------------------------------");
         logger("👉 Trạng thái: NÃO ĐÃ OK — KHÔNG CẦN NÂNG CẤP THÊM!\n");
+        if (diagnosis.findings.length > 0) {
+            logger("⚠️ Còn cảnh báo KHÔNG do engine sửa (cần người soi):");
+            for (const f of diagnosis.findings) logger("   " + f.code + "  " + f.message + " — " + f.fix);
+            logger("");
+        }
         return { exitCode: 0, diagnosis, plan: null, applied: 0, diagnosisAfter: null };
     }
 
     const plan = computePlan(snapshot, templateVersion, now);
+
+    // Nhánh CHỈ ĐỌC: TUYỆT ĐỐI không gọi applyPlan (không mkdir/write/unlink/rename).
+    if (mode === 'check' || mode === 'dry-run') {
+        emitFindings(diagnosis);
+        if (mode === 'dry-run') logger('\n' + renderDiff(plan, snapshot).replace(/\n$/, () => ''));
+        return { exitCode: exitCodeForDiagnosis(diagnosis), diagnosis, plan, applied: 0, diagnosisAfter: null };
+    }
+
     const applyResult = applyPlan(rootDir, plan, logger, errorLogger);
+
+    // Chẩn đoán LẠI sau khi ghi — giết lớp lỗi "vá hụt mà báo xong" (SPEC-P01 (b) BẮT BUỘC 7).
+    const snapshotAfter = collectSnapshot(rootDir);
+    const diagnosisAfter = diagnose(snapshotAfter, templateVersion);
+    const converged = diagnosisAfter.isStandard && snapshotAfter.fileErrors.length === 0;
+
+    if (!converged) {
+        for (const fe of snapshotAfter.fileErrors) {
+            errorLogger('[brain-engine] Không đọc được ' + fe.rel + ' (' + fe.code + '): ' + fe.message);
+        }
+        errorLogger('[brain-engine] KHÔNG HỘI TỤ sau khi ghi:');
+        errorLogger(formatFindings(diagnosisAfter).replace(/\n$/, () => ''));
+        return { exitCode: 2, diagnosis, plan, applied: applyResult.applied, diagnosisAfter };
+    }
 
     logger("\n===========================================================");
     logger("✨ THIẾT LẬP & TÁI CẤU TRÚC NÃO BỘ V5.2 HOÀN TẤT THÀNH CÔNG!");
     logger("===========================================================\n");
 
-    return { exitCode: plan.stateJsonError ? 2 : 0, diagnosis, plan, applied: applyResult.applied, diagnosisAfter: null };
+    if (diagnosisAfter.findings.length > 0) {
+        logger("⚠️ Còn cảnh báo KHÔNG do engine sửa (cần người soi):");
+        for (const f of diagnosisAfter.findings) logger("   " + f.code + "  " + f.message + " — " + f.fix);
+        logger("");
+    }
+
+    return { exitCode: 0, diagnosis, plan, applied: applyResult.applied, diagnosisAfter };
 }
 
-// VỎ CLI — nơi DUY NHẤT có process.exit / process.argv / ghi ra stdout-stderr.
+// VỎ CLI — nơi DUY NHẤT đọc process.argv/process.env và ghi ra stdout/stderr.
+function usage() {
+    return [
+        'Universal Brain Governance Engine — engine ' + ENGINE_VERSION + ', khung não ' + BRAIN_TEMPLATE_VERSION,
+        '',
+        'Cách dùng:',
+        '  node init_brain.js [rootDir] [--check | --dry-run]',
+        '  node init_brain.js --version',
+        '  node init_brain.js --help',
+        '',
+        'Đối số:',
+        '  rootDir        Thư mục dự án cần dựng/đồng bộ não (mặc định: thư mục hiện tại).',
+        '',
+        'Cờ:',
+        '  --check        CHỈ ĐỌC. Chẩn đoán và in bảng findings, KHÔNG ghi bất cứ thứ gì.',
+        '  --dry-run      CHỈ ĐỌC. Như --check, kèm diff từng thao tác mà chế độ ghi sẽ làm.',
+        '  --version      In một dòng "brain-engine <engine> template <khung>" rồi thoát.',
+        '  --help         In trợ giúp này.',
+        '',
+        'Không cờ = CHẾ ĐỘ GHI (mặc định, dùng cho Bước 0 của Agent Startup Protocol).',
+        '',
+        'Mã thoát: 0 đạt chuẩn/hội tụ · 1 có lệch engine tự sửa được (--check/--dry-run)',
+        '          2 cần người xử lý hoặc không hội tụ · 3 lỗi nội bộ engine · 64 dùng sai.',
+        ''
+    ].join('\n');
+}
+
 function parseArgs(argv) {
-    // WP6 chỉ parse rootDir; các cờ --check/--dry-run/--version/--help là việc của WP1.
-    const rootDir = argv[0] ? path.resolve(argv[0]) : process.cwd();
-    return { rootDir, mode: 'write', errors: [] };
+    const errors = [];
+    const positionals = [];
+    let wantsCheck = false;
+    let wantsDryRun = false;
+    let wantsVersion = false;
+    let wantsHelp = false;
+
+    for (const a of argv) {
+        if (a === '--check') wantsCheck = true;
+        else if (a === '--dry-run') wantsDryRun = true;
+        else if (a === '--version') wantsVersion = true;
+        else if (a === '--help') wantsHelp = true;
+        else if (a.length > 1 && a.charAt(0) === '-') errors.push('Cờ không hợp lệ: ' + a);
+        else positionals.push(a);
+    }
+    if (wantsCheck && wantsDryRun) errors.push('Không dùng đồng thời --check và --dry-run.');
+    if (positionals.length > 1) errors.push('Chỉ nhận tối đa MỘT đối số vị trí (rootDir), nhận được ' + positionals.length + '.');
+
+    let mode = 'write';
+    if (wantsHelp) mode = 'help';
+    else if (wantsVersion) mode = 'version';
+    else if (wantsCheck) mode = 'check';
+    else if (wantsDryRun) mode = 'dry-run';
+
+    const rootDir = positionals[0] ? path.resolve(positionals[0]) : process.cwd();
+    return { rootDir, mode, errors };
 }
 
 function main(argv, env, io) {
+    const environ = env || {};
+    let args;
     try {
-        const args = parseArgs(argv);
+        args = parseArgs(argv);
+    } catch (e) {
+        io.stderr('[brain-engine] LỖI NỘI BỘ: ' + ((e && e.stack) || e) + '\n');
+        return 3;
+    }
+    if (args.errors.length > 0) {
+        for (const err of args.errors) io.stderr('[brain-engine] ' + err + '\n');
+        io.stderr(usage());
+        return 64;
+    }
+    // --version / --help: KHÔNG đọc đĩa, KHÔNG in banner.
+    if (args.mode === 'version') {
+        io.stdout('brain-engine ' + ENGINE_VERSION + ' template ' + BRAIN_TEMPLATE_VERSION + '\n');
+        return 0;
+    }
+    if (args.mode === 'help') {
+        io.stdout(usage());
+        return 0;
+    }
+
+    let now = new Date();
+    if (environ.BRAIN_NOW) {
+        now = new Date(environ.BRAIN_NOW);
+        if (isNaN(now.getTime())) {
+            io.stderr('[brain-engine] BRAIN_NOW không phải mốc thời gian hợp lệ: ' + environ.BRAIN_NOW + '\n');
+            return 64;
+        }
+    }
+
+    try {
         const r = runBrainEngine({
             rootDir: args.rootDir,
             mode: args.mode,
+            now,
             logger: (line) => io.stdout(line + '\n'),
             errorLogger: (line) => io.stderr(line + '\n')
         });
         return r.exitCode;
     } catch (e) {
-        io.stderr('[brain-engine] ' + ((e && e.stack) || e) + '\n');
+        // rootDir sai là DÙNG SAI (64), không phải lỗi engine (3).
+        if (e && e.name === 'RootError') {
+            io.stderr('[brain-engine] ' + e.message + '\n');
+            io.stderr(usage());
+            return 64;
+        }
+        io.stderr('[brain-engine] LỖI NỘI BỘ: ' + ((e && e.stack) || e) + '\n');
         return 3;
     }
 }
@@ -1281,6 +1419,8 @@ module.exports = {
     computePlan,
     applyPlan,
     runBrainEngine,
+    exitCodeForDiagnosis,
+    usage,
     parseArgs,
     main
 };
