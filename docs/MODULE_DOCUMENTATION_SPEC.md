@@ -1,4 +1,4 @@
-﻿# 📚 HƯỚNG DẪN KIẾN TRÚC TÀI LIỆU MODULE (MODULE DOCUMENTATION SPECIFICATION)
+# 📚 HƯỚNG DẪN KIẾN TRÚC TÀI LIỆU MODULE (MODULE DOCUMENTATION SPECIFICATION)
 
 Tài liệu này định nghĩa tiêu chuẩn và quy tắc quản lý thư mục `docs/` trong hệ thống **Não Bộ Đa Tầng AI Agent**.
 
