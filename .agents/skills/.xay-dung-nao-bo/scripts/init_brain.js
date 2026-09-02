@@ -6,7 +6,34 @@ const path = require('path');
 // Đây là version của KHUNG (template engine), khác với version DỰ ÁN (package.json/current_version).
 const BRAIN_TEMPLATE_VERSION = '1.3.0';
 
-const rootDir = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
+// Phiên bản ENGINE (mã nguồn công cụ) — KHÁC BRAIN_TEMPLATE_VERSION (phiên bản KHUNG não).
+const ENGINE_VERSION = '1.6.0';
+
+const REQUIRED_FILES = [
+    'memory-distill.txt',
+    'index.md',
+    'project-intro.md',
+    'roadmap.md',
+    'changelog.md',
+    '-known-gotchas.md',
+    '-data-architecture.md'
+];
+
+// -------------------------------------------------------------------------
+// ĐIỂM VÀO LẬP TRÌNH — không process.exit, không console.*,
+// không bắt exception của chính nó (main() là nơi duy nhất bắt).
+// -------------------------------------------------------------------------
+function runBrainEngine(opts) {
+    const rootDir = opts.rootDir;
+    const logger = opts.logger || function () {};
+    const errorLogger = opts.errorLogger || function () {};
+    const mode = opts.mode || 'write';
+    const now = opts.now || new Date();
+    const templateVersion = opts.templateVersion || BRAIN_TEMPLATE_VERSION;
+    if (mode !== 'write') {
+        throw new RangeError('[brain-engine] mode ' + mode + ' chua duoc hien thuc (WP1).');
+    }
+
 const brainDir = path.join(rootDir, 'brain4agent');
 const hotDir = path.join(brainDir, 'memory', 'hot');
 const planningDir = path.join(rootDir, 'planning');
@@ -17,23 +44,14 @@ const agentsMdPath = path.join(rootDir, 'AGENTS.md');
 const claudeMdPath = path.join(rootDir, 'CLAUDE.md');
 const legacyLatestMemory = path.join(rootDir, 'latest_memory.md');
 
-console.log("\n===========================================================");
-console.log("🧠 UNIVERSAL BRAIN GOVERNANCE ENGINE — CHUẨN ĐA TẦNG V5.2");
-console.log("===========================================================");
-console.log(`📁 Project Root: ${rootDir}\n`);
+logger("\n===========================================================");
+logger("🧠 UNIVERSAL BRAIN GOVERNANCE ENGINE — CHUẨN ĐA TẦNG V5.2");
+logger("===========================================================");
+logger(`📁 Project Root: ${rootDir}\n`);
 
 // -------------------------------------------------------------------------
 // 1. TỰ ĐỘNG CHẨN ĐOÁN TRẠNG THÁI NÃO BỘ (SMART DIAGNOSTIC)
 // -------------------------------------------------------------------------
-const REQUIRED_FILES = [
-    'memory-distill.txt',
-    'index.md',
-    'project-intro.md',
-    'roadmap.md',
-    'changelog.md',
-    '-known-gotchas.md',
-    '-data-architecture.md'
-];
 
 const hasBrainDir = fs.existsSync(brainDir);
 const hasHotMemory = fs.existsSync(hotDir) && fs.existsSync(path.join(hotDir, 'state.json')) && fs.existsSync(path.join(hotDir, 'today.md'));
@@ -109,58 +127,58 @@ if (hasAgentsMd) {
 const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker && hasRootMarkerException && hasDualEntryPointLawInAgentsMd && hasStateJsonTrailingNewline && hasNoDuplicatePlanningLaw;
 
 if (isFullyStandard) {
-    console.log("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
-    console.log("-----------------------------------------------------------");
-    console.log("✅ Thư mục brain4agent/ đầy đủ 7 phân vùng cố định.");
-    console.log("✅ Phân khu Hot Memory (brain4agent/memory/hot/) đang hoạt động.");
-    console.log("✅ Thư mục planning/ và .agents/skills/ chuẩn hoá.");
-    console.log("✅ Giao thức khởi động có Bước 0 (.xay-dung-nao-bo boot) trong AGENTS.md & memory-distill.txt.");
-    console.log("✅ Bất Biến Hai Điểm Nạp: AGENTS.md (nguồn chân lý) + CLAUDE.md (shim) đều tồn tại.");
-    console.log("✅ AGENTS.md chứa đủ Luật J (Dual Entry-Point Invariant) và Ngoại Lệ Marker (§5.G mục 3).");
-    console.log(`✅ Marker Phiên Bản Khung Não: brain4agent-v${BRAIN_TEMPLATE_VERSION}.md đúng chuẩn tại root.`);
-    console.log("✅ Thư mục root sạch sẽ 100% (Root Clean Invariant).");
-    console.log("-----------------------------------------------------------");
-    console.log("👉 Trạng thái: NÃO ĐÃ OK — KHÔNG CẦN NÂNG CẤP THÊM!\n");
-    process.exit(0);
+    logger("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
+    logger("-----------------------------------------------------------");
+    logger("✅ Thư mục brain4agent/ đầy đủ 7 phân vùng cố định.");
+    logger("✅ Phân khu Hot Memory (brain4agent/memory/hot/) đang hoạt động.");
+    logger("✅ Thư mục planning/ và .agents/skills/ chuẩn hoá.");
+    logger("✅ Giao thức khởi động có Bước 0 (.xay-dung-nao-bo boot) trong AGENTS.md & memory-distill.txt.");
+    logger("✅ Bất Biến Hai Điểm Nạp: AGENTS.md (nguồn chân lý) + CLAUDE.md (shim) đều tồn tại.");
+    logger("✅ AGENTS.md chứa đủ Luật J (Dual Entry-Point Invariant) và Ngoại Lệ Marker (§5.G mục 3).");
+    logger(`✅ Marker Phiên Bản Khung Não: brain4agent-v${BRAIN_TEMPLATE_VERSION}.md đúng chuẩn tại root.`);
+    logger("✅ Thư mục root sạch sẽ 100% (Root Clean Invariant).");
+    logger("-----------------------------------------------------------");
+    logger("👉 Trạng thái: NÃO ĐÃ OK — KHÔNG CẦN NÂNG CẤP THÊM!\n");
+    return { exitCode: 0, diagnosis: null, plan: null, applied: 0, diagnosisAfter: null };
 }
 
 // -------------------------------------------------------------------------
 // 2. KÍCH HOẠT TẠO MỚI HOẶC TÁI CẤU TRÚC / MIGRATION (BUILD / REFACTOR)
 // -------------------------------------------------------------------------
 if (isBrandNew) {
-    console.log("⚡ [TRẠNG THÁI] Dự án mới tinh — Bắt đầu Khởi Tạo Trọn Gói Bộ Não V5.2...\n");
+    logger("⚡ [TRẠNG THÁI] Dự án mới tinh — Bắt đầu Khởi Tạo Trọn Gói Bộ Não V5.2...\n");
 } else {
-    console.log("🔄 [TRẠNG THÁI] Phát hiện Não cũ / Chưa đồng bộ — Bắt đầu Tái Cấu Trúc & Migration...\n");
+    logger("🔄 [TRẠNG THÁI] Phát hiện Não cũ / Chưa đồng bộ — Bắt đầu Tái Cấu Trúc & Migration...\n");
 }
 
 // Auto-standardize legacy uppercase DOCS directory to lowercase docs
 try {
     const rootFiles = fs.readdirSync(rootDir);
     if (rootFiles.includes('DOCS') && !rootFiles.includes('docs')) {
-        console.log("🔄 Phát hiện thư mục DOCS (in hoa), tiến hành chuẩn hóa thành docs (viết thường)...");
+        logger("🔄 Phát hiện thư mục DOCS (in hoa), tiến hành chuẩn hóa thành docs (viết thường)...");
         const uppercaseDocsDir = path.join(rootDir, 'DOCS');
         const tempDocsDir = path.join(rootDir, 'temp_docs');
         fs.renameSync(uppercaseDocsDir, tempDocsDir);
         fs.renameSync(tempDocsDir, docsDir);
-        console.log("✅ Đã chuẩn hóa thư mục DOCS thành docs thành công.");
+        logger("✅ Đã chuẩn hóa thư mục DOCS thành docs thành công.");
     }
 } catch (e) {
-    console.error("⚠️ Không thể chuẩn hóa thư mục DOCS:", e.message);
+    errorLogger("⚠️ Không thể chuẩn hóa thư mục DOCS:" + ' ' + e.message);
 }
 
 // Auto-standardize legacy uppercase Plan directory to lowercase planning
 try {
     const rootFiles = fs.readdirSync(rootDir);
     if (rootFiles.includes('Plan') && !rootFiles.includes('planning')) {
-        console.log("🔄 Phát hiện thư mục Plan (in hoa), tiến hành chuẩn hóa thành planning (viết thường)...");
+        logger("🔄 Phát hiện thư mục Plan (in hoa), tiến hành chuẩn hóa thành planning (viết thường)...");
         const uppercasePlanDir = path.join(rootDir, 'Plan');
         const tempPlanDir = path.join(rootDir, 'temp_plan');
         fs.renameSync(uppercasePlanDir, tempPlanDir);
         fs.renameSync(tempPlanDir, planningDir);
-        console.log("✅ Đã chuẩn hóa thư mục Plan thành planning thành công.");
+        logger("✅ Đã chuẩn hóa thư mục Plan thành planning thành công.");
     }
 } catch (e) {
-    console.error("⚠️ Không thể chuẩn hóa thư mục Plan:", e.message);
+    errorLogger("⚠️ Không thể chuẩn hóa thư mục Plan:" + ' ' + e.message);
 }
 
 // Ensure directories
@@ -168,20 +186,20 @@ const targetDirs = [brainDir, path.join(brainDir, 'memory'), hotDir, planningDir
 for (const dir of targetDirs) {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
-        console.log(`📁 Đã tạo thư mục: ${path.relative(rootDir, dir) || '.'}`);
+        logger(`📁 Đã tạo thư mục: ${path.relative(rootDir, dir) || '.'}`);
     }
 }
 
 // Handle legacy latest_memory.md migration if exists
 if (hasLegacyLatest) {
-    console.log("📦 Phát hiện latest_memory.md ở root -> Di dời vào brain4agent/memory/hot/...");
+    logger("📦 Phát hiện latest_memory.md ở root -> Di dời vào brain4agent/memory/hot/...");
     const legacyContent = fs.readFileSync(legacyLatestMemory, 'utf8');
     const todayPath = path.join(hotDir, 'today.md');
     if (!fs.existsSync(todayPath)) {
         fs.writeFileSync(todayPath, legacyContent, 'utf8');
     }
     fs.unlinkSync(legacyLatestMemory);
-    console.log("🗑️ Đã xóa latest_memory.md ở root để giữ chuẩn Root Clean 100%.");
+    logger("🗑️ Đã xóa latest_memory.md ở root để giữ chuẩn Root Clean 100%.");
 }
 
 // Templates definition
@@ -346,7 +364,7 @@ for (const [filename, content] of Object.entries(templates)) {
     const filePath = path.join(brainDir, filename);
     if (!fs.existsSync(filePath)) {
         fs.writeFileSync(filePath, content, 'utf8');
-        console.log(`✅ Đã tạo mới: brain4agent/${filename}`);
+        logger(`✅ Đã tạo mới: brain4agent/${filename}`);
     } else {
         // Tự động vá Bước 0 vào memory-distill.txt nếu thiếu
         if (filename === 'memory-distill.txt') {
@@ -359,19 +377,19 @@ for (const [filename, content] of Object.entries(templates)) {
                         /<agent_startup_protocol>/i,
                         `<agent_startup_protocol>\n${step0Line}`
                     );
-                    console.log(`🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào brain4agent/memory-distill.txt`);
+                    logger(`🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào brain4agent/memory-distill.txt`);
                 } else {
                     // Fallback: kernel cũ KHÔNG theo khuôn XML (markdown thuần) — regex trên sẽ trượt và
                     // ghi lại y nguyên file, sinh log báo-vá-nhưng-không-vá. Chèn khối giao thức lên ĐẦU file.
                     patchedDistill = `<agent_startup_protocol>\n${step0Line}\n</agent_startup_protocol>\n\n${currentDistill}`;
-                    console.log(`🔄 Kernel không theo khuôn <agent_startup_protocol> — đã chèn khối Bước 0 lên đầu brain4agent/memory-distill.txt (fallback).`);
+                    logger(`🔄 Kernel không theo khuôn <agent_startup_protocol> — đã chèn khối Bước 0 lên đầu brain4agent/memory-distill.txt (fallback).`);
                 }
                 fs.writeFileSync(filePath, patchedDistill, 'utf8');
             } else {
-                console.log(`📄 Đã có sẵn: brain4agent/${filename} (Giữ nguyên dữ liệu)`);
+                logger(`📄 Đã có sẵn: brain4agent/${filename} (Giữ nguyên dữ liệu)`);
             }
         } else {
-            console.log(`📄 Đã có sẵn: brain4agent/${filename} (Giữ nguyên dữ liệu)`);
+            logger(`📄 Đã có sẵn: brain4agent/${filename} (Giữ nguyên dữ liệu)`);
         }
     }
 }
@@ -390,7 +408,7 @@ if (!fs.existsSync(stateJsonPath)) {
         "active_plans_completed": 0
     };
     fs.writeFileSync(stateJsonPath, JSON.stringify(initialState, null, 2) + '\n', 'utf8');
-    console.log('✅ Đã tạo mới: memory/hot/state.json (kèm brain_template_version)');
+    logger('✅ Đã tạo mới: memory/hot/state.json (kèm brain_template_version)');
 } else {
     // Vá brain_template_version vào state.json đã có, KHÔNG đụng các field khác (vd current_version
     // là version DỰ ÁN — khái niệm khác, tuyệt đối không trộn/ghi đè lên nhau).
@@ -403,16 +421,16 @@ if (!fs.existsSync(stateJsonPath)) {
             currentState.brain_template_version = BRAIN_TEMPLATE_VERSION;
             fs.writeFileSync(stateJsonPath, JSON.stringify(currentState, null, 2) + '\n', 'utf8');
             if (needsVersionPatch) {
-                console.log(`🔄 Đã vá brain_template_version=${BRAIN_TEMPLATE_VERSION} vào memory/hot/state.json (giữ nguyên các field khác).`);
+                logger(`🔄 Đã vá brain_template_version=${BRAIN_TEMPLATE_VERSION} vào memory/hot/state.json (giữ nguyên các field khác).`);
             }
             if (needsNewlineFix) {
-                console.log('🔄 Đã bổ sung newline cuối file cho memory/hot/state.json (chuẩn POSIX, sạch git diff).');
+                logger('🔄 Đã bổ sung newline cuối file cho memory/hot/state.json (chuẩn POSIX, sạch git diff).');
             }
         } else {
-            console.log('📄 Đã có sẵn: memory/hot/state.json (brain_template_version đúng chuẩn, giữ nguyên dữ liệu).');
+            logger('📄 Đã có sẵn: memory/hot/state.json (brain_template_version đúng chuẩn, giữ nguyên dữ liệu).');
         }
     } catch (e) {
-        console.error('⚠️ Không thể vá brain_template_version vào state.json:', e.message);
+        errorLogger('⚠️ Không thể vá brain_template_version vào state.json:' + ' ' + e.message);
     }
 }
 
@@ -432,9 +450,9 @@ const staleMarkerFiles = rootFilesForMarkerWrite.filter(f => brainMarkerRegex.te
 for (const staleFile of staleMarkerFiles) {
     try {
         fs.unlinkSync(path.join(rootDir, staleFile));
-        console.log(`🗑️ Đã xoá marker phiên bản khung não lỗi thời: ${staleFile}`);
+        logger(`🗑️ Đã xoá marker phiên bản khung não lỗi thời: ${staleFile}`);
     } catch (e) {
-        console.error(`⚠️ Không thể xoá marker lỗi thời ${staleFile}:`, e.message);
+        errorLogger(`⚠️ Không thể xoá marker lỗi thời ${staleFile}:` + ' ' + e.message);
     }
 }
 
@@ -454,15 +472,15 @@ Bộ khung Não Bộ Đa Tầng sinh ra cấu trúc \`brain4agent/\` của dự 
 > Version dự án (khác với version khung não) nằm ở \`VERSION\` / \`package.json\`.
 `;
     fs.writeFileSync(brainMarkerPath, brainMarkerContent, 'utf8');
-    console.log(`✅ Đã tạo mới marker phiên bản khung não: ${currentMarkerFileName}`);
+    logger(`✅ Đã tạo mới marker phiên bản khung não: ${currentMarkerFileName}`);
 } else {
-    console.log(`📄 Đã có sẵn: ${currentMarkerFileName} (đúng chuẩn, giữ nguyên).`);
+    logger(`📄 Đã có sẵn: ${currentMarkerFileName} (đúng chuẩn, giữ nguyên).`);
 }
 
 const todayMdPath = path.join(hotDir, 'today.md');
 if (!fs.existsSync(todayMdPath)) {
     fs.writeFileSync(todayMdPath, `# 📅 Nhật Ký Làm Việc Ngày ${new Date().toLocaleDateString('vi-VN')} (Session Memory Log)\n\n> Cập nhật lúc: \`${new Date().toISOString()}\` | Phiên bản: \`v1.0.0\`\n\n---\n\n## 🎯 Thành Tựu Khởi Tạo:\n- Khởi tạo thành công cấu trúc dự án và bộ nhớ Đa Tầng brain4agent V5.2.\n`, 'utf8');
-    console.log('✅ Đã tạo mới: memory/hot/today.md');
+    logger('✅ Đã tạo mới: memory/hot/today.md');
 }
 
 // Root AGENTS.md Full Governance Template
@@ -620,7 +638,7 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (\`MAJOR.MINOR.PATCH\`)**:
 // Ghi hoặc cập nhật AGENTS.md
 if (!fs.existsSync(agentsMdPath)) {
     fs.writeFileSync(agentsMdPath, fullAgentsMdContent, 'utf8');
-    console.log('✅ Đã tạo mới: AGENTS.md với ĐẦY ĐỦ CÁC BỘ LUẬT QUẢN TRỊ TINH HOA!');
+    logger('✅ Đã tạo mới: AGENTS.md với ĐẦY ĐỦ CÁC BỘ LUẬT QUẢN TRỊ TINH HOA!');
 } else {
     let currentAgentsMd = fs.readFileSync(agentsMdPath, 'utf8');
     let agentsMdPatched = false;
@@ -632,7 +650,7 @@ if (!fs.existsSync(agentsMdPath)) {
             `## ⚡ 1. GIAO THỨC KHỞI ĐỘNG (Agent Startup Protocol)\n\nKhi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:\n\n1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\\\Users\\\\hoang\\\\.gemini\\\\config\\\\skills\\\\.xay-dung-nao-bo\\\\scripts\\\\init_brain.js\`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.\n`
         );
         agentsMdPatched = true;
-        console.log('🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào AGENTS.md tại root.');
+        logger('🔄 Đã tự động vá Bước 0 (.xay-dung-nao-bo) vào AGENTS.md tại root.');
     }
 
     // Vá Ngoại Lệ Root Clean §5.G mục 3 (Marker Phiên Bản Khung Não) nếu AGENTS.md CŨ chưa có.
@@ -649,7 +667,7 @@ if (!fs.existsSync(agentsMdPath)) {
             currentAgentsMd = currentAgentsMd.replace(/\s*$/, '') + `\n\n---\n\n## 🛡️ [PHỤ LỤC TỰ ĐỘNG VÁ] Ngoại Lệ Root Clean — Marker Phiên Bản Khung Não\n\n${rootMarkerExceptionText}\n`;
         }
         agentsMdPatched = true;
-        console.log('🔄 Đã tự động vá ngoại lệ "Marker Phiên Bản Khung Não" (§5.G mục 3) vào AGENTS.md hiện có.');
+        logger('🔄 Đã tự động vá ngoại lệ "Marker Phiên Bản Khung Não" (§5.G mục 3) vào AGENTS.md hiện có.');
     }
 
     // Vá Luật J — Dual Entry-Point Invariant nếu AGENTS.md CŨ chưa có (dự án init trước khi Luật J
@@ -673,7 +691,7 @@ if (!fs.existsSync(agentsMdPath)) {
             currentAgentsMd = currentAgentsMd.replace(/\s*$/, '') + `\n\n---\n\n${dualEntryPointLawText}\n`;
         }
         agentsMdPatched = true;
-        console.log('🔄 Đã tự động vá Luật J (Dual Entry-Point Invariant) vào AGENTS.md hiện có.');
+        logger('🔄 Đã tự động vá Luật J (Dual Entry-Point Invariant) vào AGENTS.md hiện có.');
     }
 
     // Vá luật SPEC PACKAGE (§3 mục 2) nếu AGENTS.md CŨ chưa có — dự án init trước 2026-09-01 vẫn
@@ -715,7 +733,7 @@ if (!fs.existsSync(agentsMdPath)) {
             }
         }
         agentsMdPatched = true;
-        console.log('🔄 Đã tự động vá luật SPEC PACKAGE (CẤM plan phẳng) vào AGENTS.md hiện có.');
+        logger('🔄 Đã tự động vá luật SPEC PACKAGE (CẤM plan phẳng) vào AGENTS.md hiện có.');
     } else {
         // Dọn tàn dư: bản vá đời trước dùng regex chỉ khớp LF nên trên file CRLF nó rơi vào nhánh
         // CHÈN THÊM thay vì THAY THẾ, để lại khối luật planning CŨ nằm cạnh khối SPEC PACKAGE mới
@@ -726,14 +744,14 @@ if (!fs.existsSync(agentsMdPath)) {
         if (legacyStructureBlock) {
             currentAgentsMd = currentAgentsMd.replace(legacyStructureBlock[0], '');
             fs.writeFileSync(agentsMdPath, currentAgentsMd, 'utf8');
-            console.log('🧹 Đã gỡ khối luật planning CŨ còn sót cạnh khối SPEC PACKAGE (chống hai nguồn chân lý).');
+            logger('🧹 Đã gỡ khối luật planning CŨ còn sót cạnh khối SPEC PACKAGE (chống hai nguồn chân lý).');
         }
     }
 
     if (agentsMdPatched) {
         fs.writeFileSync(agentsMdPath, currentAgentsMd, 'utf8');
     } else {
-        console.log('📄 Đã có sẵn: AGENTS.md (đầy đủ luật, giữ nguyên).');
+        logger('📄 Đã có sẵn: AGENTS.md (đầy đủ luật, giữ nguyên).');
     }
 }
 
@@ -754,19 +772,63 @@ tối thượng của dự án, giữ **\`AGENTS.md\` là nguồn chân lý DUY 
 
 if (!fs.existsSync(claudeMdPath)) {
     fs.writeFileSync(claudeMdPath, claudeMdShimContent, 'utf8');
-    console.log('✅ Đã tạo mới: CLAUDE.md (shim ≤10 dòng, trỏ @AGENTS.md — Dual Entry-Point Invariant).');
+    logger('✅ Đã tạo mới: CLAUDE.md (shim ≤10 dòng, trỏ @AGENTS.md — Dual Entry-Point Invariant).');
 } else {
     const currentClaudeMd = fs.readFileSync(claudeMdPath, 'utf8');
     if (!currentClaudeMd.includes('@AGENTS.md')) {
         // Vá thêm dòng import, giữ nguyên nội dung người dùng đã viết thêm (không ghi đè).
         const patchedClaudeMd = currentClaudeMd.replace(/\s*$/, '') + '\n\n@AGENTS.md\n';
         fs.writeFileSync(claudeMdPath, patchedClaudeMd, 'utf8');
-        console.log('🔄 Đã tự động vá dòng @AGENTS.md vào CLAUDE.md hiện có (giữ nguyên nội dung cũ).');
+        logger('🔄 Đã tự động vá dòng @AGENTS.md vào CLAUDE.md hiện có (giữ nguyên nội dung cũ).');
     } else {
-        console.log('📄 Đã có sẵn: CLAUDE.md (đã trỏ @AGENTS.md, giữ nguyên).');
+        logger('📄 Đã có sẵn: CLAUDE.md (đã trỏ @AGENTS.md, giữ nguyên).');
     }
 }
 
-console.log("\n===========================================================");
-console.log("✨ THIẾT LẬP & TÁI CẤU TRÚC NÃO BỘ V5.2 HOÀN TẤT THÀNH CÔNG!");
-console.log("===========================================================\n");
+logger("\n===========================================================");
+logger("✨ THIẾT LẬP & TÁI CẤU TRÚC NÃO BỘ V5.2 HOÀN TẤT THÀNH CÔNG!");
+logger("===========================================================\n");
+
+    return { exitCode: 0, diagnosis: null, plan: null, applied: 0, diagnosisAfter: null };
+}
+
+// -------------------------------------------------------------------------
+// VỎ CLI — nơi DUY NHẤT có process.exit / process.argv / ghi ra stdout-stderr.
+// -------------------------------------------------------------------------
+function parseArgs(argv) {
+    // WP6 chỉ parse rootDir; các cờ --check/--dry-run/--version/--help là việc của WP1.
+    const rootDir = argv[0] ? path.resolve(argv[0]) : process.cwd();
+    return { rootDir, mode: 'write', errors: [] };
+}
+
+function main(argv, env, io) {
+    try {
+        const args = parseArgs(argv);
+        const r = runBrainEngine({
+            rootDir: args.rootDir,
+            mode: args.mode,
+            logger: (line) => io.stdout(line + '\n'),
+            errorLogger: (line) => io.stderr(line + '\n')
+        });
+        return r.exitCode;
+    } catch (e) {
+        io.stderr('[brain-engine] ' + ((e && e.stack) || e) + '\n');
+        return 3;
+    }
+}
+
+module.exports = {
+    BRAIN_TEMPLATE_VERSION,
+    ENGINE_VERSION,
+    REQUIRED_FILES,
+    runBrainEngine,
+    parseArgs,
+    main
+};
+
+if (require.main === module) {
+    process.exitCode = main(process.argv.slice(2), process.env, {
+        stdout: (s) => process.stdout.write(s),
+        stderr: (s) => process.stderr.write(s)
+    });
+}
