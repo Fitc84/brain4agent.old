@@ -735,6 +735,9 @@ function diagnose(s, templateVersion) {
         if (!agentsText.includes('xay-dung-nao-bo')) missingTokens.push('xay-dung-nao-bo');
         if (!agentsText.includes('Marker Phiên Bản Khung Não')) missingTokens.push('Marker Phiên Bản Khung Não');
         if (!agentsText.includes('Dual Entry-Point Invariant')) missingTokens.push('Dual Entry-Point Invariant');
+        // Token thứ 4 (01-CONTRACTS §8 BRN-002 / SPEC-P01 a.2 + P01-E3): thiếu luật
+        // SPEC PACKAGE nghĩa là repo còn khối luật planning CŨ ⇒ engine PHẢI vá.
+        if (!agentsText.includes('SPEC PACKAGE')) missingTokens.push('SPEC PACKAGE');
         if (missingTokens.length > 0) add('BRN-002', 'AGENTS.md thiếu token mốc bắt buộc', { missing: missingTokens });
         if (agentsText.includes('SPEC PACKAGE') && agentsText.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)')) {
             add('BRN-003');

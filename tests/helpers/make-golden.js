@@ -57,6 +57,7 @@ function gitHeadSha(repoRoot) {
 
 function main(argv) {
   const args = parseArgs(argv);
+  const argvHadCase = argv.indexOf('--case') !== -1;
   const enginePath = path.resolve(args.engine);
   const outPath = path.resolve(args.out);
   const repoRoot = path.join(__dirname, '..', '..');
@@ -69,6 +70,15 @@ function main(argv) {
     node: process.version,
     cases: {}
   };
+
+  // Chụp lại MỘT ca (--case) phải GIỮ NGUYÊN các ca khác: đọc manifest cũ và chỉ
+  // ghi đè đúng ca được nêu. Chụp lại toàn bộ là hành vi duy nhất khi KHÔNG có --case.
+  const partial = argvHadCase;
+  if (partial && fs.existsSync(outPath)) {
+    const old = JSON.parse(fs.readFileSync(outPath, 'utf8'));
+    // Giữ nguyên thứ tự key ⇒ git diff của manifest chỉ đụng đúng ca được chụp lại.
+    manifest.cases = Object.assign({}, old.cases);
+  }
 
   for (const name of args.cases) {
     const t = mkTmpRoot(name);

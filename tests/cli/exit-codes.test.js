@@ -49,7 +49,8 @@ test('exit 1 — --check và --dry-run khi có lệch engine tự sửa được
     assert.ok(!chk.stdout.includes('NÃO ĐÃ OK'));
     assert.ok(!chk.stdout.includes('HOÀN TẤT THÀNH CÔNG'));
     const codes = chk.stdout.split('\n').filter((l) => l.startsWith('BRN-')).map((l) => l.slice(0, 7)).sort();
-    assert.deepEqual(codes, ['BRN-006', 'BRN-010', 'BRN-011']);
+    // P01-E3: tập mã kỳ vọng của F03 (BRN-002 vì AGENTS.md còn thiếu luật SPEC PACKAGE).
+    assert.deepEqual(codes, ['BRN-002', 'BRN-006', 'BRN-010', 'BRN-011']);
 
     const dry = runEngine(ENGINE_PATH, ['--dry-run', dir]);
     assert.equal(dry.code, 1, dry.stderr);

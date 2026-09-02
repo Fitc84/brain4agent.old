@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "engine_commit": "bddd003242c0fe4e8e52dd636be2678798be2275",
-  "engine_sha256": "a139a9d25a3f5749d9d2b51e6ae56d6fb55970c3acd8b5a9f6ccf86b747ca617",
+  "engine_commit": "abe0760ab82a69f4ec8a98083e3efd820f6d737a",
+  "engine_sha256": "32f899b12094329055c8142d637b222f23cb9e131baecd6a420ce08b0b11f5a2",
   "brain_now": "2026-01-15T03:04:05.000Z",
   "node": "v24.15.0",
   "cases": {
@@ -59,7 +59,7 @@
     "F04-old-planning-block": {
       "exit_code": 0,
       "files": {
-        "AGENTS.md": "e6427aeca73baaae5e49566cb78310c56cf45737bceb79cbc3810e97963f9dec",
+        "AGENTS.md": "ca10434eed6d221e04b3f6052a58be75895cc6d9e2e3468b8ca1daae583de203",
         "CLAUDE.md": "12c79f19d275c0689b22f8126e50f3cb172cfc338b82a16877b12ebec9c762fc",
         "brain4agent-v1.3.0.md": "3f951034bb2541f385590ed3e0e9e5581ba6428c25ff9d4736c3d6a7c2ad39d6",
         "brain4agent/-data-architecture.md": "cb3cedec4a8aa6fac31b92142661bbab5f933a723312a73ba9dc36b212dacc4c",
