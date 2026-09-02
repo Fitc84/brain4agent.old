@@ -113,3 +113,10 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Nghiệm thu bắt buộc:** duyệt **mọi file × mọi commit** trong khoảng sắp push bằng `git show <sha>:<path>` cộng regex marker, phải ra 0. Chỉ `git grep` ở HEAD là chưa đủ.
 - **Nguồn:** 2026-09-02, ngay trước lần push đầu tiên của chiến dịch — user ra lệnh "loại bỏ các bí mật quan trọng ra khỏi lần push này".
 
+## 15. Cổng An Toàn Chỉ IN Cảnh Báo Mà Không CHẶN — Nối `&&` Nên Lệnh Nguy Hiểm Vẫn Chạy
+- **Triệu chứng:** cổng kiểm secret cuối cùng trước `git push` in ra `CO DAU VET`, nhưng lệnh `push` ngay sau đó **vẫn chạy** và hoàn tất. Người vận hành chỉ đọc được cảnh báo SAU khi việc đã rồi.
+- **Nguyên nhân:** cổng được viết dạng `for ...; do ...; echo "CO DAU VET"; done && git push`. Vòng lặp chỉ **in** kết quả và gán biến, luôn kết thúc với mã thoát `0` ⇒ `&&` coi là thành công ⇒ push chạy. Biến `bad=1` không có tác dụng gì nếu không ai `exit` theo nó.
+- **Luật rút ra:** cổng chặn thao tác khó đảo ngược (push, xoá, deploy) **BẮT BUỘC phải trả mã thoát khác 0 khi phát hiện vấn đề**: kết thúc bằng `[ $bad -eq 0 ] || exit 1`, hoặc tách hẳn thành lệnh riêng và ĐỌC kết quả trước khi gõ lệnh sau. Không bao giờ nối cổng với hành động bằng `&&` khi cổng chỉ `echo`.
+- **Hệ quả phụ cần biết:** regex quét secret dễ dính **dương tính giả** vì chính tài liệu mô tả mẫu quét (ví dụ câu "quét bằng regex `api_key|bearer|token|sk-|ghp_|AIza`" sẽ khớp mẫu `ghp_`). Cổng phải **in ra dòng khớp** để phân biệt được khoá thật với văn bản mô tả, thay vì chỉ đếm.
+- **Nguồn:** kế hoạch #08, 2026-09-02 — lỗi của chính orchestrator, ghi lại để không lặp.
+

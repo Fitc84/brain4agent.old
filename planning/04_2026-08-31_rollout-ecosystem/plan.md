@@ -1,7 +1,7 @@
 # KẾ HOẠCH NÂNG CẤP: ROLLOUT KHUNG NÃO v1.2.0 RA TOÀN HỆ SINH THÁI (#04)
 
 - **STT KẾ HOẠCH:** #04
-- **TRẠNG THÁI:** 🔄 ĐÃ XỬ LÝ 13/19 REPO — **CHƯA hoàn tất**: còn 6 repo chờ user (4 working tree bẩn + 2 repo chưa có commit nào). Xem bảng phân loại 4 nhóm ở Cổng Nghiệm Thu.
+- **TRẠNG THÁI:** ✅ ĐÃ HOÀN THÀNH — đóng 2026-09-02. Đợt 1 xử 13/19 repo; **6 repo treo còn lại đã được xử xong ở #06/#07** (xem mục "Đóng kế hoạch" cuối file). Bảng phân loại 4 nhóm ở Cổng Nghiệm Thu giữ nguyên làm hồ sơ đợt 1.
 - **THỜI GIAN BẮT ĐẦU:** 2026-08-31
 - **THỜI GIAN HOÀN TẤT ĐỢT 1:** 2026-08-31 (sau phê duyệt pilot của user cùng ngày)
 - **PHIÊN BẢN MỤC TIÊU:** v1.2.1 (PATCH — hotfix newline `state.json` phát sinh khi user duyệt pilot; template khung não GIỮ v1.2.0)
@@ -139,3 +139,32 @@ Ngữ cảnh bổ sung của user nêu `control-discord` và `teamworkflow` đan
 - Nhóm C (6 repo không `AGENTS.md`): bỏ qua toàn bộ đợt này.
 - Bản script cũ lạc `Agent to Product/.agents/skills/.brain-build/scripts/init_brain.js`: chỉ báo cáo, không xoá.
 - Engine dùng: bản nguồn repo này = bản global `.gemini` (byte-identical, đã xác nhận ở kế hoạch #03).
+
+---
+
+## 🏁 ĐÓNG KẾ HOẠCH (2026-09-02)
+
+Header cũ ghi "CHƯA hoàn tất — còn 6 repo chờ user". Kiểm chứng lại bằng máy ngày 2026-09-02:
+**cả 6 repo đều đã được xử xong trong chiến dịch #06 và đợt phủ template #07.**
+
+| Repo treo của #04 | Kết quả đo 2026-09-02 | Xử ở đâu |
+| :--- | :--- | :--- |
+| `control-codex` | marker `v1.3.0` · `brain_template_version=1.3.0` · có luật SPEC PACKAGE · `git status` sạch | #06 → #07 |
+| `control-cloudflare` | như trên | #06 → #07 |
+| `control-discord` | như trên (hết unborn nhờ first-commit ở #06 P02) | #06 → #07 |
+| `teamworkflow` | như trên (hết unborn nhờ first-commit ở #06 P02) | #06 → #07 |
+| `GramPilot` | bản vá ĐÃ áp trên đĩa và đạt `1.3.0`, nhưng `AGENTS.md` + `state.json` **cố ý chưa commit** | #07 — đánh đổi minh bạch |
+| `control-gpm` | như trên | #07 — đánh đổi minh bạch |
+
+**Lý do 2 repo cuối chưa commit trọn vẹn:** `AGENTS.md` và `state.json` của chúng nằm trong danh sách file
+đang dở của chủ dự án; commit hộ sẽ nuốt việc của user. Đây là quyết định có chủ đích, đã ghi ở mục
+**🔴 Active** của `brain4agent/roadmap.md` — chỉ cần user commit việc đang dở rồi chạy lại `init_brain.js`.
+
+**Không có mục nào của #04 còn treo vì lý do kỹ thuật.** Kế hoạch đóng.
+
+### Cổng nghiệm thu đóng — môi trường: **local**
+
+- [x] 6/6 repo treo đạt `brain_template_version = 1.3.0` và có luật SPEC PACKAGE trong `AGENTS.md`.
+- [x] 0 repo còn khối luật planning cũ (`Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)`) — đếm bằng máy = 0.
+- [x] 4/6 repo `git status` sạch; 2/6 còn bẩn đúng bằng việc đang dở của user, không phải do #04.
+

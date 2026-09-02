@@ -130,10 +130,10 @@ Không còn chữ mẫu "Điền/Mô tả ... tại đây" trong `brain4agent/`.
 #### ⏸️ Giai đoạn 2 — điều kiện mở gate
 
 User tạo **commit đầu tiên "as-is"** cho toàn repo (kiểm `.gitignore` để `.env` KHÔNG bị
-add — file này chứa API key Tavily/Gemini/OpenAI). Sau đó mới dọn root theo bảng ánh xạ,
+add — file này chứa khoá API của bên thứ ba). Sau đó mới dọn root theo bảng ánh xạ,
 có `git diff` làm đường lùi, kèm grep tham chiếu chéo giữa các `scratch_*.py` và smoke
 `run_critique.py`.
 
 - [x] Kết quả grep tham chiếu + quyết định mv: **hoãn sang Giai đoạn 2** (chưa mv file root nào).
 - [x] V1–V5, V7: đạt (bằng chứng ở trên). V6 không áp dụng.
-- [ ] SHA commit não hóa: **KHÔNG tạo** — chờ user tạo commit đầu tiên của repo.
+- [x] ~~SHA commit não hóa: **KHÔNG tạo** — chờ user tạo commit đầu tiên của repo.~~ → **ĐÃ XONG ở #06 (SPEC-P02)**: commit đầu `c702ea9` (baseline as-is), rồi `6771b3b` nâng khung não lên `1.3.0` và `249daa2` dọn khối luật cũ ở #07. Đo 2026-09-02: `brain_template_version = 1.3.0`, `git status` sạch. Việc dọn root vẫn hoãn (cần sửa `scratch_*.py` cho độc-lập-vị-trí trước) — đã ghi ở mục 🔴 Active của `roadmap.md`.

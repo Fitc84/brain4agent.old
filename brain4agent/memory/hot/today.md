@@ -22,6 +22,25 @@ Gỡ luật là xong trong một lần chạy engine.
 
 ---
 
+## 🏁 CHỐT PHIÊN 2026-09-02 — BÀN GIAO CHO PHIÊN SAU
+
+**Đã push lần đầu của cả chiến dịch.** Hub `v1.5.4`, remote `origin/main` = `main`, `git status` sạch.
+Chỉ nhánh `main` lên remote — nhánh/tag `backup/pre-redact-2026-09-02` và `refs/original/` giữ lịch sử
+GỐC chưa gỡ secret, **tuyệt đối không được push**.
+
+**Tình trạng kế hoạch:** #01–#03 ✅ · #04 ✅ (đóng hôm nay, 6 repo treo đã xong ở #06/#07) · #05 ✅ ·
+#06 ✅ · #07 ✅ · #08 ✅ (hồ sơ lập bù cho `v1.5.2`+`v1.5.3`). **Không còn kế hoạch nào đang dở.**
+Kế hoạch tiếp theo sẽ là **#09**, và theo luật hiện hành phải đủ bộ `specs/` trừ khi là PATCH ≤1 ngày.
+
+**Việc đầu tiên của phiên sau:**
+1. Chạy Bước 0 (boot engine), rồi `git log -3` của hub xem phiên khác có đổi `BRAIN_TEMPLATE_VERSION` không.
+2. Đọc mục **🔴 Active** của `roadmap.md`. Mục xoay khoá **đã đóng theo quyết định user** — đừng nhắc lại.
+   Ưu tiên còn lại: tìm và tắt tiến trình nhân bản ngoài git, rồi quyết cách xử 12 cặp repo lồng.
+3. **51 repo khác vẫn chưa push** (có repo lệch tới 149 commit). Nếu định push hàng loạt: phải quét secret
+   TỪNG repo, và nhớ gotcha #15 — cổng phải `exit 1`, không được chỉ `echo` rồi nối `&&`.
+
+---
+
 ## 🔐 02/09 — Gỡ Bản Đồ Secret Rồi Mới Push (lần push ĐẦU TIÊN của cả chiến dịch)
 
 User hỏi *"có thể push não mới nhất lên Git chưa?"*. Kiểm ra **hub là repo PUBLIC** trong khi tài liệu
@@ -39,9 +58,11 @@ Chi tiết không mất: chuyển sang `..\.brain4agent-secrets-map.local.md`, n
 **Lưu ý cho agent sau:** nhật ký #06 phía dưới còn câu *"Phải xoay khoá"* — **đã bị thay thế**:
 user quyết 2026-09-02 KHÔNG xoay. Đọc mục 🔴 Active của `roadmap.md` làm chuẩn.
 
-**Còn tồn tại (đã báo user):** danh sách 15 repo có secret ở root nằm trong `planning/06_*/plan.md`
-**đã public từ lần push trước**, gỡ bây giờ không thu hồi được — muốn xử phải force-push viết lại lịch
-sử đã công bố, là quyết định riêng của user.
+**Còn tồn tại (đã báo user) — 2 chỗ ĐÃ public từ lần push TRƯỚC, gỡ bây giờ không thu hồi được:**
+(a) danh sách 15 repo có secret ở root trong `planning/06_*/plan.md`; (b) `planning/05_*/specs/`
+`SPEC-P06-causalagent.md` ghi `.env` của một repo chứa khoá API của 3 nhà cung cấp có tên — đã gỡ tên
+khỏi bản hiện tại ở #08, nhưng lịch sử vẫn giữ. Muốn xoá triệt để phải force-push viết lại lịch sử đã
+công bố — quyết định riêng của user.
 
 ---
 

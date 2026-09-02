@@ -2,6 +2,18 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.5.4] - 2026-09-02: Đóng Kế Hoạch #04 + Lập Hồ Sơ #08 Cho Hai Bản Vá PATCH
+
+### Fixed
+- **Kế hoạch #04 treo trạng thái sai.** Header ghi "🔄 CHƯA hoàn tất — còn 6 repo chờ user", nhưng đo bằng máy 2026-09-02 thì **cả 6 repo đã xong ở #06/#07**: 4 repo đạt chuẩn và commit sạch; 2 repo (`GramPilot`, `control-gpm`) đã áp bản vá trên đĩa nhưng cố ý chưa commit vì `AGENTS.md`/`state.json` nằm trong việc đang dở của chủ dự án. Đã chuyển sang ✅ và thêm mục "Đóng kế hoạch" kèm bảng kiểm chứng.
+- **Hai bản vá `v1.5.2` và `v1.5.3` không có hồ sơ kế hoạch nào.** Đã lập bù `planning/08_2026-09-02_hotfix-lenh-va-go-secret/plan.md` (dạng `plan.md` đơn theo ngoại lệ PATCH §3 mục 2.5) với đủ nhật ký quyết định, mục "Quyết định bị thay thế", checklist và cổng nghiệm thu có nhãn môi trường.
+
+### Security
+- Quét rộng phát hiện **2 chỗ chỉ dẫn vị trí khoá đã công khai từ những lần push TRƯỚC**: `planning/05_*/specs/SPEC-P06-causalagent.md` nêu đích danh 3 nhà cung cấp khoá trong `.env` của một repo (đã gỡ tên khỏi bản hiện tại), và danh sách 15 repo có secret ở root trong `planning/06_*/plan.md` (giữ nguyên — chỉ nói repo nào có `.env`, không nói bên trong có gì). **Lịch sử đã công bố vẫn giữ cả hai**; xoá triệt để cần force-push, là quyết định của chủ dự án.
+
+### Learned
+- Gotcha **#15**: cổng an toàn chỉ `echo` cảnh báo mà không trả mã thoát khác 0, lại nối `&&` với `git push`, nên lệnh push vẫn chạy dù cổng đã báo có vấn đề. Cổng chặn thao tác khó đảo ngược bắt buộc phải `exit 1`, và phải in ra dòng khớp để phân biệt khoá thật với văn bản mô tả mẫu quét.
+
 ## [v1.5.3] - 2026-09-02: Gỡ Bản Đồ Vị Trí Secret Khỏi Kho Công Khai (Trước Lần Push Đầu Tiên)
 
 ### Security
