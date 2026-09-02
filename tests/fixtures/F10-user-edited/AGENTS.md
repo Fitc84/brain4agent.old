@@ -2,6 +2,8 @@
 
 Tệp này là kim chỉ nam tối thượng của dự án. Mọi AI Agent khi bước vào workspace này **BẮT BUỘC** phải tuân thủ nghiêm ngặt các quy tắc và giao thức dưới đây.
 
+Đoạn riêng #1: dự án này có quy ước bổ sung ngoài khung, agent phải đọc kèm.
+
 ---
 
 ## ⚡ 1. GIAO THỨC KHỞI ĐỘNG (Agent Startup Protocol)
@@ -43,6 +45,24 @@ Mọi đề xuất nâng cấp tính năng lớn, tái cấu trúc hoặc thêm 
    - **Quy tắc STT:** 2 chữ số (`01`, `02`, ..., `99`) tăng dần theo thời gian thực tế.
    - **Quy tắc tên ngắn (2-3 từ):** Giữ độ dài thư mục trong khoảng 25 - 35 ký tự.
    - **Cố định đường dẫn (Path Invariant):** Không đổi tên thư mục khi hoàn thành.
+2. **BẮT BUỘC DẠNG SPEC PACKAGE — CẤM PLAN PHẲNG/MỎNG (luật chốt 2026-09-01):**
+   Một kế hoạch KHÔNG được là một file `plan.md` dồn hết mọi thứ. Bắt buộc tách thành **bộ SPEC nhiều file**, mỗi file là MỘT hợp đồng độc lập:
+   ```text
+   planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]/
+   ├── plan.md                          # HỒ SƠ kế hoạch (KHÔNG chứa thiết kế — xem mục 2.3)
+   └── specs/                           # Bản thiết kế chi tiết (Spec-First)
+       ├── 00-ARCHITECTURE.md           # Mục tiêu, Non-goals, Bất biến kiến trúc, Router thứ tự đọc
+       ├── 01-CONTRACTS.md              # Contracts, Types, Schema/DDL bất biến
+       ├── SPEC-Pxx-[Name].md           # Đặc tả từng mảng/bước thực thi cụ thể
+       ├── OPERATIONS.md                # Deploy, runbook, thứ tự bắt buộc, rollback
+       └── TESTING-ACCEPTANCE.md        # Ma trận test + bằng chứng nghiệm thu + Exit Gates
+   ```
+   - **2.1. Bộ SPEC tối thiểu:** phải phủ đủ 4 mảng — (a) kiến trúc & bất biến, (b) contract dữ liệu/API/module, (c) vận hành-deploy-rollback, (d) kiểm thử-nghiệm thu. Dự án lớn tách thêm SPEC theo từng tính năng.
+   - **2.2. Mỗi file SPEC BẮT BUỘC có:** contract chính xác (chữ ký hàm/endpoint/schema, không mô tả chung chung); luật **BẮT BUỘC / CẤM** tường minh, kể cả **"vùng cấm"** (điều đã cân nhắc và quyết định KHÔNG làm, kèm lý do — chống việc agent sau "sửa lại cho tốt hơn"); bảng phân loại lỗi + hành vi bắt buộc của caller cho từng loại; số đo/bằng chứng nghiệm thu thật (không chỉ "test xanh").
+   - **2.3. `plan.md` CHỈ được chứa:** Metadata Header (mục 3); **Nhật ký quyết định có mốc thời gian** — kèm mục **"Quyết định bị thay thế"** (không xoá lịch sử, không để hai phát biểu ngược nhau cùng sống); phân công Work Packages + Model Tier; checklist thực thi; bảng trỏ sang các file SPEC. **CẤM nhét thiết kế chi tiết vào `plan.md`.**
+   - **2.4. Exit Gates phải đánh dấu theo môi trường** (vd `✅ local / ⬜ server`) — kế hoạch chỉ được đóng khi mọi gate của môi trường thật chuyển ✅.
+   - **2.5. NGOẠI LỆ DUY NHẤT:** hotfix/patch nhỏ (`PATCH` SemVer, ≤1 ngày công) được phép chỉ có `plan.md`, nhưng vẫn đủ Metadata + nhật ký quyết định + checklist. Mọi đợt `MINOR`/`MAJOR` bắt buộc đủ bộ SPEC.
+   - **2.6. Package cũ dạng phẳng** (file `NN-*.md` nằm thẳng trong thư mục kế hoạch, không có `specs/`) được GIỮ NGUYÊN theo Path Invariant — không đổi cấu trúc để tránh gãy tham chiếu; chỉ áp cấu trúc chuẩn cho kế hoạch MỚI.
 3. **Quy tắc Phân Tầng Mô Hình (Model Tiering Tagging):**
    - 🔴 **Tier Đỏ (Strongest):** Thiết kế kiến trúc nền tảng, Data Contracts, Security (Ưu tiên mô hình mạnh nhất như Claude 3.7 / Opus / GPT-4.5).
    - 🟠 **Tier Cam (Standard):** Viết logic tính năng chính, xử lý luồng, Unit tests (Mô hình cân bằng như Sonnet).
@@ -66,6 +86,14 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (`MAJOR.MINOR.PATCH`)**:
 2. **Đồng bộ phiên bản (Single Source of Version Truth):**
    - Cập nhật đồng thời tại tất cả các file cấu hình của dự án (`package.json`, `pyproject.toml`, `Cargo.toml`, `tauri.conf.json`...).
    - Ghi nhận mục phát hành mới vào [`brain4agent/changelog.md`](file:///brain4agent/changelog.md).
+3. **Bảng quy ước riêng của dự án (ngoài khung):**
+
+| Nhánh | Ai duyệt | Ghi chú |
+| :--- | :--- | :--- |
+| `main` | chủ dự án | chỉ nhận merge đã review |
+| `feat/*` | tác giả | xoá sau khi merge |
+
+Đoạn riêng #2: bảng trên là dữ liệu của người, engine CẤM đụng.
 
 ---
 
@@ -122,7 +150,7 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (`MAJOR.MINOR.PATCH`)**:
 2. **Cơ chế Reactive Wakeup:** Để hệ thống tự đánh thức khi task ngầm hoàn tất; nếu cần heartbeat dùng `schedule` với chu kỳ $\ge 45\text{s} - 60\text{s}$.
 
 ### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)
-1. Root repo BẮT BUỘC đủ 2 file: `AGENTS.md` = nguồn chân lý DUY NHẤT chứa toàn bộ luật; `CLAUDE.md` = shim mỏng ≤10 dòng, chỉ 1 dòng `@AGENTS.md` + ghi chú ngắn, TUYỆT ĐỐI không chứa luật.
+1. Root repo BẮT BUỘC đủ 2 file: `AGENTS.md` = nguồn chân lý DUY NHẤT chứa toàn bộ luật; `CLAUDE.md` = shim mỏng ≤10 dòng, chỉ 1 dòng `@AGENTS.md` + ghi chú ngắn, TUYỆT ĐỐI không chứa luật. (ghi chú riêng)
 2. Lý do: mỗi hãng agent đọc tên file khác nhau. Claude Code CHỈ auto-load `CLAUDE.md`; Gemini/Codex và agent theo chuẩn `agents.md` đọc `AGENTS.md`. Hai điểm nạp, MỘT nguồn chân lý.
 3. CẤM: (a) chép/nhân bản luật sang `CLAUDE.md` → sinh 2 nguồn chân lý lệch nhau; (b) đổi tên `AGENTS.md` (các tài liệu trong repo + agent khác tham chiếu đúng tên này).
 4. Khi khởi tạo dự án MỚI hoặc chạy skill `xay-dung-nao-bo`: PHẢI sinh ĐỦ CẢ HAI file, không sinh mỗi một cái.
@@ -132,11 +160,13 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (`MAJOR.MINOR.PATCH`)**:
 
 ---
 
-## 🧪 Khối luật planning CŨ còn sót (cố ý)
+## 📎 Ghi chú riêng cuối file
 
-2. **Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First):**
-   ```text
-   planning/[STT]_[YYYY-MM-DD]_[Ten-Ngan]/
-   ├── plan.md
-   └── 01-thiet-ke-chi-tiet.md
-   ```
+Đoạn riêng #3: ví dụ minh hoạ cú pháp mốc — dòng dưới đây THỤT LỀ nên KHÔNG phải
+là mốc thật (bất biến M-1: mốc phải chiếm trọn một dòng).
+
+```text
+   <!-- brain:rule:boot -->
+   …thân luật do engine quản lý…
+   <!-- /brain:rule:boot -->
+```
