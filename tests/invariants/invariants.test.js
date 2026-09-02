@@ -11,7 +11,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { mkTmpRoot, listFixtures } = require('../helpers/tmp.js');
+const { mkTmpRoot, convergingFixtures } = require('../helpers/tmp.js');
 const { snapshotTree } = require('../helpers/tree.js');
 const { runEngine, ENGINE_PATH } = require('../helpers/run.js');
 
@@ -88,25 +88,48 @@ test('I4: CLAUDE.md là shim ≤10 dòng, trỏ @AGENTS.md, và giữ nguyên n�
   });
 });
 
-test('I5: AGENTS.md sau khi vá có ĐỦ 4 token luật mốc', () => {
-  const TOKENS = ['xay-dung-nao-bo', 'Marker Phiên Bản Khung Não', 'Dual Entry-Point Invariant', 'SPEC PACKAGE'];
-  for (const name of ['F03-legacy-v120', 'F04-old-planning-block', 'F08-dollar-agents', 'F01-blank']) {
+test('I5: AGENTS.md sau khi vá có ĐỦ 6 khối marker, ruột ĐÚNG BẰNG thân luật hiện hành', () => {
+  // Từ #10, "đủ luật" không còn đo bằng cách dò chuỗi token (cách đó cho âm tính giả:
+  // token có thể nằm trong khối ``` hoặc trong một câu khác) mà đo bằng khối marker.
+  for (const name of ['F03-legacy-v120', 'F05-crlf-agents', 'F08-dollar-agents', 'F09-legacy-v130', 'F01-blank']) {
     withFixture(name, (dir) => {
       assert.equal(runEngine(ENGINE_PATH, [dir]).code, 0, name);
-      const agents = readUtf8(dir, 'AGENTS.md');
-      for (const t of TOKENS) assert.ok(agents.includes(t), `${name}: I5 thiếu token ${t}`);
+      const lines = engine.normalizeEol(readUtf8(dir, 'AGENTS.md')).split('\n');
+      for (const blk of engine.RULE_BLOCKS) {
+        const found = engine.findBlock(lines, blk.id);
+        assert.notEqual(found, 'malformed', `${name}: I5 khối ${blk.id} hỏng mốc`);
+        assert.ok(found, `${name}: I5 thiếu khối ${blk.id}`);
+        assert.equal(found.inner, blk.body, `${name}: I5 ruột khối ${blk.id} lệch thân luật`);
+      }
     });
   }
 });
 
-test('I6: chỉ MỘT phát biểu luật planning tồn tại — khối cũ bị gỡ, SPEC PACKAGE ×1', () => {
-  for (const name of ['F04-old-planning-block', 'F06-duplicate-law', 'F05-crlf-agents']) {
+test('I6: mỗi luật CHỈ có một phát biểu — trùng lặp là việc của NGƯỜI, engine chỉ báo', () => {
+  // Hội tụ được ⇒ đúng 1 phát biểu mỗi token luật.
+  for (const name of ['F05-crlf-agents', 'F03-legacy-v120', 'F09-legacy-v130']) {
     withFixture(name, (dir) => {
       assert.equal(runEngine(ENGINE_PATH, [dir]).code, 0, name);
       const agents = readUtf8(dir, 'AGENTS.md');
-      assert.equal(agents.split('SPEC PACKAGE').length - 1, 1, `${name}: I6 phải có đúng 1 phát biểu SPEC PACKAGE`);
-      assert.ok(!agents.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)'),
-        `${name}: I6 khối luật CŨ phải biến mất`);
+      for (const blk of engine.RULE_BLOCKS) {
+        assert.equal(agents.split(blk.probe).length - 1, 1,
+          `${name}: I6 luật ${blk.id} phải có ĐÚNG 1 phát biểu`);
+      }
+    });
+  }
+
+  // TQ5: engine KHÔNG tự gỡ bản thừa / khối luật cũ của người dùng — nó BÁO BRN-003
+  // (mã 2, cần người) và để nguyên văn bản. Đây là hành vi ĐÚNG, không phải thiếu sót.
+  for (const [name, probe] of [
+    ['F04-old-planning-block', 'Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)'],
+    ['F06-duplicate-law', '### J. Quy tắc Tương Thích Đa Agent']
+  ]) {
+    withFixture(name, (dir) => {
+      const r = runEngine(ENGINE_PATH, [dir]);
+      assert.equal(r.code, 2, `${name}: I6 hai phát biểu cùng sống ⇒ mã 2`);
+      assert.ok(runEngine(ENGINE_PATH, ['--check', dir]).stdout.includes('BRN-003'));
+      assert.ok(readUtf8(dir, 'AGENTS.md').includes(probe),
+        `${name}: I6 engine CẤM tự xoá văn bản người dùng`);
     });
   }
 });
@@ -152,7 +175,7 @@ test('I9: memory-distill.txt luôn có Bước 0 (.xay-dung-nao-bo) sau khi ch�
 });
 
 test('I10: idempotent — lần chạy thứ 2 không đổi MỘT BYTE hay MỘT mtime nào trên toàn cây', async (t) => {
-  for (const name of listFixtures()) {
+  for (const name of convergingFixtures()) {
     await t.test(name, () => {
       withFixture(name, (dir) => {
         const first = runEngine(ENGINE_PATH, [dir]);

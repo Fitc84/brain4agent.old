@@ -66,12 +66,26 @@ test('T-H02c · J: CLAUDE.md của hub là shim ≤10 dòng, chỉ trỏ @AGENTS
   }
 });
 
-test('T-H02d · A8: hub tự tuân luật — AGENTS.md của hub đủ 4 token engine bắt buộc', () => {
+test('T-H02d · A8: hub tự tuân luật — 6/6 khối marker có ruột ĐÚNG BẰNG thân luật', () => {
   const agents = read('AGENTS.md');
-  for (const t of ['xay-dung-nao-bo', 'Marker Phiên Bản Khung Não', 'Dual Entry-Point Invariant', 'SPEC PACKAGE']) {
-    assert.ok(agents.includes(t), `hub thiếu token ${t} — engine sẽ tự vá chính hub`);
+  const lines = engine.normalizeEol(agents).split('\n');
+  for (const blk of engine.RULE_BLOCKS) {
+    const found = engine.findBlock(lines, blk.id);
+    assert.notEqual(found, 'malformed', `hub: khối ${blk.id} hỏng mốc (Đ2)`);
+    assert.ok(found, `hub thiếu khối ${blk.id} — engine sẽ tự vá chính hub`);
+    assert.equal(found.inner, blk.body, `hub: ruột khối ${blk.id} lệch thân luật engine phát tán`);
   }
-  // Và engine coi AGENTS.md của hub là đã chuẩn (không sinh patch nào).
-  assert.equal(engine.patchAgentsMd(agents).changed, false,
+  // Và engine coi AGENTS.md của hub là đã chuẩn (không sinh patch, không khối hỏng).
+  const patched = engine.patchAgentsMd(agents);
+  assert.equal(patched.changed, false,
     'engine còn muốn vá AGENTS.md của hub ⇒ hub chưa tuân chính luật mình phát tán');
+  assert.deepEqual(patched.broken, []);
+  assert.deepEqual(engine.classifyRuleBlocks(engine.normalizeEol(agents)).filter((x) => x.extra), [],
+    'hub: probe luật còn xuất hiện NGOÀI khối ⇒ BRN-003');
+});
+
+test('T-H02e · M-8 (bánh cóc): RULE_BLOCKS đúng 6 khối', () => {
+  assert.equal(engine.RULE_BLOCKS.length, 6,
+    'Thêm/bớt một luật khung ⇒ phải cập nhật ĐỒNG THỜI: CORE_GOVERNANCE_RULES.md, ' +
+    'AGENTS.md của hub, con số này, và bộ SPEC của đợt tương ứng. Sửa mỗi con số là xanh giả.');
 });

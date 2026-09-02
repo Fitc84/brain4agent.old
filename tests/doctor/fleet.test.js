@@ -13,6 +13,7 @@ const os = require('node:os');
 const path = require('node:path');
 
 const { runDoctor } = require('../helpers/run.js');
+const { mkTmpRoot } = require('../helpers/tmp.js');
 const { buildFleet, buildSingle, VIET_NAME } = require('./make-fleet.js');
 
 // Đường dẫn tuyệt đối của MÁY (A9). Ghép từ mảnh để file test không tự khớp.
@@ -217,6 +218,50 @@ test('P04 · --expect-template đổi chuẩn kỳ vọng (chuẩn đến từ C
     const alpha = report.repos.find((x) => x.name === 'repo-alpha');
     assert.ok(alpha.findings.some((x) => x.code === 'BRN-010'), 'ngược lại repo 1.3.0 trở thành lệch');
   } finally { f.cleanup(); }
+});
+
+// ── T-R20 / T-R21 · #10: doctor nhận 2 mã mới QUA BẢNG ENGINE (0 dòng logic riêng) ──
+// Quét trên `tests/fixtures/fleet` — chính tài nguyên mà bước CI `doctor-fixture-run`
+// trỏ vào; chạy trên BẢN SAO tạm để doctor không bao giờ đụng thư mục fixture.
+function withFleetFixture(fn) {
+  const tmp = mkTmpRoot('fleet');
+  try { return fn(tmp.dir); } finally { tmp.cleanup(); }
+}
+
+test('T-R20 · fleet fixture: 00-chuan CLEAN, 01 = BRN-003, 03-moc-hong = BRN-016, exit 2', () => {
+  withFleetFixture((root) => {
+    const r = runDoctor(['--root', root, '--no-git', '--format', 'json']);
+    assert.equal(r.code, 2, 'có ERROR ⇒ mã thoát 2 (bước doctor-fixture-check của CI)');
+    const by = Object.fromEntries(JSON.parse(r.stdout).repos.map((x) => [x.name, x]));
+
+    assert.equal(by['00-chuan'].status, 'CLEAN', 'S2 (6 khối mốc, thân đúng) ⇒ sạch');
+    assert.deepEqual(by['00-chuan'].findings, []);
+    assert.equal(by['01-nhan-doi-luat'].status, 'ERROR');
+    assert.deepEqual(codesOf(by['01-nhan-doi-luat']), ['BRN-003']);
+    assert.equal(by['03-moc-hong'].status, 'ERROR');
+    assert.deepEqual(codesOf(by['03-moc-hong']), ['BRN-016']);
+    assert.equal(by['02-thu-muc-thuong'].status, 'SKIPPED');
+  });
+});
+
+test('T-R21 · fleet fixture: detail của BRN-016/003 đi nguyên vẹn ra --format json', () => {
+  withFleetFixture((root) => {
+    const by = Object.fromEntries(
+      JSON.parse(runDoctor(['--root', root, '--no-git', '--format', 'json']).stdout).repos.map((x) => [x.name, x])
+    );
+    const moc = by['03-moc-hong'].findings.find((f) => f.code === 'BRN-016');
+    assert.equal(moc.level, 'error');
+    assert.equal(moc.message, 'AGENTS.md: khối marker hỏng hoặc vùng luật đã bị sửa tay');
+    assert.deepEqual(moc.detail, { malformed: ['dual-entry'], edited: [] });
+
+    const dup = by['01-nhan-doi-luat'].findings.find((f) => f.code === 'BRN-003');
+    assert.deepEqual(dup.detail, { extra: [], legacy_planning: true });
+
+    // Bảng terminal in mã mới như mọi mã engine khác (labelOf không có nhánh riêng).
+    const table = runDoctor(['--root', root, '--no-git']).stdout;
+    assert.ok(table.includes('BRN-016'));
+    assert.ok(table.includes('BRN-003'));
+  });
 });
 
 test('P04 · --version / --help: mã thoát 0, không đọc kho nào', () => {

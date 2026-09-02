@@ -10,6 +10,18 @@ const { mkSnapshot, engine: e, tf, NOW, V } = require('../helpers/snapshot.js');
 
 const realOps = (plan) => plan.ops.filter((op) => op.op !== 'log');
 
+/**
+ * Dựng một `AGENTS.md` ở trạng thái **S1** từ chính bảng `RULE_BLOCKS`: các thân luật
+ * 1.3.0 nguyên văn (`legacy`), 0 mốc. Lỗ SemVer của `root-marker` điền `1.3.0`.
+ * Đây là hình dạng thật của 49/65 repo vệ tinh (SPEC-P02 §2) và là hình dạng của F09.
+ */
+function legacyAgentsS1() {
+  const bodies = e.RULE_BLOCKS
+    .filter((b) => b.legacy.length > 0)
+    .map((b) => (Array.isArray(b.legacy[0]) ? b.legacy[0].join('1.3.0') : b.legacy[0]));
+  return '# AGENTS.md — dự án mẫu (khung não 1.3.0, chưa bọc mốc)\n\n' + bodies.join('\n\n') + '\n';
+}
+
 test('T-U19 · I1/D7(b): planMarkerOps ĐẾM marker — marker lỗi thời vào stale, không tạo thêm', () => {
   const r = e.planMarkerOps(['brain4agent-v1.2.0.md', `brain4agent-v${V}.md`, 'x.md'], V);
   assert.deepEqual(r.stale, ['brain4agent-v1.2.0.md']);
@@ -55,8 +67,10 @@ test('T-U32 · §2.3: computePlan giữ ĐÚNG thứ tự ops (rename → mkdir 
       todayMd: null,
       stateJson: tf(JSON.stringify({ current_version: '9.9.9', brain_template_version: '1.2.0' }, null, 2) + '\n'),
       claudeMd: tf('# CLAUDE.md\n\nghi chú riêng\n'),
-      // Bỏ luật J khỏi AGENTS.md để bước 8 chắc chắn sinh op ghi.
-      agentsMd: tf(e.renderFullAgentsMd().split('### J. Quy tắc Tương Thích Đa Agent')[0])
+      // AGENTS.md ở trạng thái S1 (SPEC-P02 §3): thân luật 1.3.0 NGUYÊN VĂN, chưa mốc
+      // nào ⇒ chắc chắn sinh op ghi ở bước 8. CẤM dựng input bằng cách cắt đôi văn bản
+      // đã bọc mốc: cắt giữa cặp mốc là H1 (fail-closed) ⇒ engine đúng ra KHÔNG ghi gì.
+      agentsMd: tf(legacyAgentsS1())
     }
   });
 

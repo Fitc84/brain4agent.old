@@ -2,7 +2,7 @@
 /**
  * D7 — `isFullyStandard` của v1.5.4 là một chuỗi boolean thủ công, bỏ sót 3 việc:
  *   (a) không đối chiếu `state.json.brain_template_version` ⇒ repo kẹt version cũ vẫn "OK";
- *   (b) không ĐẾM token luật ⇒ hai/ba phát biểu luật cùng sống vẫn "OK";
+ *   (b) không nhận ra hai/ba phát biểu luật cùng sống (từ #10: probe ngoài khối ⇒ BRN-003);
  *   (c) không kiểm `CLAUDE.md` ≤ 10 dòng ⇒ shim phình thành hiến pháp thứ hai vẫn "OK".
  *
  * Ba nhánh được kiểm hộp đen ở đây; các ca đơn vị tương ứng nằm ở
@@ -30,7 +30,7 @@ test('D7(a): state.json kẹt version cũ (marker đã đúng) ⇒ --check KHÔN
   try {
     const statePath = path.join(tmp.dir, ...STATE_REL);
     const st = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-    st.brain_template_version = '1.2.0'; // marker ở root vẫn là 1.3.0
+    st.brain_template_version = '1.2.0'; // marker ở root vẫn mang version khung hiện hành
     fs.writeFileSync(statePath, JSON.stringify(st, null, 2) + '\n');
 
     const r = runEngine(ENGINE_PATH, ['--check', tmp.dir]);

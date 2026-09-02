@@ -9,7 +9,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { mkTmpRoot, listFixtures } = require('../helpers/tmp.js');
+const { mkTmpRoot, listFixtures, convergingFixtures, NON_CONVERGING } = require('../helpers/tmp.js');
 const { snapshotTree } = require('../helpers/tree.js');
 const { runEngine, ENGINE_PATH } = require('../helpers/run.js');
 
@@ -35,7 +35,9 @@ test('P01-E4: --check/--dry-run không ghi bất cứ thứ gì (sha256 + mtime 
 });
 
 test('P01-E9: idempotent — chạy ghi lần 2 exit 0, NÃO ĐÃ OK, cây không đổi', async (t) => {
-  for (const name of listFixtures()) {
+  // Chỉ fixture HỘI TỤ ĐƯỢC. Fixture cố ý hỏng (BRN-003/016, không fixable) được kiểm
+  // riêng ở P01-E9b: chúng phải dừng ở mã 2 và ĐỨNG YÊN, không phải "hội tụ".
+  for (const name of convergingFixtures()) {
     await t.test(name, () => {
       const tmp = mkTmpRoot(name);
       try {
@@ -50,6 +52,28 @@ test('P01-E9: idempotent — chạy ghi lần 2 exit 0, NÃO ĐÃ OK, cây khôn
 
         const check = runEngine(ENGINE_PATH, ['--check', tmp.dir]);
         assert.equal(check.code, 0, `${name}: --check sau khi ghi phải exit 0`);
+      } finally {
+        tmp.cleanup();
+      }
+    });
+  }
+});
+
+test('P01-E9b: fixture CỐ Ý hỏng — ghi lần 2 vẫn mã 2 và cây ĐỨNG YÊN (điểm bất động)', async (t) => {
+  for (const [name, why] of Object.entries(NON_CONVERGING)) {
+    await t.test(`${name} — ${why}`, () => {
+      const tmp = mkTmpRoot(name);
+      try {
+        const first = runEngine(ENGINE_PATH, [tmp.dir]);
+        assert.equal(first.code, 2, `${name}: lỗi không fixable ⇒ 2 (stderr: ${first.stderr})`);
+        assert.ok(!first.stdout.includes('HOÀN TẤT THÀNH CÔNG'));
+        const afterFirst = snapshotTree(tmp.dir);
+
+        const second = runEngine(ENGINE_PATH, [tmp.dir]);
+        assert.equal(second.code, 2, `${name}: lần 2 vẫn phải là 2`);
+        assert.ok(!second.stdout.includes('NÃO ĐÃ OK'));
+        assert.deepEqual(snapshotTree(tmp.dir), afterFirst,
+          `${name}: A1 — lần 2 CẤM ghi thêm dù chưa hội tụ`);
       } finally {
         tmp.cleanup();
       }
