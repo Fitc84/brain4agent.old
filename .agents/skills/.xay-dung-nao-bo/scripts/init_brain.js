@@ -644,6 +644,156 @@ function patchClaudeMd(content) {
 }
 
 // -------------------------------------------------------------------------
+// BẢNG MÃ KIỂM TRA (01-CONTRACTS §8). WP6 chỉ dùng các mã mà chẩn đoán dòng 109
+// của v1.5.4 đã kiểm; WP1 điền đủ BRN-001..BRN-015.
+// -------------------------------------------------------------------------
+const BRN = {
+    'BRN-001': { level: 'blocker', title: 'Thiếu AGENTS.md ở root', fix: 'Chạy engine chế độ ghi tại repo' },
+    'BRN-002': { level: 'error', title: 'AGENTS.md thiếu token mốc bắt buộc', fix: 'Chạy engine chế độ ghi' },
+    'BRN-003': { level: 'error', title: 'AGENTS.md có hai phát biểu luật planning cùng sống', fix: 'Chạy engine chế độ ghi để gỡ khối cũ' },
+    'BRN-004': { level: 'blocker', title: 'CLAUDE.md thiếu hoặc không chứa @AGENTS.md', fix: 'Chạy engine chế độ ghi' },
+    'BRN-006': { level: 'error', title: 'Số marker brain4agent-v<x.y.z>.md ở root khác 1', fix: 'Chạy engine chế độ ghi' },
+    'BRN-008': { level: 'blocker', title: 'Thiếu brain4agent/ hoặc thiếu phân vùng bắt buộc', fix: 'Chạy engine chế độ ghi' },
+    'BRN-009': { level: 'error', title: 'Thiếu thư mục hạ tầng bắt buộc', fix: 'Chạy engine chế độ ghi' },
+    'BRN-011': { level: 'warning', title: 'state.json không kết thúc bằng byte 0x0A', fix: 'Chạy engine chế độ ghi' },
+    'BRN-012': { level: 'error', title: 'memory-distill.txt thiếu Bước 0, hoặc root còn latest_memory.md', fix: 'Chạy engine chế độ ghi' }
+};
+
+const BRAIN_MARKER_REGEX = /^brain4agent-v(\d+\.\d+\.\d+)\.md$/;
+
+const SNAPSHOT_FILES = {
+    agentsMd: 'AGENTS.md',
+    claudeMd: 'CLAUDE.md',
+    legacyLatest: 'latest_memory.md',
+    stateJson: 'brain4agent/memory/hot/state.json',
+    todayMd: 'brain4agent/memory/hot/today.md'
+};
+
+// -------------------------------------------------------------------------
+// collectSnapshot — LỚP I/O ĐỌC DUY NHẤT. Mỗi file được đọc ĐÚNG MỘT LẦN.
+// -------------------------------------------------------------------------
+function collectSnapshot(rootDir) {
+    let st = null;
+    try {
+        st = fs.statSync(rootDir);
+    } catch (e) {
+        st = null;
+    }
+    if (!st || !st.isDirectory()) {
+        const err = new Error('rootDir khong ton tai hoac khong phai thu muc: ' + rootDir);
+        err.name = 'RootError';
+        err.code = 'EROOT';
+        throw err;
+    }
+
+    let rootEntries = [];
+    try {
+        rootEntries = fs.readdirSync(rootDir).sort();
+    } catch (e) {
+        rootEntries = [];
+    }
+
+    const fileErrors = [];
+    const present = {};
+    const abs = (rel) => path.join(rootDir, ...rel.split('/'));
+    const read = (rel) => {
+        const p = abs(rel);
+        present[rel] = fs.existsSync(p);
+        if (!present[rel]) return null;
+        try {
+            return readText(p);
+        } catch (e) {
+            fileErrors.push({ rel, code: e.code || 'EIO', message: e.message });
+            return null;
+        }
+    };
+
+    const files = { brain: {} };
+    for (const key of Object.keys(SNAPSHOT_FILES)) files[key] = read(SNAPSHOT_FILES[key]);
+    for (const f of REQUIRED_FILES) files.brain[f] = read('brain4agent/' + f);
+    files.distill = files.brain['memory-distill.txt'];
+
+    const dirs = {
+        brain: fs.existsSync(abs('brain4agent')),
+        memory: fs.existsSync(abs('brain4agent/memory')),
+        hot: fs.existsSync(abs('brain4agent/memory/hot')),
+        planning: fs.existsSync(abs('planning')),
+        agents: fs.existsSync(abs('.agents')),
+        skills: fs.existsSync(abs('.agents/skills')),
+        docs: fs.existsSync(abs('docs'))
+    };
+
+    return { rootLabel: path.basename(rootDir), rootEntries, dirs, files, present, fileErrors };
+}
+
+// -------------------------------------------------------------------------
+// diagnose — THUẦN. isStandard phải cho CÙNG giá trị boolean với isFullyStandard
+// của engine v1.5.4 (dòng 109) trên mọi ca golden.
+// -------------------------------------------------------------------------
+function diagnose(s, templateVersion) {
+    const findings = [];
+    const add = (code, message, detail) => {
+        const meta = BRN[code];
+        findings.push({ code, level: meta.level, fixable: true, message: message || meta.title, fix: meta.fix, detail: detail || {} });
+    };
+
+    const isBrandNew = !s.dirs.brain;
+
+    if (!s.dirs.brain) {
+        add('BRN-008', 'Thiếu thư mục brain4agent/', { missing: REQUIRED_FILES.slice() });
+    } else {
+        const missingBrainFiles = REQUIRED_FILES.filter((f) => !s.present['brain4agent/' + f]);
+        if (missingBrainFiles.length > 0) {
+            add('BRN-008', 'Thiếu phân vùng bắt buộc trong brain4agent/', { missing: missingBrainFiles });
+        }
+    }
+
+    const hasHotMemory = s.dirs.hot
+        && s.present['brain4agent/memory/hot/state.json']
+        && s.present['brain4agent/memory/hot/today.md'];
+    const missingInfra = [];
+    if (!hasHotMemory) missingInfra.push('brain4agent/memory/hot/');
+    if (!s.dirs.planning) missingInfra.push('planning/');
+    if (!s.dirs.skills) missingInfra.push('.agents/skills/');
+    if (missingInfra.length > 0) add('BRN-009', 'Thiếu thư mục hạ tầng bắt buộc', { missing: missingInfra });
+
+    if (!s.present['AGENTS.md']) {
+        add('BRN-001');
+    } else {
+        const agentsText = s.files.agentsMd ? s.files.agentsMd.text : '';
+        const missingTokens = [];
+        if (!agentsText.includes('xay-dung-nao-bo')) missingTokens.push('xay-dung-nao-bo');
+        if (!agentsText.includes('Marker Phiên Bản Khung Não')) missingTokens.push('Marker Phiên Bản Khung Não');
+        if (!agentsText.includes('Dual Entry-Point Invariant')) missingTokens.push('Dual Entry-Point Invariant');
+        if (missingTokens.length > 0) add('BRN-002', 'AGENTS.md thiếu token mốc bắt buộc', { missing: missingTokens });
+        if (agentsText.includes('SPEC PACKAGE') && agentsText.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)')) {
+            add('BRN-003');
+        }
+    }
+
+    const claudeText = s.files.claudeMd ? s.files.claudeMd.text : null;
+    if (claudeText === null || !claudeText.includes('@AGENTS.md')) add('BRN-004');
+
+    const markerFiles = s.rootEntries.filter((f) => BRAIN_MARKER_REGEX.test(f));
+    const expectedMarker = `brain4agent-v${templateVersion}.md`;
+    if (!(markerFiles.length === 1 && markerFiles[0] === expectedMarker)) {
+        add('BRN-006', 'Marker phiên bản khung não ở root không đúng chuẩn', { found: markerFiles, expected: expectedMarker });
+    }
+
+    if (s.files.stateJson && !s.files.stateJson.text.endsWith('\n')) add('BRN-011');
+
+    const which = [];
+    if (s.present['brain4agent/memory-distill.txt']
+        && (!s.files.distill || !s.files.distill.text.includes('xay-dung-nao-bo'))) {
+        which.push('memory-distill.txt');
+    }
+    if (s.present['latest_memory.md']) which.push('latest_memory.md');
+    if (which.length > 0) add('BRN-012', BRN['BRN-012'].title, { which });
+
+    return { findings, isStandard: findings.length === 0, isBrandNew };
+}
+
+// -------------------------------------------------------------------------
 // ĐIỂM VÀO LẬP TRÌNH — không process.exit, không console.*,
 // không bắt exception của chính nó (main() là nơi duy nhất bắt).
 // -------------------------------------------------------------------------
@@ -683,78 +833,12 @@ logger(`📁 Project Root: ${rootDir}\n`);
 // 1. TỰ ĐỘNG CHẨN ĐOÁN TRẠNG THÁI NÃO BỘ (SMART DIAGNOSTIC)
 // -------------------------------------------------------------------------
 
-const hasBrainDir = fs.existsSync(brainDir);
-const hasHotMemory = fs.existsSync(hotDir) && fs.existsSync(path.join(hotDir, 'state.json')) && fs.existsSync(path.join(hotDir, 'today.md'));
-const hasPlanning = fs.existsSync(planningDir);
-const hasAgentsMd = fs.existsSync(agentsMdPath);
-const hasSkillsVault = fs.existsSync(skillsDir);
-const hasLegacyLatest = fs.existsSync(legacyLatestMemory);
-
-// Kiểm tra shim CLAUDE.md — Claude Code CHỈ auto-load CLAUDE.md, không đọc AGENTS.md,
-// nên mọi dự án bắt buộc phải có shim này trỏ về AGENTS.md (Dual Entry-Point Invariant, mục J).
-let hasClaudeMd = false;
-if (fs.existsSync(claudeMdPath)) {
-    const claudeMdContent = readText(claudeMdPath).text;
-    hasClaudeMd = claudeMdContent.includes('@AGENTS.md');
-}
-
-// Kiểm tra xem AGENTS.md và memory-distill.txt đã được cập nhật Bước 0 (Boot Não) chưa
-let hasStep0InAgentsMd = false;
-// Kiểm tra AGENTS.md ĐÃ TỒN TẠI đã có ngoại lệ §5.G (marker phiên bản khung não) và
-// Luật J (Dual Entry-Point Invariant) chưa — dò bằng chuỗi ổn định (không dò theo số dòng),
-// vì các luật này có thể được thêm vào SAU KHI dự án đã init lần đầu (giống lỗ hổng Luật J v1.1.0).
-let hasRootMarkerException = false;
-let hasDualEntryPointLawInAgentsMd = false;
-if (hasAgentsMd) {
-    const agentsContent = readText(agentsMdPath).text;
-    hasStep0InAgentsMd = agentsContent.includes('xay-dung-nao-bo');
-    hasRootMarkerException = agentsContent.includes('Marker Phiên Bản Khung Não');
-    hasDualEntryPointLawInAgentsMd = agentsContent.includes('Dual Entry-Point Invariant');
-}
-
-let hasStep0InDistill = false;
-const distillPath = path.join(brainDir, 'memory-distill.txt');
-if (fs.existsSync(distillPath)) {
-    const distillContent = readText(distillPath).text;
-    hasStep0InDistill = distillContent.includes('xay-dung-nao-bo');
-}
-
-let missingBrainFiles = [];
-if (hasBrainDir) {
-    missingBrainFiles = REQUIRED_FILES.filter(f => !fs.existsSync(path.join(brainDir, f)));
-}
-
-// Kiểm tra Marker Phiên Bản Khung Não ở root (brain4agent-v<version>.md) — bản soi cho người,
-// dẫn xuất từ nguồn chân lý máy đọc brain4agent/memory/hot/state.json -> brain_template_version.
-const brainMarkerRegex = /^brain4agent-v(\d+\.\d+\.\d+)\.md$/;
-let rootFilesForMarker = [];
-try {
-    rootFilesForMarker = fs.readdirSync(rootDir);
-} catch (e) {
-    rootFilesForMarker = [];
-}
-const existingMarkerFiles = rootFilesForMarker.filter(f => brainMarkerRegex.test(f));
-const currentMarkerFileName = `brain4agent-v${BRAIN_TEMPLATE_VERSION}.md`;
-const hasBrainVersionMarker = existingMarkerFiles.length === 1 && existingMarkerFiles[0] === currentMarkerFileName;
-
-// state.json phải kết thúc bằng newline (chuẩn POSIX) — tránh vết "\ No newline at end of file"
-// xuất hiện vĩnh viễn trong mọi git diff về sau của file này.
-let hasStateJsonTrailingNewline = true;
-const stateJsonDiagPath = path.join(hotDir, 'state.json');
-if (fs.existsSync(stateJsonDiagPath)) {
-    hasStateJsonTrailingNewline = readText(stateJsonDiagPath).text.endsWith('\n');
-}
-
-const isBrandNew = !hasBrainDir;
-// Chẩn đoán: AGENTS.md KHÔNG được chứa đồng thời khối luật planning CŨ và khối SPEC PACKAGE mới.
-// Bản vá đời trước dùng regex chỉ khớp LF nên trên file CRLF nó CHÈN THÊM thay vì THAY THẾ,
-// để lại hai phát biểu ngược nhau cùng sống (vi phạm "một nguồn chân lý").
-let hasNoDuplicatePlanningLaw = true;
-if (hasAgentsMd) {
-    const agentsMdDiag = readText(agentsMdPath).text;
-    hasNoDuplicatePlanningLaw = !(agentsMdDiag.includes('SPEC PACKAGE') && agentsMdDiag.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)'));
-}
-const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker && hasRootMarkerException && hasDualEntryPointLawInAgentsMd && hasStateJsonTrailingNewline && hasNoDuplicatePlanningLaw;
+const snapshot = collectSnapshot(rootDir);
+const diagnosis = diagnose(snapshot, templateVersion);
+const isBrandNew = diagnosis.isBrandNew;
+const isFullyStandard = diagnosis.isStandard;
+const hasLegacyLatest = snapshot.present['latest_memory.md'] === true;
+const currentMarkerFileName = `brain4agent-v${templateVersion}.md`;
 
 if (isFullyStandard) {
     logger("🎉 [KẾT QUẢ CHẨN ĐOÁN] BỘ NÃO DỰ ÁN ĐÃ HOÀN HẢO!");
@@ -765,7 +849,7 @@ if (isFullyStandard) {
     logger("✅ Giao thức khởi động có Bước 0 (.xay-dung-nao-bo boot) trong AGENTS.md & memory-distill.txt.");
     logger("✅ Bất Biến Hai Điểm Nạp: AGENTS.md (nguồn chân lý) + CLAUDE.md (shim) đều tồn tại.");
     logger("✅ AGENTS.md chứa đủ Luật J (Dual Entry-Point Invariant) và Ngoại Lệ Marker (§5.G mục 3).");
-    logger(`✅ Marker Phiên Bản Khung Não: brain4agent-v${BRAIN_TEMPLATE_VERSION}.md đúng chuẩn tại root.`);
+    logger(`✅ Marker Phiên Bản Khung Não: brain4agent-v${templateVersion}.md đúng chuẩn tại root.`);
     logger("✅ Thư mục root sạch sẽ 100% (Root Clean Invariant).");
     logger("-----------------------------------------------------------");
     logger("👉 Trạng thái: NÃO ĐÃ OK — KHÔNG CẦN NÂNG CẤP THÊM!\n");
@@ -823,7 +907,7 @@ for (const dir of targetDirs) {
 // Handle legacy latest_memory.md migration if exists
 if (hasLegacyLatest) {
     logger("📦 Phát hiện latest_memory.md ở root -> Di dời vào brain4agent/memory/hot/...");
-    const legacyFile = readText(legacyLatestMemory);
+    const legacyFile = snapshot.files.legacyLatest;
     const todayPath = path.join(hotDir, 'today.md');
     if (!fs.existsSync(todayPath)) {
         writeText(todayPath, legacyFile.text, legacyFile.eol);
@@ -843,7 +927,7 @@ for (const [filename, content] of Object.entries(templates)) {
     } else {
         // Tự động vá Bước 0 vào memory-distill.txt nếu thiếu
         if (filename === 'memory-distill.txt') {
-            const currentDistill = readText(filePath);
+            const currentDistill = snapshot.files.brain[filename];
             const distillResult = patchDistill(currentDistill.text);
             if (distillResult.changed) {
                 for (const patchName of distillResult.patches) {
@@ -873,7 +957,7 @@ if (!fs.existsSync(stateJsonPath)) {
     // Vá brain_template_version vào state.json đã có, KHÔNG đụng các field khác (vd current_version
     // là version DỰ ÁN — khái niệm khác, tuyệt đối không trộn/ghi đè lên nhau).
     try {
-        const currentStateFile = readText(stateJsonPath);
+        const currentStateFile = snapshot.files.stateJson;
         const stateResult = patchStateJson(currentStateFile.text, templateVersion);
         if (stateResult.changed) {
             writeText(stateJsonPath, stateResult.content, 'lf');
@@ -904,7 +988,7 @@ try {
 } catch (e) {
     rootFilesForMarkerWrite = [];
 }
-const staleMarkerFiles = rootFilesForMarkerWrite.filter(f => brainMarkerRegex.test(f) && f !== currentMarkerFileName);
+const staleMarkerFiles = rootFilesForMarkerWrite.filter(f => BRAIN_MARKER_REGEX.test(f) && f !== currentMarkerFileName);
 for (const staleFile of staleMarkerFiles) {
     try {
         fs.unlinkSync(path.join(rootDir, staleFile));
@@ -935,7 +1019,7 @@ if (!fs.existsSync(agentsMdPath)) {
     writeText(agentsMdPath, fullAgentsMdContent, 'lf');
     logger('✅ Đã tạo mới: AGENTS.md với ĐẦY ĐỦ CÁC BỘ LUẬT QUẢN TRỊ TINH HOA!');
 } else {
-    const agentsMdFile = readText(agentsMdPath);
+    const agentsMdFile = snapshot.files.agentsMd;
     const agentsResult = patchAgentsMd(agentsMdFile.text, templateVersion);
     for (const patchName of agentsResult.patches) {
         logger(AGENTS_PATCH_LOGS[patchName]);
@@ -960,7 +1044,7 @@ if (!fs.existsSync(claudeMdPath)) {
     writeText(claudeMdPath, claudeMdShimContent, 'lf');
     logger('✅ Đã tạo mới: CLAUDE.md (shim ≤10 dòng, trỏ @AGENTS.md — Dual Entry-Point Invariant).');
 } else {
-    const claudeMdFile = readText(claudeMdPath);
+    const claudeMdFile = snapshot.files.claudeMd;
     const claudeResult = patchClaudeMd(claudeMdFile.text);
     if (claudeResult.changed) {
         warnMixedEol('CLAUDE.md', claudeMdFile.eol);
@@ -1025,6 +1109,9 @@ module.exports = {
     patchStateJson,
     patchAgentsMd,
     patchClaudeMd,
+    BRN,
+    collectSnapshot,
+    diagnose,
     runBrainEngine,
     parseArgs,
     main
