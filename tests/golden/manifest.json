@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "engine_commit": "abe0760ab82a69f4ec8a98083e3efd820f6d737a",
-  "engine_sha256": "32f899b12094329055c8142d637b222f23cb9e131baecd6a420ce08b0b11f5a2",
+  "engine_commit": "d184bc2d5c7fac8e3303bcb6d90524fd356d4d0b",
+  "engine_sha256": "5e7f89f45bbf92a751261fb3f2400997d4f433caf10deea207db95755326ff8e",
   "brain_now": "2026-01-15T03:04:05.000Z",
   "node": "v24.15.0",
   "cases": {
     "F01-blank": {
       "exit_code": 0,
       "files": {
-        "AGENTS.md": "b8923941e2ae81177412eeee3d867bac1fc5fa182a27fa7fd8501b2ad26799e5",
+        "AGENTS.md": "c28a4aa8cc437f9ab73f95f61fa625219405e00d99efe2d1caa206b7a6c0fef4",
         "CLAUDE.md": "268d29c75bd6bde733d691394321a35e054222904f8a21c74f9d1450c6e1fcf1",
         "brain4agent-v1.3.0.md": "e02dcf3f047d038dabeb36fd2997cee906afc3fca387bd1d719af3b802854408",
         "brain4agent/-data-architecture.md": "3508030ba710e7a92101b28efa72041ca852e8a3ab253cab484c59864efabb3d",
@@ -25,7 +25,7 @@
     "F02-standard-lf": {
       "exit_code": 0,
       "files": {
-        "AGENTS.md": "f1561f15528f0efdcdc30fc6c584d46b33afe526b955eef0e7cac9bccb7df093",
+        "AGENTS.md": "e49a7c0a5f6c0983f91c5bee60c7651d8ed4b772d7f11b41188f0de96e29d114",
         "CLAUDE.md": "12c79f19d275c0689b22f8126e50f3cb172cfc338b82a16877b12ebec9c762fc",
         "brain4agent-v1.3.0.md": "3f951034bb2541f385590ed3e0e9e5581ba6428c25ff9d4736c3d6a7c2ad39d6",
         "brain4agent/-data-architecture.md": "cb3cedec4a8aa6fac31b92142661bbab5f933a723312a73ba9dc36b212dacc4c",
@@ -42,7 +42,7 @@
     "F03-legacy-v120": {
       "exit_code": 0,
       "files": {
-        "AGENTS.md": "02df08d015da1824aa2b165024fd7e81000745ec25e91f9b08a98fcd51a4fc7f",
+        "AGENTS.md": "ed8a4ed9fcb7118856efcfa53c0fa6deebb7c6dfd55554a092ee776c349182b9",
         "CLAUDE.md": "12c79f19d275c0689b22f8126e50f3cb172cfc338b82a16877b12ebec9c762fc",
         "brain4agent-v1.3.0.md": "e02dcf3f047d038dabeb36fd2997cee906afc3fca387bd1d719af3b802854408",
         "brain4agent/-data-architecture.md": "cb3cedec4a8aa6fac31b92142661bbab5f933a723312a73ba9dc36b212dacc4c",
@@ -57,9 +57,9 @@
       }
     },
     "F04-old-planning-block": {
-      "exit_code": 0,
+      "exit_code": 2,
       "files": {
-        "AGENTS.md": "ca10434eed6d221e04b3f6052a58be75895cc6d9e2e3468b8ca1daae583de203",
+        "AGENTS.md": "69d7dac58a77c5ea08cb00fed5937298cee3c185e33b85812bc989da6c387504",
         "CLAUDE.md": "12c79f19d275c0689b22f8126e50f3cb172cfc338b82a16877b12ebec9c762fc",
         "brain4agent-v1.3.0.md": "3f951034bb2541f385590ed3e0e9e5581ba6428c25ff9d4736c3d6a7c2ad39d6",
         "brain4agent/-data-architecture.md": "cb3cedec4a8aa6fac31b92142661bbab5f933a723312a73ba9dc36b212dacc4c",
@@ -74,9 +74,43 @@
       }
     },
     "F06-duplicate-law": {
+      "exit_code": 2,
+      "files": {
+        "AGENTS.md": "29bf8bdf7e485b3f4afab05b2158a7f85082141d0120d6e0fc080b663abc7232",
+        "CLAUDE.md": "12c79f19d275c0689b22f8126e50f3cb172cfc338b82a16877b12ebec9c762fc",
+        "brain4agent-v1.3.0.md": "3f951034bb2541f385590ed3e0e9e5581ba6428c25ff9d4736c3d6a7c2ad39d6",
+        "brain4agent/-data-architecture.md": "cb3cedec4a8aa6fac31b92142661bbab5f933a723312a73ba9dc36b212dacc4c",
+        "brain4agent/-known-gotchas.md": "226ad3bdb41a9933eb3353da6d56fe183f2304137fad538ac3ccd566b9f1858f",
+        "brain4agent/changelog.md": "9641608a9be9ec2dabc09933d074167a897b2b97d7ad4a5f6468dd05ad18edfb",
+        "brain4agent/index.md": "e3d40fa24e73acf894409501d85b630f447a9373d453703e205640d78ae3b00b",
+        "brain4agent/memory-distill.txt": "b488e296330ad2d00c5ebdea930993a2bdbe832db595c5b789f36eeffffff392",
+        "brain4agent/memory/hot/state.json": "262b53f64a9cf0437dc4c7fab2cedc9e2a855e4f60991e72df636329154189a0",
+        "brain4agent/memory/hot/today.md": "d578b973b48a17be85f0d38c304389d57057e1cec3749d4eaa8c0b9cfa01d6b2",
+        "brain4agent/project-intro.md": "1bab1720b2056c6ad9749902b7133caae0b85a4851ad20adb4cceafc80b4578c",
+        "brain4agent/roadmap.md": "b8652d612e2049a8c8dcea8d27f8df43c3f61da3fc84c12bce938658fd9dd767"
+      }
+    },
+    "F09-legacy-v130": {
       "exit_code": 0,
       "files": {
-        "AGENTS.md": "f1561f15528f0efdcdc30fc6c584d46b33afe526b955eef0e7cac9bccb7df093",
+        "AGENTS.md": "81c1553924a41559367358bb78d4526c62c2030ed682a12bed69b86027201622",
+        "CLAUDE.md": "12c79f19d275c0689b22f8126e50f3cb172cfc338b82a16877b12ebec9c762fc",
+        "brain4agent-v1.3.0.md": "3f951034bb2541f385590ed3e0e9e5581ba6428c25ff9d4736c3d6a7c2ad39d6",
+        "brain4agent/-data-architecture.md": "cb3cedec4a8aa6fac31b92142661bbab5f933a723312a73ba9dc36b212dacc4c",
+        "brain4agent/-known-gotchas.md": "226ad3bdb41a9933eb3353da6d56fe183f2304137fad538ac3ccd566b9f1858f",
+        "brain4agent/changelog.md": "9641608a9be9ec2dabc09933d074167a897b2b97d7ad4a5f6468dd05ad18edfb",
+        "brain4agent/index.md": "e3d40fa24e73acf894409501d85b630f447a9373d453703e205640d78ae3b00b",
+        "brain4agent/memory-distill.txt": "b488e296330ad2d00c5ebdea930993a2bdbe832db595c5b789f36eeffffff392",
+        "brain4agent/memory/hot/state.json": "262b53f64a9cf0437dc4c7fab2cedc9e2a855e4f60991e72df636329154189a0",
+        "brain4agent/memory/hot/today.md": "d578b973b48a17be85f0d38c304389d57057e1cec3749d4eaa8c0b9cfa01d6b2",
+        "brain4agent/project-intro.md": "1bab1720b2056c6ad9749902b7133caae0b85a4851ad20adb4cceafc80b4578c",
+        "brain4agent/roadmap.md": "b8652d612e2049a8c8dcea8d27f8df43c3f61da3fc84c12bce938658fd9dd767"
+      }
+    },
+    "F10-user-edited": {
+      "exit_code": 2,
+      "files": {
+        "AGENTS.md": "916af4176daea4975fa41aae565d445d891a28e170952aff32dde188e0e7e873",
         "CLAUDE.md": "12c79f19d275c0689b22f8126e50f3cb172cfc338b82a16877b12ebec9c762fc",
         "brain4agent-v1.3.0.md": "3f951034bb2541f385590ed3e0e9e5581ba6428c25ff9d4736c3d6a7c2ad39d6",
         "brain4agent/-data-architecture.md": "cb3cedec4a8aa6fac31b92142661bbab5f933a723312a73ba9dc36b212dacc4c",

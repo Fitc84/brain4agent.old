@@ -24,12 +24,15 @@ const { runEngine, BRAIN_NOW } = require('./run.js');
 // Ca đưa vào golden. F05/F07/F08 CỐ Ý đứng ngoài: chúng là fixture khiếm khuyết
 // (CRLF / BOM / mẫu `$`) mà engine hiện tại xử lý SAI — chụp ảnh cái sai rồi so lại
 // chính nó là tự đóng băng bug (xem SPEC-P02 §a.3 cột "Golden?").
+// #10 thêm F09 (oracle migration S1 → S2) và F10 (S4 sửa tay, exit 2) — SPEC-P05 §5.
 const GOLDEN_CASES = [
   'F01-blank',
   'F02-standard-lf',
   'F03-legacy-v120',
   'F04-old-planning-block',
-  'F06-duplicate-law'
+  'F06-duplicate-law',
+  'F09-legacy-v130',
+  'F10-user-edited'
 ];
 
 function parseArgs(argv) {
