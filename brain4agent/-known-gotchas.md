@@ -143,3 +143,20 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Nguyên nhân:** bước CI `doctor-fixture-run` trỏ vào `tests/fixtures/fleet` (SPEC-P05 bước 9 quy định) nhưng fixture **chưa từng được tạo**; bộ test doctor dựng fleet trong thư mục tạm nên không test nào đụng tới đường dẫn đó — tài nguyên chỉ CI dùng thì chỉ CI mới phát hiện thiếu.
 - **Luật rút ra:** mọi tài nguyên mà một bước CI tham chiếu (fixture, script, đường dẫn) phải có **test local chốt sự tồn tại** (dạng T-H06), để `npm test` đỏ trước khi CI kịp đỏ. Khi viết workflow, đối chiếu từng đường dẫn trong `ci.yml` với `git ls-files`.
 - **Nguồn:** kế hoạch #09, run CI đầu tiên 33608846259, 2026-09-02. Sửa tại `fc03be5`.
+## 20. Mốc Marker Phải Chiếm Trọn Một Dòng — Thụt Lề Là Vô Hình Với Engine
+- **Triệu chứng:** đặt `<!-- brain:rule:x -->` thụt lề (trong ví dụ, trong khối ```) — engine không thấy, coi khối là `absent`.
+- **Nguyên nhân:** so khớp mốc theo `lines[i] === OPEN(id)` NGUYÊN DÒNG sau `normalizeEol` — cố ý, để mốc nằm trong khối code ví dụ không bị nhận nhầm (F09 có ca này làm chứng).
+- **Luật:** viết mốc ở cột 0, một mình một dòng. Kèm theo: đoạn `legacy` khớp mà không kết thúc ở cuối dòng ⇒ mốc CLOSE dính đuôi văn bản ⇒ lần chạy sau `malformed` (fail-closed, không mất dữ liệu — nhưng cần người gỡ).
+- **Nguồn:** kế hoạch #10, WP1, 2026-09-02.
+
+## 21. Đếm Chuỗi Dò Luật Có Cả ÂM TÍNH GIẢ — 9 Repo Thiếu Luật Mà Vẫn "Sạch"
+- **Triệu chứng:** 9–10 repo không hề có phát biểu Bước 0, engine v1.6.0 vẫn cho qua BRN-002.
+- **Nguyên nhân:** token `xay-dung-nao-bo` xuất hiện ở luật J mục 4 ⇒ `includes(token)` = true dù luật thật vắng. Anh em ngược chiều của gotcha #17 (dương tính giả) — cùng căn nguyên: đếm chuỗi thay vì định biên.
+- **Luật:** dò sự tồn tại của luật phải định biên bằng mốc máy-đọc (khối marker), không bằng chuỗi con.
+- **Nguồn:** kế hoạch #10, đo thật trên fleet khi viết SPEC, 2026-09-02.
+
+## 22. Template Và Bản Vá Là Hai Nguồn Văn Bản — Tự Trôi Lệch Nhau
+- **Triệu chứng:** `renderFullAgentsMd` hardcode ví dụ `v1.2.0.md` trong khi `patchAgentsMd` nội suy `${version}` ⇒ repo khởi tạo mới và repo được vá mang hai văn bản khác nhau cho CÙNG một luật.
+- **Cách trị (đã làm ở #10):** `renderFullAgentsMd = patchAgentsMd(AGENTS_SKELETON)` — thân luật chỉ tồn tại MỘT bản trong `RULE_BLOCKS`; thân luật không chứa version (TQ3).
+- **Luật:** mọi văn bản máy quản phải có đúng một nguồn; template chỉ là skeleton + mốc rỗng.
+- **Nguồn:** kế hoạch #10, phát hiện khi viết SPEC-P03, 2026-09-02.

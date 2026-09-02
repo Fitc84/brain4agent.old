@@ -1,6 +1,6 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.6.0",
+  "current_version": "1.7.0",
   "system_status": "healthy_and_runtime_verified | [01/09] v1.5.0: luat SPEC PACKAGE (CAM plan phang) da vao AGENTS.md Hub + CORE_GOVERNANCE_RULES.md + template & patcher init_brain.js (khung nao 1.3.0).",
   "last_verification": {
     "timestamp": "2026-09-02",
@@ -377,5 +377,23 @@
       "#17",
       "#18"
     ]
+  },
+  "plan_10_2026-09-02": {
+    "ten": "Va tat dinh bang khoi danh dau an + khung nao v1.4.0",
+    "phien_ban": "1.6.0 -> 1.7.0 (MINOR); brain_template 1.3.0 -> 1.4.0",
+    "co_che": "6 khoi marker <!-- brain:rule:<id> -->, fail-closed, khong ghi de van ban nguoi dung, probe chan chen ban thu hai",
+    "so_do": {
+      "test": "193 -> 237 (236 xanh + 1 skip cho dong bo — da xu)",
+      "engine_dong": "1447 -> 1432 (co them 2 luat moi ma van ngan hon)",
+      "G1_loi_va": "165 -> 123 dong (teo 25%, dung nguong)",
+      "G3_chi_phi_2_luat_moi": "9 dong (<= 20)",
+      "ma_BRN": "15 engine + 2 doctor = 17 (them 016 khoi hong/sua tay, 017 file la trong archive)",
+      "am_tinh_gia_phat_hien": "9-10 repo thieu Buoc 0 nhung engine cu bao sach (token trung o luat J.4)"
+    },
+    "luat_v140": [
+      "Ky uc Lanh memory/archive/ (chi script ghi)",
+      "Structural Extension §5.B dieu 2"
+    ],
+    "trang_thai": "engine + hub + luoi test XONG tren nhanh feat/plan-10-marker; CHUA deploy global, CHUA push, CHUA rollout fleet — 3 nut cho user"
   }
 }

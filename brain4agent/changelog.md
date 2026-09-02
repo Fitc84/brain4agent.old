@@ -2,6 +2,35 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.7.0] - 2026-09-02: Vá Tất Định Bằng Khối Đánh Dấu Ẩn — Khung Não v1.4.0, BRN-016/017, Ký Ức Lạnh
+
+Kế hoạch #10. Engine ngừng *đoán* vị trí luật bằng regex trên văn xuôi tiếng Việt; chuyển sang **6 khối marker** `<!-- brain:rule:<id> -->` do máy tự quản. `BRAIN_TEMPLATE_VERSION` **1.3.0 → 1.4.0** (đợt ghi fleet chờ lệnh user).
+
+### Added
+- **Lớp marker**: `findBlock`/`findLegacy`/`classifyRuleBlocks`/`patchAgentsMd` mới trên bảng `RULE_BLOCKS` 6 khối; **fail-closed** — mốc lẻ/đóng-trước-mở/trùng id ⇒ không ghi byte nào cho khối đó (CẤM diễn giải "mở → EOF"). Bước `probe` chặn tái diễn sự cố #07 (chèn bản luật thứ hai khi văn bản bị sửa một chữ).
+- **2 luật khung v1.4.0** (học từ repo mẫu, đã chạy thật): Phân khu **Ký ức Lạnh** `memory/archive/` (chỉ script ghi) và luật **Structural Extension** §5.B điều 2. Chi phí đúng **9 dòng engine** cho cả hai — bằng chứng marker giảm giá thành thêm luật.
+- **BRN-016** (khối hỏng / vùng luật bị sửa tay — cần người, engine không ghi đè) và **BRN-017** (file lạ trong `memory/archive/`). Toàn hệ 17 mã.
+- Fixture mới: **F09** (oracle migration S1 v1.3.0), **F10** (sửa tay ⇒ BRN-016), `fleet/03` (mốc hỏng); bộ đo **A1/A2/A3** (`tests/helpers/diff-scope.js`) chứng minh migration không phá dòng nào ngoài vùng mốc.
+- Allowlist abs-path về MỘT nguồn (`tests/hygiene/abs-path-allowlist.json`) — CI và test cùng đọc, hết trôi dạt hai bản.
+
+### Changed
+- **BRN-002/003 đổi điều kiện** (đếm chuỗi bị khai tử): 002 = khối `absent`/`legacy`/`stale` (fixable); 003 = probe còn NGOÀI khối khi khối đã có, hoặc còn khối planning cũ (không fixable).
+- `renderFullAgentsMd = patchAgentsMd(AGENTS_SKELETON)` — thân luật chỉ còn MỘT bản, template hết trôi lệch bản vá.
+- Hub `AGENTS.md` bọc 6 khối mốc (S2), theo template ở `boot`/`dual-entry`; `LAW_TOKENS` của test hai-hiến-pháp đọc từ engine thay vì mảng tĩnh.
+- Thân luật Bước 0 khuyến nghị `--check` (chế độ ghi phải nêu tường minh); CLI giữ mặc định cũ (TQ2).
+- `actions/checkout`/`setup-node` v4 → v5 (hết cảnh báo Node 20).
+- Test: 193 → **237 ca** (0 dependency); golden 7 case × 12 file, chụp SAU khi test đơn vị chứng minh hành vi (chống hợp thức hoá bug).
+
+### Fixed
+- **Âm tính giả**: 9–10 repo không hề có phát biểu Bước 0 nhưng engine cũ vẫn báo sạch (token trùng ở luật J.4). Chẩn đoán theo khối diệt cả hai chiều (dương tính giả #17 + âm tính giả này).
+
+### Removed
+- Toàn bộ đường vá regex cũ: `AGENTS_PATCH_LOGS`, `patchAgentsMd` dò-neo 106 dòng, `RULE_ANCHORS` + vòng đếm mệnh đề. **Lõi vá 165 → 123 dòng (−25%)**; engine 1447 → **1432 dòng** dù thêm 2 luật + 2 mã BRN + archive.
+
+### Gates
+- G1 = 123 ≤ 123 ✅ · G2 = 1432 ≤ 1472 ✅ · G3 = 9 ≤ 20 ✅ · A1 byte-identical (sha ba lần chạy trùng) ✅ · A2/A3 = 0 vi phạm trên F09 ✅.
+- Chưa: deploy global, push, rollout fleet (chờ user — OPERATIONS §8).
+
 ## [v1.6.0] - 2026-09-02: Engine Có Kiểm Chứng — Bộ Test 0-Dependency, Mã Thoát Thật, Deploy Fail-Closed, `brain-doctor`
 
 Kế hoạch #09. Biến hub từ *"tập tài liệu + một script 772 dòng không ai kiểm"* thành *"công cụ kỹ thuật có kiểm chứng tự động"*. `BRAIN_TEMPLATE_VERSION` **giữ nguyên `1.3.0`** ⇒ không repo vệ tinh nào bị chạm.

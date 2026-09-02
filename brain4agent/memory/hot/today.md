@@ -22,6 +22,20 @@ Gỡ luật là xong trong một lần chạy engine.
 
 ---
 
+## 🧱 Phiên 2026-09-02 (tiếp) — KẾ HOẠCH #10: VÁ TẤT ĐỊNH BẰNG MARKER (v1.7.0, khung 1.4.0)
+
+Orchestrator tổng (Fable) điều phối: Opus (WP1 lõi marker · WP3 diagnose · WP4 lưới test) + Sonnet (WP2 luật) + Haiku (WP5 việc nhỏ), 2 agent nghiên cứu + 1 SPEC-writer trước đó. Mỗi WP một cổng, orchestrator tự đo lại mọi gate.
+
+**Số đo chốt:** engine 1447 → **1432 dòng** (thêm 2 luật + 2 mã BRN mà vẫn ngắn đi); lõi vá **165 → 123** (−25%, đúng ngưỡng G1); chi phí 2 luật mới **9 dòng** (G3 ≤ 20); test **193 → 237** (xanh 100%); golden 7 case; A1 sha trùng 3 lần chạy, A2/A3 = 0 vi phạm.
+
+**Phát hiện mới trong lúc làm:** (1) 9–10 repo **thiếu hẳn phát biểu Bước 0** nhưng engine cũ báo sạch — âm tính giả do token trùng ở luật J.4; (2) nguyên mẫu R2 dùng byte NUL thật làm sentinel ⇒ file thành nhị phân với git (đã cấm, Đ7); (3) hai allowlist abs-path đã trôi dạt sẵn (mục chết trong ci.yml) ⇒ về một nguồn JSON; (4) SPEC dự đoán sai 2 lần (xoá test cũ ⇒ 0 đỏ chứ không ≥7; fixture đời cũ thành BRN-016 đúng như §2 dự báo).
+
+**Đ11:** `--check` giữ mã thoát #09 (chỉ finding không-fixable ⇒ exit 0) — doctor mới là nơi phân mức.
+
+**CHƯA làm (3 nút của user):** deploy global (D4) · push nhánh/CI (H4) · rollout fleet theo sóng (H7). Nhánh: `feat/plan-10-marker`.
+
+---
+
 ## 🏗️ Phiên 2026-09-02 — KẾ HOẠCH #09: ENGINE CÓ KIỂM CHỨNG (v1.6.0)
 
 User giao: *"đóng vai orchestrator, điều phối model khác, đặt scope nâng cấp lên cấp cao hơn, triển khai A-Z"*.
