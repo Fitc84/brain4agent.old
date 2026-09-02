@@ -99,9 +99,13 @@ test('T-U26b · I4: CLAUDE.md thiếu @AGENTS.md ⇒ BRN-004 blocker (fixable)',
 
 test('T-U27 · D7(b): token mốc xuất hiện ×3 ⇒ BRN-003 với detail.counts, KHÔNG fixable', () => {
   // v1.5.4 chỉ hỏi includes() ⇒ ba bản luật cùng sống vẫn ra "NÃO ĐÃ OK".
+  // Nhân đôi NGUYÊN VĂN mệnh đề luật (đúng hình dạng của trùng lặp thật), không phải
+  // token lẻ: token lẻ còn xuất hiện trong tiêu đề phụ lục do CHÍNH engine sinh ra
+  // và trong văn xuôi tham chiếu — đếm token lẻ gây báo động giả (đo thật 2026-09-02).
+  const RULE_J = '### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)';
   const agents = e.renderFullAgentsMd()
-    + '\n\n## Bản sao thừa 1 — Dual Entry-Point Invariant\n'
-    + '\n## Bản sao thừa 2 — Dual Entry-Point Invariant\n';
+    + '\n\n' + RULE_J + '\n1. Bản sao thừa 1.\n'
+    + '\n' + RULE_J + '\n1. Bản sao thừa 2.\n';
   const d = dx({ files: { agentsMd: tf(agents) } });
   const f = findingsOf(d, 'BRN-003');
   assert.equal(f.length, 1);

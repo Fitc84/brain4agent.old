@@ -49,9 +49,11 @@ test('D7(b): token luật lặp ×3 trong AGENTS.md ⇒ exit 2 (cần người),
   try {
     const agentsPath = path.join(tmp.dir, 'AGENTS.md');
     const orig = fs.readFileSync(agentsPath, 'utf8');
+    // Nhân đôi NGUYÊN VĂN mệnh đề luật — hình dạng của trùng lặp THẬT.
+    const RULE_J = '### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp (Dual Entry-Point Invariant)';
     fs.writeFileSync(agentsPath, orig
-      + '\n## Bản sao thừa 1 — Dual Entry-Point Invariant\n'
-      + '\n## Bản sao thừa 2 — Dual Entry-Point Invariant\n');
+      + '\n' + RULE_J + '\n1. Bản sao thừa 1.\n'
+      + '\n' + RULE_J + '\n1. Bản sao thừa 2.\n');
     const before = snapshotTree(tmp.dir);
 
     const chk = runEngine(ENGINE_PATH, ['--check', tmp.dir]);
@@ -64,7 +66,7 @@ test('D7(b): token luật lặp ×3 trong AGENTS.md ⇒ exit 2 (cần người),
     assert.equal(wr.code, 2, 'chế độ ghi cũng phải kết thúc 2 (không hội tụ được)');
     assert.ok(!wr.stdout.includes('HOÀN TẤT THÀNH CÔNG'));
     // Engine CẤM tự gỡ nội dung người dùng: 3 lần xuất hiện vẫn còn nguyên.
-    assert.equal(fs.readFileSync(agentsPath, 'utf8').split('Dual Entry-Point Invariant').length - 1, 3);
+    assert.equal(fs.readFileSync(agentsPath, 'utf8').split(RULE_J).length - 1, 3);
   } finally {
     tmp.cleanup();
   }

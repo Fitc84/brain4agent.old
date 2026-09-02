@@ -743,17 +743,27 @@ function diagnose(s, templateVersion) {
         if (agentsText.includes('SPEC PACKAGE') && agentsText.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)')) {
             add('BRN-003');
         }
-        // I6 (mới): ĐẾM số lần xuất hiện, không chỉ hỏi có/không. Token mốc lặp > 1 lần
-        // nghĩa là hai phát biểu luật cùng sống — engine KHÔNG tự sửa (nội dung người dùng).
+        // I6: ĐẾM số lần MỆNH ĐỀ LUẬT xuất hiện, KHÔNG đếm token trần.
+        //
+        // Vì sao không đếm token trần: chính engine, khi vá theo đường PHỤ LỤC (dòng 532, 595),
+        // sinh ra TIÊU ĐỀ có chứa token — ví dụ '## [PHỤ LỤC TỰ ĐỘNG VÁ] ... SPEC PACKAGE bắt buộc'
+        // — rồi thân luật lặp lại token đó. Một repo được vá ĐÚNG vì thế vẫn đếm ra 2.
+        // Đo thật trên toàn hệ sinh thái 2026-09-02: đếm token trần cho 2 ở 8 repo (đều là
+        // báo động giả), đếm mệnh đề luật cho 1 ở TẤT CẢ. Chỉ mệnh đề lặp mới là trùng thật.
+        const RULE_ANCHORS = {
+            'SPEC PACKAGE': 'BẮT BUỘC DẠNG SPEC PACKAGE',
+            'Marker Phiên Bản Khung Não': 'NGOẠI LỆ TƯỜNG MINH — Marker Phiên Bản Khung Não',
+            'Dual Entry-Point Invariant': '### J. Quy tắc Tương Thích Đa Agent — Bất Biến Hai Điểm Nạp'
+        };
         const counts = {};
-        for (const token of ['Dual Entry-Point Invariant', 'Marker Phiên Bản Khung Não', 'SPEC PACKAGE']) {
-            const c = agentsText.split(token).length - 1;
-            if (c > 1) counts[token] = c;
+        for (const [label, anchor] of Object.entries(RULE_ANCHORS)) {
+            const c = agentsText.split(anchor).length - 1;
+            if (c > 1) counts[label] = c;
         }
         const dupTokens = Object.keys(counts);
         if (dupTokens.length > 0) {
             add('BRN-003',
-                'AGENTS.md có token mốc lặp lại: ' + dupTokens.map((t) => t + ' ×' + counts[t]).join(', '),
+                'AGENTS.md có mệnh đề luật lặp lại: ' + dupTokens.map((t) => t + ' ×' + counts[t]).join(', '),
                 { counts },
                 { fixable: false, fix: 'Soi tay AGENTS.md, gỡ bản thừa (engine KHÔNG tự sửa nội dung người dùng)' });
         }
