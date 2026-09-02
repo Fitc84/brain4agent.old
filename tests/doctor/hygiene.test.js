@@ -71,8 +71,7 @@ test('P04-E7g · MỘT nguồn chân lý: doctor không tự định nghĩa lạ
   const doctor = require(DOCTOR);
   assert.deepEqual(Object.keys(doctor.DOCTOR_BRN).sort(), ['BRN-014', 'BRN-015']);
   assert.ok(SRC.includes('diagnose(snap'), 'phải dùng diagnose() của engine');
-  for (let i = 1; i <= 13; i++) {
-    const code = 'BRN-0' + String(i).padStart(2, '0');
+  for (const code of Object.keys(require(path.join(path.dirname(DOCTOR), 'init_brain.js')).BRN)) {
     assert.ok(!SRC.includes("'" + code + "': {"), 'doctor CẤM định nghĩa lại meta của ' + code);
   }
 });

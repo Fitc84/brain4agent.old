@@ -5,7 +5,7 @@
 // BẤT BIẾN CỦA FILE NÀY:
 //   1. CHỈ ĐỌC tuyệt đối. Ngoại lệ DUY NHẤT: một lời gọi `writeText` để ghi báo cáo
 //      khi người dùng chỉ định tường minh `--json <file>`.
-//   2. "Thế nào là chuẩn" cho BRN-001..013 do `diagnose()` của engine quyết định.
+//   2. "Thế nào là chuẩn" cho BRN-001..013, 016, 017 do `diagnose()` của engine quyết định.
 //      Doctor CẤM tự định nghĩa lại. Doctor chỉ bổ sung BRN-014/BRN-015 (cột D của §8).
 //   3. I/O bị chặn cứng: mỗi repo chỉ đọc thư mục gốc + brain4agent/ + memory/hot/,
 //      cộng đúng 1 lời gọi stat cho mỗi mục con cấp 1. KHÔNG đi sâu hơn cấp 1.

@@ -62,15 +62,18 @@ function mkSnapshot(overrides) {
   const snap = {
     rootLabel: 'du-an-mau',
     rootEntries: ['.agents', 'AGENTS.md', 'CLAUDE.md', 'brain4agent', `brain4agent-v${V}.md`, 'docs', 'planning'],
-    dirs: { brain: true, memory: true, hot: true, planning: true, agents: true, skills: true, docs: true },
+    dirs: { brain: true, memory: true, hot: true, archive: true, planning: true, agents: true, skills: true, docs: true },
     files,
     present,
-    fileErrors: []
+    fileErrors: [],
+    // Ký ức lạnh: repo chuẩn có thư mục archive/ rỗng. `null` = thư mục chưa tồn tại (TQ6: KHÔNG báo).
+    archiveEntries: []
   };
 
   if (o.rootEntries) snap.rootEntries = o.rootEntries;
   if (o.rootLabel) snap.rootLabel = o.rootLabel;
   if (o.fileErrors) snap.fileErrors = o.fileErrors;
+  if (o.archiveEntries !== undefined) snap.archiveEntries = o.archiveEntries;
   if (o.dirs) Object.assign(snap.dirs, o.dirs);
   if (o.present) Object.assign(snap.present, o.present);
   if (o.files) {

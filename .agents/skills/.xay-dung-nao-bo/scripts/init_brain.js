@@ -614,8 +614,11 @@ function patchClaudeMd(content) {
     return { content: patchedClaudeMd, patches, changed: patches.length > 0 };
 }
 
-// BẢNG MÃ KIỂM TRA (01-CONTRACTS §8). WP1 điền các mã do engine kiểm (cột "Ai kiểm = E");
-// BRN-014/BRN-015 là việc của doctor (WP4), KHÔNG khai ở đây.
+// Tên hợp lệ của một mục ký ức lạnh (01-CONTRACTS §4). Mẫu CỐ ĐỊNH, không nhận `YYYY-MM.md`.
+const isArchiveName = (n) => /^\d{4}-\d{2}-\d{2}\.md$/.test(n);
+
+// BẢNG MÃ KIỂM TRA (01-CONTRACTS §6). Các mã do engine kiểm (cột "Ai kiểm = E");
+// BRN-014/BRN-015 là việc của doctor, KHÔNG khai ở đây. BRN-016/017 thêm từ #10.
 const BRN = {
     'BRN-001': { level: 'blocker', title: 'Thiếu AGENTS.md ở root', fix: 'Chạy engine chế độ ghi tại repo' },
     'BRN-002': { level: 'error', title: 'AGENTS.md thiếu token mốc bắt buộc', fix: 'Chạy engine chế độ ghi' },
@@ -629,7 +632,9 @@ const BRN = {
     'BRN-010': { level: 'error', title: 'state.json.brain_template_version sai hoặc state.json không parse được', fix: 'Engine vá version; JSON hỏng ⇒ sửa tay' },
     'BRN-011': { level: 'warning', title: 'state.json không kết thúc bằng byte 0x0A', fix: 'Chạy engine chế độ ghi' },
     'BRN-012': { level: 'error', title: 'memory-distill.txt thiếu Bước 0, hoặc root còn latest_memory.md', fix: 'Chạy engine chế độ ghi' },
-    'BRN-013': { level: 'warning', title: 'File có BOM UTF-8 / không phải UTF-8 hợp lệ', fix: 'Lưu lại file dạng UTF-8 không BOM' }
+    'BRN-013': { level: 'warning', title: 'File có BOM UTF-8 / không phải UTF-8 hợp lệ', fix: 'Lưu lại file dạng UTF-8 không BOM' },
+    'BRN-016': { level: 'error', title: 'AGENTS.md: khối marker hỏng hoặc vùng luật đã bị sửa tay', fix: 'Soi tay AGENTS.md: sửa cặp mốc (đúng 1 mở + 1 đóng, mỗi mốc trọn một dòng) hoặc xoá/bọc lại đoạn luật đã sửa, rồi chạy lại engine' },
+    'BRN-017': { level: 'warning', title: 'memory/archive/ có file không theo mẫu YYYY-MM-DD.md', fix: 'Chuyển file lạ ra khỏi memory/archive/ hoặc đổi tên đúng mẫu' }
 };
 
 const BRAIN_MARKER_REGEX = /^brain4agent-v(\d+\.\d+\.\d+)\.md$/;
@@ -673,10 +678,14 @@ function collectSnapshot(rootDir) {
         brain: fs.existsSync(abs('brain4agent')), memory: fs.existsSync(abs('brain4agent/memory')),
         hot: fs.existsSync(abs('brain4agent/memory/hot')), planning: fs.existsSync(abs('planning')),
         agents: fs.existsSync(abs('.agents')), skills: fs.existsSync(abs('.agents/skills')),
-        docs: fs.existsSync(abs('docs'))
+        docs: fs.existsSync(abs('docs')), archive: fs.existsSync(abs('brain4agent/memory/archive'))
     };
 
-    return { rootLabel: path.basename(rootDir), rootEntries, dirs, files, present, fileErrors };
+    // Ký ức lạnh: chỉ đọc TÊN mục (không stat, không đọc nội dung — vùng cấm SPEC-P04 §4).
+    let archiveEntries = null;
+    if (dirs.archive) { try { archiveEntries = fs.readdirSync(abs('brain4agent/memory/archive')).sort(); } catch (e) { archiveEntries = []; } }
+
+    return { rootLabel: path.basename(rootDir), rootEntries, dirs, files, present, fileErrors, archiveEntries };
 }
 
 // diagnose — THUẦN. Sinh Finding theo 01-CONTRACTS §8 (cột "Ai kiểm = E").
@@ -719,21 +728,22 @@ function diagnose(s, templateVersion) {
     if (!s.dirs.docs) missingInfra.push('docs/');
     if (missingInfra.length > 0) add('BRN-009', 'Thiếu thư mục hạ tầng bắt buộc', { missing: missingInfra });
 
-    if (!s.present['AGENTS.md']) {
-        add('BRN-001');
-    } else {
-        const agentsText = s.files.agentsMd ? s.files.agentsMd.text : '';
-        const missingTokens = [];
-        if (!agentsText.includes('xay-dung-nao-bo')) missingTokens.push('xay-dung-nao-bo');
-        if (!agentsText.includes('Marker Phiên Bản Khung Não')) missingTokens.push('Marker Phiên Bản Khung Não');
-        if (!agentsText.includes('Dual Entry-Point Invariant')) missingTokens.push('Dual Entry-Point Invariant');
-        // Token thứ 4 (01-CONTRACTS §8 BRN-002 / SPEC-P01 a.2 + P01-E3): thiếu luật
-        // SPEC PACKAGE nghĩa là repo còn khối luật planning CŨ ⇒ engine PHẢI vá.
-        if (!agentsText.includes('SPEC PACKAGE')) missingTokens.push('SPEC PACKAGE');
-        if (missingTokens.length > 0) add('BRN-002', 'AGENTS.md thiếu token mốc bắt buộc', { missing: missingTokens });
-        if (agentsText.includes('SPEC PACKAGE') && agentsText.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)')) {
-            add('BRN-003');
-        }
+    // AGENTS.md chẩn đoán QUA classifyRuleBlocks — một sự thật với patchAgentsMd (M-9): 002 = khối thiếu/cũ (vá được) · 016 = máy không nhận diện được · 003 = hai phát biểu cùng sống.
+    if (!s.present['AGENTS.md']) add('BRN-001');
+    else {
+        const at = s.files.agentsMd ? s.files.agentsMd.text : '', st = classifyRuleBlocks(at), ids = (k) => st.filter((x) => x.state === k).map((x) => x.id);
+        const need = { absent: ids('absent'), adopt: ids('legacy'), stale: ids('stale') };
+        const bad = { malformed: ids('malformed'), edited: ids('edited') };
+        const extra = st.filter((x) => x.extra).map((x) => x.id), oldPlan = at.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)');
+        if (need.absent.length + need.adopt.length + need.stale.length > 0) add('BRN-002', 'AGENTS.md thiếu/cũ khối luật: ' + need.absent.concat(need.adopt, need.stale).join(', '), need);
+        if (bad.malformed.length + bad.edited.length > 0) add('BRN-016', undefined, bad, { fixable: false });
+        if (extra.length > 0 || oldPlan) add('BRN-003', undefined, { extra, legacy_planning: oldPlan }, { fixable: false, fix: 'Soi tay AGENTS.md, gỡ bản thừa (engine KHÔNG tự sửa nội dung người dùng)' });
+    }
+
+    // Ký ức lạnh (TQ6): chỉ soi TÊN; thư mục chưa tồn tại ⇒ KHÔNG báo (không có .gitkeep, clone mới không được báo giả).
+    if (s.archiveEntries) {
+        const stray = s.archiveEntries.filter((n) => n !== '.gitkeep' && !isArchiveName(n));
+        if (stray.length > 0) add('BRN-017', undefined, { files: stray }, { fixable: false });
     }
 
     const claudeText = s.files.claudeMd ? s.files.claudeMd.text : null;
@@ -831,7 +841,7 @@ function formatFindings(d) {
 // Thu tu BAT BIEN theo mang targetDirs cua v1.5.4.
 const TARGET_DIRS = [
     ['brain4agent', 'brain'], ['brain4agent/memory', 'memory'], ['brain4agent/memory/hot', 'hot'],
-    ['planning', 'planning'], ['.agents', 'agents'], ['.agents/skills', 'skills'], ['docs', 'docs']
+    ['brain4agent/memory/archive', 'archive'], ['planning', 'planning'], ['.agents', 'agents'], ['.agents/skills', 'skills'], ['docs', 'docs']
 ];
 
 function planCaseRenames(rootEntries) {
@@ -1397,6 +1407,7 @@ module.exports = {
     classifyRuleBlocks,
     patchAgentsMd,
     patchClaudeMd,
+    isArchiveName,
     BRN,
     collectSnapshot,
     diagnose,
