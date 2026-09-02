@@ -622,18 +622,22 @@ function patchClaudeMd(content) {
     return { content: patchedClaudeMd, patches, changed: patches.length > 0 };
 }
 
-// BẢNG MÃ KIỂM TRA (01-CONTRACTS §8). WP6 chỉ dùng các mã mà chẩn đoán dòng 109
-// của v1.5.4 đã kiểm; WP1 điền đủ BRN-001..BRN-015.
+// BẢNG MÃ KIỂM TRA (01-CONTRACTS §8). WP1 điền các mã do engine kiểm (cột "Ai kiểm = E");
+// BRN-014/BRN-015 là việc của doctor (WP4), KHÔNG khai ở đây.
 const BRN = {
     'BRN-001': { level: 'blocker', title: 'Thiếu AGENTS.md ở root', fix: 'Chạy engine chế độ ghi tại repo' },
     'BRN-002': { level: 'error', title: 'AGENTS.md thiếu token mốc bắt buộc', fix: 'Chạy engine chế độ ghi' },
     'BRN-003': { level: 'error', title: 'AGENTS.md có hai phát biểu luật planning cùng sống', fix: 'Chạy engine chế độ ghi để gỡ khối cũ' },
     'BRN-004': { level: 'blocker', title: 'CLAUDE.md thiếu hoặc không chứa @AGENTS.md', fix: 'Chạy engine chế độ ghi' },
+    'BRN-005': { level: 'warning', title: 'CLAUDE.md dài hơn 10 dòng (không còn là shim)', fix: 'Rút CLAUDE.md về shim ≤10 dòng, chuyển luật sang AGENTS.md' },
     'BRN-006': { level: 'error', title: 'Số marker brain4agent-v<x.y.z>.md ở root khác 1', fix: 'Chạy engine chế độ ghi' },
     'BRN-008': { level: 'blocker', title: 'Thiếu brain4agent/ hoặc thiếu phân vùng bắt buộc', fix: 'Chạy engine chế độ ghi' },
+    'BRN-007': { level: 'error', title: 'Version trong tên marker khác state.json.brain_template_version', fix: 'Chạy engine chế độ ghi' },
     'BRN-009': { level: 'error', title: 'Thiếu thư mục hạ tầng bắt buộc', fix: 'Chạy engine chế độ ghi' },
+    'BRN-010': { level: 'error', title: 'state.json.brain_template_version sai hoặc state.json không parse được', fix: 'Engine vá version; JSON hỏng ⇒ sửa tay' },
     'BRN-011': { level: 'warning', title: 'state.json không kết thúc bằng byte 0x0A', fix: 'Chạy engine chế độ ghi' },
-    'BRN-012': { level: 'error', title: 'memory-distill.txt thiếu Bước 0, hoặc root còn latest_memory.md', fix: 'Chạy engine chế độ ghi' }
+    'BRN-012': { level: 'error', title: 'memory-distill.txt thiếu Bước 0, hoặc root còn latest_memory.md', fix: 'Chạy engine chế độ ghi' },
+    'BRN-013': { level: 'warning', title: 'File có BOM UTF-8 / không phải UTF-8 hợp lệ', fix: 'Lưu lại file dạng UTF-8 không BOM' }
 };
 
 const BRAIN_MARKER_REGEX = /^brain4agent-v(\d+\.\d+\.\d+)\.md$/;
@@ -683,13 +687,22 @@ function collectSnapshot(rootDir) {
     return { rootLabel: path.basename(rootDir), rootEntries, dirs, files, present, fileErrors };
 }
 
-// diagnose — THUẦN. isStandard phải cho CÙNG giá trị boolean với isFullyStandard
-// của engine v1.5.4 (dòng 109) trên mọi ca golden.
+// diagnose — THUẦN. Sinh Finding theo 01-CONTRACTS §8 (cột "Ai kiểm = E").
+// isStandard = mọi finding đều KHÔNG fixable và không ở mức blocker/error
+// ⇒ warning không-fixable (BRN-005, BOM file ngoài state.json) KHÔNG kéo engine vào đường ghi.
 function diagnose(s, templateVersion) {
     const findings = [];
-    const add = (code, message, detail) => {
+    const add = (code, message, detail, opts) => {
         const meta = BRN[code];
-        findings.push({ code, level: meta.level, fixable: true, message: message || meta.title, fix: meta.fix, detail: detail || {} });
+        const o = opts || {};
+        findings.push({
+            code,
+            level: o.level || meta.level,
+            fixable: o.fixable === undefined ? true : o.fixable,
+            message: message || meta.title,
+            fix: o.fix || meta.fix,
+            detail: detail || {}
+        });
     };
 
     const isBrandNew = !s.dirs.brain;
@@ -710,6 +723,8 @@ function diagnose(s, templateVersion) {
     if (!hasHotMemory) missingInfra.push('brain4agent/memory/hot/');
     if (!s.dirs.planning) missingInfra.push('planning/');
     if (!s.dirs.skills) missingInfra.push('.agents/skills/');
+    // I11: docs/ nằm trong targetDirs nhưng chẩn đoán v1.5.4 KHÔNG kiểm — bổ sung ở WP1.
+    if (!s.dirs.docs) missingInfra.push('docs/');
     if (missingInfra.length > 0) add('BRN-009', 'Thiếu thư mục hạ tầng bắt buộc', { missing: missingInfra });
 
     if (!s.present['AGENTS.md']) {
@@ -724,28 +739,110 @@ function diagnose(s, templateVersion) {
         if (agentsText.includes('SPEC PACKAGE') && agentsText.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)')) {
             add('BRN-003');
         }
+        // I6 (mới): ĐẾM số lần xuất hiện, không chỉ hỏi có/không. Token mốc lặp > 1 lần
+        // nghĩa là hai phát biểu luật cùng sống — engine KHÔNG tự sửa (nội dung người dùng).
+        const counts = {};
+        for (const token of ['Dual Entry-Point Invariant', 'Marker Phiên Bản Khung Não', 'SPEC PACKAGE']) {
+            const c = agentsText.split(token).length - 1;
+            if (c > 1) counts[token] = c;
+        }
+        const dupTokens = Object.keys(counts);
+        if (dupTokens.length > 0) {
+            add('BRN-003',
+                'AGENTS.md có token mốc lặp lại: ' + dupTokens.map((t) => t + ' ×' + counts[t]).join(', '),
+                { counts },
+                { fixable: false, fix: 'Soi tay AGENTS.md, gỡ bản thừa (engine KHÔNG tự sửa nội dung người dùng)' });
+        }
     }
 
     const claudeText = s.files.claudeMd ? s.files.claudeMd.text : null;
     if (claudeText === null || !claudeText.includes('@AGENTS.md')) add('BRN-004');
+    // I4 (mới): shim phải ≤10 dòng. KHÔNG fixable — engine CẤM cắt nội dung người dùng.
+    if (claudeText !== null) {
+        const claudeLines = claudeText.replace(/\n+$/, () => '').split('\n').length;
+        if (claudeLines > 10) {
+            add('BRN-005', 'CLAUDE.md dài ' + claudeLines + ' dòng (> 10) — rút về shim', { lines: claudeLines }, { fixable: false });
+        }
+    }
 
     const markerFiles = s.rootEntries.filter((f) => BRAIN_MARKER_REGEX.test(f));
-    const expectedMarker = `brain4agent-v${templateVersion}.md`;
+    const expectedMarker = 'brain4agent-v' + templateVersion + '.md';
     if (!(markerFiles.length === 1 && markerFiles[0] === expectedMarker)) {
         add('BRN-006', 'Marker phiên bản khung não ở root không đúng chuẩn', { found: markerFiles, expected: expectedMarker });
     }
 
-    if (s.files.stateJson && !s.files.stateJson.text.endsWith('\n')) add('BRN-011');
+    // I3 (mới): state.json.brain_template_version. CẤM đụng current_version.
+    let stateObj = null;
+    if (s.files.stateJson) {
+        let parseError = null;
+        try { stateObj = JSON.parse(s.files.stateJson.text); } catch (e) { parseError = e.message; stateObj = null; }
+        if (parseError !== null) {
+            add('BRN-010', 'state.json không parse được: ' + parseError, { parse_error: parseError },
+                { fixable: false, fix: 'Sửa tay state.json cho đúng JSON rồi chạy lại engine' });
+        } else {
+            const actual = (stateObj && typeof stateObj === 'object' && !Array.isArray(stateObj))
+                ? stateObj.brain_template_version : undefined;
+            if (actual !== templateVersion) {
+                add('BRN-010',
+                    'state.json.brain_template_version = ' + (actual === undefined ? '(thiếu)' : actual) + ', kỳ vọng ' + templateVersion,
+                    { actual: actual === undefined ? null : actual, expected: templateVersion });
+            }
+        }
+        if (!s.files.stateJson.text.endsWith('\n')) add('BRN-011');
+    }
 
-    const which = [];
+    // I1 (mới): đối chiếu marker ↔ state.json (v1.5.4 chỉ kiểm marker, KHÔNG đối chiếu).
+    if (markerFiles.length === 1 && stateObj && typeof stateObj === 'object' && !Array.isArray(stateObj)) {
+        const markerVersion = BRAIN_MARKER_REGEX.exec(markerFiles[0])[1];
+        if (stateObj.brain_template_version !== markerVersion) {
+            add('BRN-007',
+                'Marker ' + markerFiles[0] + ' lệch state.json.brain_template_version = ' + stateObj.brain_template_version,
+                { marker: markerVersion, state: stateObj.brain_template_version === undefined ? null : stateObj.brain_template_version });
+        }
+    }
+
     if (s.present['brain4agent/memory-distill.txt']
         && (!s.files.distill || !s.files.distill.text.includes('xay-dung-nao-bo'))) {
-        which.push('memory-distill.txt');
+        add('BRN-012', 'memory-distill.txt thiếu Bước 0 (.xay-dung-nao-bo)', { which: 'distill' });
     }
-    if (s.present['latest_memory.md']) which.push('latest_memory.md');
-    if (which.length > 0) add('BRN-012', BRN['BRN-012'].title, { which });
+    if (s.present['latest_memory.md']) {
+        add('BRN-012', 'Root còn latest_memory.md (vi phạm Root Clean)', { which: 'latest_memory' });
+    }
 
-    return { findings, isStandard: findings.length === 0, isBrandNew };
+    // BRN-013: BOM / mã hoá. CHỈ state.json có BOM là fixable (engine ghi lại không BOM).
+    const bomOthers = [];
+    const scan = [['AGENTS.md', s.files.agentsMd], ['CLAUDE.md', s.files.claudeMd],
+        ['brain4agent/memory/hot/today.md', s.files.todayMd]];
+    for (const f of REQUIRED_FILES) scan.push(['brain4agent/' + f, s.files.brain[f]]);
+    for (const pair of scan) {
+        if (pair[1] && pair[1].hadBom) bomOthers.push({ rel: pair[0], encoding: 'utf8-bom' });
+    }
+    for (const fe of s.fileErrors) {
+        if (fe.code === 'UTF16' || fe.code === 'INVALID_UTF8') bomOthers.push({ rel: fe.rel, encoding: fe.code });
+    }
+    if (s.files.stateJson && s.files.stateJson.hadBom) {
+        add('BRN-013', 'state.json có BOM UTF-8 — engine sẽ ghi lại không BOM',
+            { files: [{ rel: 'brain4agent/memory/hot/state.json', encoding: 'utf8-bom' }] });
+    }
+    if (bomOthers.length > 0) {
+        add('BRN-013', 'File không đúng chuẩn UTF-8 không BOM: ' + bomOthers.map((x) => x.rel).join(', '),
+            { files: bomOthers }, { fixable: false });
+    }
+
+    const isStandard = findings.every((f) => !f.fixable && f.level !== 'blocker' && f.level !== 'error');
+    return { findings, isStandard, isBrandNew };
+}
+
+// formatFindings — THUẦN. Nhóm [tự sửa] trước, trong mỗi nhóm sort theo mã tăng dần.
+function formatFindings(d) {
+    const byCode = (a, b) => (a.code < b.code ? -1 : a.code > b.code ? 1 : 0);
+    const fixables = d.findings.filter((f) => f.fixable).sort(byCode);
+    const manuals = d.findings.filter((f) => !f.fixable).sort(byCode);
+    const parts = ['=== CHẨN ĐOÁN: CẦN NÂNG CẤP (' + fixables.length + ' lệch engine tự sửa · ' + manuals.length + ' việc cần người) ==='];
+    for (const f of fixables.concat(manuals)) {
+        parts.push(f.code + '  ' + f.level.padEnd(8) + ' ' + (f.fixable ? '[tự sửa]' : '[cần người]').padEnd(12) + f.message);
+    }
+    return parts.join('\n') + '\n';
 }
 
 // LỚP KẾ HOẠCH — computePlan THUẦN (không fs/Date/console/process), applyPlan I/O.
@@ -1059,6 +1156,7 @@ module.exports = {
     BRN,
     collectSnapshot,
     diagnose,
+    formatFindings,
     planCaseRenames,
     planMarkerOps,
     computePlan,
