@@ -32,6 +32,11 @@
 | 09-02 07:30 | Tài liệu module 1-1: tạo `docs/xay-dung-nao-bo.md` và `docs/compact.md` (**bỏ dấu chấm đầu**) | Dấu chấm đầu tên thư mục skill nghĩa là "skill ẩn", không phải một phần tên module; file ẩn trong `docs/` là chống người đọc. ⚠️ *User có thể muốn đổi thành tên có dấu chấm để khớp 100% chữ nghĩa luật §5.C.* |
 | 09-02 07:30 | Ghi nhận trung thực về D3: cơ chế có thật (`$&`, `` $` ``, `$'`, `$$` làm hỏng văn bản — chạy Node kiểm 2026-09-02), nhưng 8 dòng `$\rightarrow$`/`$\ge`/`$<` trong `AGENTS.md` hub **không** thuộc nhóm mẫu đặc biệt ⇒ với hub bug đang **tiềm ẩn**, với repo vệ tinh có `AGENTS.md` tuỳ biến thì **sống** | SPEC là hợp đồng, không được phóng đại bằng chứng. Vẫn sửa bắt buộc vì văn bản thay thế là nội dung do người dùng kiểm soát. Fixture D3 phải chứa mẫu đặc biệt thật mới bắt được lỗi. |
 
+| 09-02 11:20 | **User ra lệnh "Triển khai" ⇒ coi là DUYỆT bộ SPEC (cổng P00b/H1)** | Người dùng đã đọc scope và phát lệnh thực thi; không dùng thẻ hỏi lại theo quy ước làm việc. |
+| 09-02 11:35 | **Lệch so với SPEC-P05 §A bước 3: dùng `rm` + `git checkout --` thay cho `git checkout-index --force`** | Đo thật trên máy: `git checkout-index -f -- <file>` **KHÔNG ghi đè** file đã tồn tại (CRLF vẫn 53 sau khi chạy); `rm` rồi `git checkout --` mới đưa về LF. Chỉ áp dụng cho file **không có thay đổi chưa commit** (đã kiểm từng file trước khi xoá). |
+| 09-02 12:05 | **DUYỆT cổng H2 — chụp lại golden CHỈ cho ca `F04-old-planning-block`** | Đo bằng máy: fixture F04 có `SPEC PACKAGE` **0 lần** và khối luật cũ **1 lần**. Golden cũ đang ghi lại đúng **hành vi SAI** (engine coi là "đã chuẩn", bỏ qua, để khối luật cũ sống vĩnh viễn) — chính là căn nguyên sự cố 33 repo nhân đôi luật ở #07. Bổ sung token thứ 4 vào `BRN-002` là sửa lỗi có chủ đích, không phải hồi quy. **Chỉ 1 ca được chụp lại**; 4 ca còn lại phải giữ nguyên hash. |
+| 09-02 12:05 | Orchestrator **kiểm chứng độc lập** WP6 bằng bộ so sánh tự dựng (5 kịch bản riêng, không dùng fixture của agent): engine cũ ↔ mới **byte-identical** về cây file, stdout, stderr, mã thoát | Không tin báo cáo suông. Lần đo đầu báo "khác" do chưa ghim đồng hồ và do stdout chứa tên thư mục tạm — đã chuẩn hoá rồi đo lại. Ghi lại để agent sau không lặp lỗi đo này. |
+
 ### Quyết định bị thay thế
 
 - **#07 chốt** *"nếu sửa engine: BẮT BUỘC chạy `scripts/deploy_skills.ps1` rồi so hash tới khi diff RỖNG"* (kỷ luật thủ công ghi trong `state.json` → `next_session_first_steps`) → **THAY BẰNG** *"chính script deploy tự so SHA-256 nguồn↔đích và trả mã thoát ≠ 0 khi lệch"* (SPEC-P03). Kỷ luật thủ công vẫn đúng nhưng không còn là hàng rào duy nhất.
@@ -56,11 +61,11 @@ Thứ tự bắt buộc và lý do: xem [OPERATIONS.md §1](specs/OPERATIONS.md)
 
 ## 📋 3. Checklist Thực Thi
 
-- [ ] **P00 🔴 [Lập bộ SPEC]** — 10 file trong `specs/` (00, 01, SPEC-P01..P06, OPERATIONS, TESTING-ACCEPTANCE) + hồ sơ này. *(Xong khi user duyệt.)*
-- [ ] **P00b 🔴 [USER APPROVAL GATE]** — user duyệt bộ SPEC. KHÔNG thực thi trước khi duyệt.
-- [ ] **P01 🟠 [WP5a `.gitattributes` + EOL/BOM]** — theo SPEC-P05 §A. Gate: `git ls-files --eol` = 100% `w/lf` (trừ `tests/fixtures/**` và file khai báo binary); 0 BOM.
-- [ ] **P02 🔴 [WP2a fixture + golden]** — theo SPEC-P02 §A. Gate: `tests/golden/manifest.json` sinh từ engine **v1.5.4 chưa sửa** (ghi SHA commit engine vào manifest).
-- [ ] **P03 🟠 [WP6 refactor]** — theo SPEC-P06. Gate: golden byte-identical 100% ca; `require()` engine không in gì, không ghi gì.
+- [x] **P00 🔴 [Lập bộ SPEC]** — 10 file trong `specs/` (00, 01, SPEC-P01..P06, OPERATIONS, TESTING-ACCEPTANCE) + hồ sơ này. *(Xong khi user duyệt.)*
+- [x] **P00b 🔴 [USER APPROVAL GATE]** — user duyệt bộ SPEC. KHÔNG thực thi trước khi duyệt.
+- [x] **P01 🟠 [WP5a `.gitattributes` + EOL/BOM]** — theo SPEC-P05 §A. Gate: `git ls-files --eol` = 100% `w/lf` (trừ `tests/fixtures/**` và file khai báo binary); 0 BOM.
+- [x] **P02 🔴 [WP2a fixture + golden]** — theo SPEC-P02 §A. Gate: `tests/golden/manifest.json` sinh từ engine **v1.5.4 chưa sửa** (ghi SHA commit engine vào manifest).
+- [x] **P03 🟠 [WP6 refactor]** — theo SPEC-P06. Gate: golden byte-identical 100% ca; `require()` engine không in gì, không ghi gì.
 - [ ] **P04 🔴 [WP1 CLI + mã thoát + diagnose]** — theo SPEC-P01. Gate: bảng mã thoát 01-CONTRACTS §6 nghiệm thu từng dòng bằng test.
 - [ ] **P05 🔴 [WP2b test khiếm khuyết + `npm test`]** — theo SPEC-P02 §B. Gate: 7/7 khiếm khuyết D1..D7 có ≥1 ca; 11/11 bất biến có ≥1 ca; `npm test` xanh Windows + Linux.
 - [ ] **P06 🟠 [WP5b CI]** — theo SPEC-P05 §B. Gate: workflow xanh trên cả 2 OS ở commit đầu tiên có workflow.
@@ -86,3 +91,13 @@ Chi tiết ma trận và Exit Gates theo môi trường (`⬜ local / ⬜ CI`): 
 | [specs/SPEC-P06-refactor-testable.md](specs/SPEC-P06-refactor-testable.md) | WP6 | Refactor engine |
 | [specs/OPERATIONS.md](specs/OPERATIONS.md) | Thứ tự bắt buộc, quy trình deploy, runbook rollback từng WP, việc cần người bấm nút | Trước khi bắt đầu mỗi WP và khi có sự cố |
 | [specs/TESTING-ACCEPTANCE.md](specs/TESTING-ACCEPTANCE.md) | Ma trận test ↔ D1..D7 / I1..I11, Exit Gates theo môi trường | Khi viết test và khi đóng kế hoạch |
+
+### Bằng chứng thực thi (cập nhật khi từng bước xong)
+
+| Bước | Commit | Bằng chứng do orchestrator tự đo |
+| :-- | :--- | :--- |
+| P01 WP5a | `1077491`, `0309d5d` | `git ls-files --eol`: **0** file `w/crlf`/`w/mixed`/`-text`; **0** file tracked còn BOM; file gotchas hết bị git coi là nhị phân (`--numstat` ra số, không còn `-`). |
+| P02 WP2a | `ce85239` | `npm run test:golden` **6/6 xanh** (tự chạy); `git diff` engine **rỗng** (golden chụp bằng engine chưa sửa); `package.json` **0 dependency**; fixture giữ nguyên byte (`text: unset`, F05 có 44 CRLF, F07 có BOM); 113 file, 5 ca golden × 12 file. |
+| P03 WP6 | `739d5db` → `4a820fd` (6 commit S1–S6) | Bộ so sánh **tự dựng** trên 5 kịch bản độc lập: cây file, stdout, stderr, mã thoát **giống hệt** engine v1.5.4. `require()` không in/ghi gì (31 export). `readFileSync`/`writeFileSync` chỉ còn trong `readText`/`writeText`. 772 → 1076 dòng. |
+| P04 WP1 | `2583b4c`, `571fc85`, `abe0760` (+ token thứ 4) | `npm test` **43/43 xanh**; `--version` → `brain-engine 1.6.0 template 1.3.0`; `--check` trên hub exit **0** không ghi gì; cờ lạ exit **64**; `diagnose()` sinh **13 mã BRN**. |
+
