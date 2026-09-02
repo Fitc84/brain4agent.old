@@ -20,6 +20,93 @@ const REQUIRED_FILES = [
 ];
 
 // -------------------------------------------------------------------------
+// LỚP VĂN BẢN (01-CONTRACTS §1) — chuẩn hoá khi ĐỌC, khôi phục EOL khi GHI.
+// ĐÂY LÀ NƠI DUY NHẤT trong file được phép gọi fs.readFileSync / fs.writeFileSync
+// lên nội dung văn bản. Mọi hàm thuần chỉ nhận văn bản đã chuẩn hoá LF.
+// -------------------------------------------------------------------------
+function stripBom(s) {
+    return s.charCodeAt(0) === 0xfeff ? s.slice(1) : s;
+}
+
+function detectEol(raw) {
+    let crlf = 0;
+    let lf = 0;
+    for (let i = 0; i < raw.length; i++) {
+        if (raw.charCodeAt(i) === 10) {
+            if (i > 0 && raw.charCodeAt(i - 1) === 13) crlf++;
+            else lf++;
+        }
+    }
+    if (crlf && lf) return 'mixed';
+    if (crlf) return 'crlf';
+    if (lf) return 'lf';
+    return 'none';
+}
+
+// CR đơn độc KHÔNG phải EOL — giữ nguyên byte.
+function normalizeEol(raw) {
+    return raw.replace(/\r\n/g, () => '\n');
+}
+
+function restoreEol(lf, eol) {
+    return eol === 'crlf' ? lf.replace(/\n/g, () => '\r\n') : lf;
+}
+
+function hasUtf8Bom(buf) {
+    return buf.length >= 3 && buf[0] === 0xef && buf[1] === 0xbb && buf[2] === 0xbf;
+}
+
+function detectEncoding(buf) {
+    if (buf.length >= 2 && buf[0] === 0xff && buf[1] === 0xfe) return 'utf16le';
+    if (buf.length >= 2 && buf[0] === 0xfe && buf[1] === 0xff) return 'utf16be';
+    if (hasUtf8Bom(buf)) return 'utf8-bom';
+    try {
+        new TextDecoder('utf-8', { fatal: true }).decode(buf);
+    } catch (e) {
+        return 'invalid-utf8';
+    }
+    return 'utf8';
+}
+
+function textFileError(code, message) {
+    const err = new Error(message);
+    err.name = 'TextFileError';
+    err.code = code;
+    return err;
+}
+
+// readText(filePath) -> { text, eol, hadBom, bytes, encoding } | null (ENOENT)
+function readText(filePath) {
+    let buf;
+    try {
+        buf = fs.readFileSync(filePath);
+    } catch (e) {
+        if (e && e.code === 'ENOENT') return null;
+        throw textFileError(e && e.code ? e.code : 'EIO', 'Khong doc duoc file: ' + (e && e.message));
+    }
+    const encoding = detectEncoding(buf);
+    if (encoding === 'utf16le' || encoding === 'utf16be') {
+        throw textFileError('UTF16', 'File dang UTF-16 (' + encoding + '), engine chi lam viec voi UTF-8.');
+    }
+    if (encoding === 'invalid-utf8') {
+        throw textFileError('INVALID_UTF8', 'File khong phai UTF-8 hop le.');
+    }
+    const raw = stripBom(buf.toString('utf8'));
+    return {
+        text: normalizeEol(raw),
+        eol: detectEol(raw),
+        hadBom: encoding === 'utf8-bom',
+        bytes: buf.length,
+        encoding: encoding
+    };
+}
+
+// writeText(filePath, lfText, eol) — KHÔNG BAO GIỜ ghi BOM; 'mixed'/'none' ghi như 'lf'.
+function writeText(filePath, lfText, eol) {
+    fs.writeFileSync(filePath, Buffer.from(restoreEol(lfText, eol), 'utf8'));
+}
+
+// -------------------------------------------------------------------------
 // LỚP RENDER — hàm THUẦN: không fs, không Date, không console, không process.
 // Nội dung template chép NGUYÊN VĂN từ engine v1.5.4 (bất biến A8).
 // -------------------------------------------------------------------------
@@ -446,7 +533,7 @@ function patchAgentsMd(content, version) {
     if (!currentAgentsMd.includes('xay-dung-nao-bo')) {
         currentAgentsMd = currentAgentsMd.replace(
             /## ⚡ 1\. GIAO THỨC KHỞI ĐỘNG \(Agent Startup Protocol\)\s*\n\s*Khi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:\s*\n/i,
-            () =>`## ⚡ 1. GIAO THỨC KHỞI ĐỘNG (Agent Startup Protocol)\n\nKhi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:\n\n1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\\\Users\\\\hoang\\\\.gemini\\\\config\\\\skills\\\\.xay-dung-nao-bo\\\\scripts\\\\init_brain.js\`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.\n`
+            () => `## ⚡ 1. GIAO THỨC KHỞI ĐỘNG (Agent Startup Protocol)\n\nKhi bắt đầu bất kỳ phiên làm việc nào, Agent phải thực hiện tuần tự:\n\n1. **Bước 0 (Bắt buộc tiên quyết — Đồng Bộ & Boot Não Bộ):** Chạy kiểm tra/đồng bộ não bộ qua skill \`.xay-dung-nao-bo\` (\`node C:\\\\Users\\\\hoang\\\\.gemini\\\\config\\\\skills\\\\.xay-dung-nao-bo\\\\scripts\\\\init_brain.js\`) để đảm bảo toàn bộ hệ thống Não Bộ luôn đạt chuẩn mới nhất trước khi xử lý bất kỳ yêu cầu nào.\n`
         );
         patches.push('step0');
     }
@@ -568,6 +655,11 @@ function runBrainEngine(opts) {
     const now = opts.now || new Date();
     const templateVersion = opts.templateVersion || BRAIN_TEMPLATE_VERSION;
     let stateJsonBroken = false;
+    const warnMixedEol = (rel, eol) => {
+        if (eol === 'mixed') {
+            logger(`⚠️ EOL trộn lẫn trong ${rel} — ghi lại theo LF (01-CONTRACTS §1.1).`);
+        }
+    };
     if (mode !== 'write') {
         throw new RangeError('[brain-engine] mode ' + mode + ' chua duoc hien thuc (WP1).');
     }
@@ -602,7 +694,7 @@ const hasLegacyLatest = fs.existsSync(legacyLatestMemory);
 // nên mọi dự án bắt buộc phải có shim này trỏ về AGENTS.md (Dual Entry-Point Invariant, mục J).
 let hasClaudeMd = false;
 if (fs.existsSync(claudeMdPath)) {
-    const claudeMdContent = fs.readFileSync(claudeMdPath, 'utf8');
+    const claudeMdContent = readText(claudeMdPath).text;
     hasClaudeMd = claudeMdContent.includes('@AGENTS.md');
 }
 
@@ -614,7 +706,7 @@ let hasStep0InAgentsMd = false;
 let hasRootMarkerException = false;
 let hasDualEntryPointLawInAgentsMd = false;
 if (hasAgentsMd) {
-    const agentsContent = fs.readFileSync(agentsMdPath, 'utf8');
+    const agentsContent = readText(agentsMdPath).text;
     hasStep0InAgentsMd = agentsContent.includes('xay-dung-nao-bo');
     hasRootMarkerException = agentsContent.includes('Marker Phiên Bản Khung Não');
     hasDualEntryPointLawInAgentsMd = agentsContent.includes('Dual Entry-Point Invariant');
@@ -623,7 +715,7 @@ if (hasAgentsMd) {
 let hasStep0InDistill = false;
 const distillPath = path.join(brainDir, 'memory-distill.txt');
 if (fs.existsSync(distillPath)) {
-    const distillContent = fs.readFileSync(distillPath, 'utf8');
+    const distillContent = readText(distillPath).text;
     hasStep0InDistill = distillContent.includes('xay-dung-nao-bo');
 }
 
@@ -650,7 +742,7 @@ const hasBrainVersionMarker = existingMarkerFiles.length === 1 && existingMarker
 let hasStateJsonTrailingNewline = true;
 const stateJsonDiagPath = path.join(hotDir, 'state.json');
 if (fs.existsSync(stateJsonDiagPath)) {
-    hasStateJsonTrailingNewline = fs.readFileSync(stateJsonDiagPath, 'utf8').endsWith('\n');
+    hasStateJsonTrailingNewline = readText(stateJsonDiagPath).text.endsWith('\n');
 }
 
 const isBrandNew = !hasBrainDir;
@@ -659,7 +751,7 @@ const isBrandNew = !hasBrainDir;
 // để lại hai phát biểu ngược nhau cùng sống (vi phạm "một nguồn chân lý").
 let hasNoDuplicatePlanningLaw = true;
 if (hasAgentsMd) {
-    const agentsMdDiag = fs.readFileSync(agentsMdPath, 'utf8');
+    const agentsMdDiag = readText(agentsMdPath).text;
     hasNoDuplicatePlanningLaw = !(agentsMdDiag.includes('SPEC PACKAGE') && agentsMdDiag.includes('Cấu trúc Thư mục Kế hoạch Chuẩn (Spec-First)'));
 }
 const isFullyStandard = hasBrainDir && hasHotMemory && hasPlanning && hasAgentsMd && hasClaudeMd && hasSkillsVault && !hasLegacyLatest && missingBrainFiles.length === 0 && hasStep0InAgentsMd && hasStep0InDistill && hasBrainVersionMarker && hasRootMarkerException && hasDualEntryPointLawInAgentsMd && hasStateJsonTrailingNewline && hasNoDuplicatePlanningLaw;
@@ -731,10 +823,10 @@ for (const dir of targetDirs) {
 // Handle legacy latest_memory.md migration if exists
 if (hasLegacyLatest) {
     logger("📦 Phát hiện latest_memory.md ở root -> Di dời vào brain4agent/memory/hot/...");
-    const legacyContent = fs.readFileSync(legacyLatestMemory, 'utf8');
+    const legacyFile = readText(legacyLatestMemory);
     const todayPath = path.join(hotDir, 'today.md');
     if (!fs.existsSync(todayPath)) {
-        fs.writeFileSync(todayPath, legacyContent, 'utf8');
+        writeText(todayPath, legacyFile.text, legacyFile.eol);
     }
     fs.unlinkSync(legacyLatestMemory);
     logger("🗑️ Đã xóa latest_memory.md ở root để giữ chuẩn Root Clean 100%.");
@@ -746,13 +838,13 @@ const templates = renderTemplates(templateVersion, now);
 for (const [filename, content] of Object.entries(templates)) {
     const filePath = path.join(brainDir, filename);
     if (!fs.existsSync(filePath)) {
-        fs.writeFileSync(filePath, content, 'utf8');
+        writeText(filePath, content, 'lf');
         logger(`✅ Đã tạo mới: brain4agent/${filename}`);
     } else {
         // Tự động vá Bước 0 vào memory-distill.txt nếu thiếu
         if (filename === 'memory-distill.txt') {
-            const currentDistill = fs.readFileSync(filePath, 'utf8');
-            const distillResult = patchDistill(currentDistill);
+            const currentDistill = readText(filePath);
+            const distillResult = patchDistill(currentDistill.text);
             if (distillResult.changed) {
                 for (const patchName of distillResult.patches) {
                     if (patchName === 'step0') {
@@ -761,7 +853,8 @@ for (const [filename, content] of Object.entries(templates)) {
                         logger(`🔄 Kernel không theo khuôn <agent_startup_protocol> — đã chèn khối Bước 0 lên đầu brain4agent/memory-distill.txt (fallback).`);
                     }
                 }
-                fs.writeFileSync(filePath, distillResult.content, 'utf8');
+                warnMixedEol(`brain4agent/${filename}`, currentDistill.eol);
+                writeText(filePath, distillResult.content, currentDistill.eol);
             } else {
                 logger(`📄 Đã có sẵn: brain4agent/${filename} (Giữ nguyên dữ liệu)`);
             }
@@ -774,16 +867,16 @@ for (const [filename, content] of Object.entries(templates)) {
 // Hot memory files
 const stateJsonPath = path.join(hotDir, 'state.json');
 if (!fs.existsSync(stateJsonPath)) {
-    fs.writeFileSync(stateJsonPath, renderInitialState(templateVersion, now), 'utf8');
+    writeText(stateJsonPath, renderInitialState(templateVersion, now), 'lf');
     logger('✅ Đã tạo mới: memory/hot/state.json (kèm brain_template_version)');
 } else {
     // Vá brain_template_version vào state.json đã có, KHÔNG đụng các field khác (vd current_version
     // là version DỰ ÁN — khái niệm khác, tuyệt đối không trộn/ghi đè lên nhau).
     try {
-        const currentStateRaw = fs.readFileSync(stateJsonPath, 'utf8');
-        const stateResult = patchStateJson(currentStateRaw, templateVersion);
+        const currentStateFile = readText(stateJsonPath);
+        const stateResult = patchStateJson(currentStateFile.text, templateVersion);
         if (stateResult.changed) {
-            fs.writeFileSync(stateJsonPath, stateResult.content, 'utf8');
+            writeText(stateJsonPath, stateResult.content, 'lf');
             if (stateResult.patches.includes('version')) {
                 logger(`🔄 Đã vá brain_template_version=${templateVersion} vào memory/hot/state.json (giữ nguyên các field khác).`);
             }
@@ -822,7 +915,7 @@ for (const staleFile of staleMarkerFiles) {
 }
 
 if (!fs.existsSync(brainMarkerPath)) {
-    fs.writeFileSync(brainMarkerPath, renderMarker(templateVersion, now), 'utf8');
+    writeText(brainMarkerPath, renderMarker(templateVersion, now), 'lf');
     logger(`✅ Đã tạo mới marker phiên bản khung não: ${currentMarkerFileName}`);
 } else {
     logger(`📄 Đã có sẵn: ${currentMarkerFileName} (đúng chuẩn, giữ nguyên).`);
@@ -830,7 +923,7 @@ if (!fs.existsSync(brainMarkerPath)) {
 
 const todayMdPath = path.join(hotDir, 'today.md');
 if (!fs.existsSync(todayMdPath)) {
-    fs.writeFileSync(todayMdPath, renderTodayMd(now), 'utf8');
+    writeText(todayMdPath, renderTodayMd(now), 'lf');
     logger('✅ Đã tạo mới: memory/hot/today.md');
 }
 
@@ -839,16 +932,17 @@ const fullAgentsMdContent = renderFullAgentsMd();
 
 // Ghi hoặc cập nhật AGENTS.md
 if (!fs.existsSync(agentsMdPath)) {
-    fs.writeFileSync(agentsMdPath, fullAgentsMdContent, 'utf8');
+    writeText(agentsMdPath, fullAgentsMdContent, 'lf');
     logger('✅ Đã tạo mới: AGENTS.md với ĐẦY ĐỦ CÁC BỘ LUẬT QUẢN TRỊ TINH HOA!');
 } else {
-    const originalAgentsMd = fs.readFileSync(agentsMdPath, 'utf8');
-    const agentsResult = patchAgentsMd(originalAgentsMd, templateVersion);
+    const agentsMdFile = readText(agentsMdPath);
+    const agentsResult = patchAgentsMd(agentsMdFile.text, templateVersion);
     for (const patchName of agentsResult.patches) {
         logger(AGENTS_PATCH_LOGS[patchName]);
     }
     if (agentsResult.changed) {
-        fs.writeFileSync(agentsMdPath, agentsResult.content, 'utf8');
+        warnMixedEol('AGENTS.md', agentsMdFile.eol);
+        writeText(agentsMdPath, agentsResult.content, agentsMdFile.eol);
     }
     if (!agentsResult.patches.some((p) => p !== 'remove-legacy-planning')) {
         logger('📄 Đã có sẵn: AGENTS.md (đầy đủ luật, giữ nguyên).');
@@ -863,13 +957,14 @@ if (!fs.existsSync(agentsMdPath)) {
 const claudeMdShimContent = renderClaudeShim();
 
 if (!fs.existsSync(claudeMdPath)) {
-    fs.writeFileSync(claudeMdPath, claudeMdShimContent, 'utf8');
+    writeText(claudeMdPath, claudeMdShimContent, 'lf');
     logger('✅ Đã tạo mới: CLAUDE.md (shim ≤10 dòng, trỏ @AGENTS.md — Dual Entry-Point Invariant).');
 } else {
-    const currentClaudeMd = fs.readFileSync(claudeMdPath, 'utf8');
-    const claudeResult = patchClaudeMd(currentClaudeMd);
+    const claudeMdFile = readText(claudeMdPath);
+    const claudeResult = patchClaudeMd(claudeMdFile.text);
     if (claudeResult.changed) {
-        fs.writeFileSync(claudeMdPath, claudeResult.content, 'utf8');
+        warnMixedEol('CLAUDE.md', claudeMdFile.eol);
+        writeText(claudeMdPath, claudeResult.content, claudeMdFile.eol);
         logger('🔄 Đã tự động vá dòng @AGENTS.md vào CLAUDE.md hiện có (giữ nguyên nội dung cũ).');
     } else {
         logger('📄 Đã có sẵn: CLAUDE.md (đã trỏ @AGENTS.md, giữ nguyên).');
@@ -912,6 +1007,14 @@ module.exports = {
     BRAIN_TEMPLATE_VERSION,
     ENGINE_VERSION,
     REQUIRED_FILES,
+    stripBom,
+    detectEol,
+    normalizeEol,
+    restoreEol,
+    hasUtf8Bom,
+    detectEncoding,
+    readText,
+    writeText,
     renderTemplates,
     renderInitialState,
     renderMarker,
