@@ -6,9 +6,16 @@ const { spawnSync } = require('node:child_process');
 
 const BRAIN_NOW = '2026-01-15T03:04:05.000Z';
 const FAKE_DATE = path.join(__dirname, 'fake-date.js');
-const ENGINE_PATH = path.join(
+const DEFAULT_ENGINE_PATH = path.join(
   __dirname, '..', '..', '.agents', 'skills', '.xay-dung-nao-bo', 'scripts', 'init_brain.js'
 );
+
+// BRAIN_ENGINE: trỏ bộ test sang MỘT BẢN COPY khác của engine. Dùng để chứng minh test
+// "có răng" — chạy nguyên bộ test lên bản engine đã hoàn tác bản sửa (đặt ở thư mục tạm)
+// và xem nó ĐỎ. CẤM đặt biến này trong CI hay trong npm script.
+const ENGINE_PATH = process.env.BRAIN_ENGINE
+  ? path.resolve(process.env.BRAIN_ENGINE)
+  : DEFAULT_ENGINE_PATH;
 const DOCTOR_PATH = path.join(path.dirname(ENGINE_PATH), 'brain_doctor.js');
 
 function baseEnv(extra) {
@@ -50,4 +57,4 @@ function runPwsh(scriptArgs = [], opts = {}) {
   return { code: r.status, stdout: r.stdout || '', stderr: r.stderr || '' };
 }
 
-module.exports = { runEngine, runDoctor, runPwsh, BRAIN_NOW, ENGINE_PATH, DOCTOR_PATH, FAKE_DATE };
+module.exports = { runEngine, runDoctor, runPwsh, BRAIN_NOW, ENGINE_PATH, DEFAULT_ENGINE_PATH, DOCTOR_PATH, FAKE_DATE };
