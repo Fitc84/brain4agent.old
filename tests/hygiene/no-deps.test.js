@@ -37,6 +37,7 @@ test('T-H04b · NG3: mọi file test chỉ require module chuẩn hoặc file tr
     let m;
     while ((m = re.exec(src)) !== null) {
       const id = m[1];
+      if (id.includes('${')) continue; // template literal trong THÔNG BÁO của chính test này
       if (id.startsWith('.') || id.startsWith('/')) continue; // đường dẫn tương đối trong repo
       if (ALLOWED_MODULES.has(id)) continue;
       offenders.push(`${rel}: require('${id}')`);
