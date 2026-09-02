@@ -50,7 +50,7 @@ brain4agent/
 ├── package.json                      # [VERSION TRUTH] Phiên bản v1.5.4
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
-├── brain4agent-v1.2.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
+├── brain4agent-v1.3.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
 ├── README.md                         # [TỔNG QUAN] Bản đồ trung tâm quản lý và hướng dẫn vận hành
 ├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện
 ├── brain4agent/                      # [BỘ NHỚ WORKSPACE] Single Source of Truth của Hub
