@@ -16,14 +16,17 @@ const { REPO_ROOT } = require('../helpers/repo.js');
 const { ENGINE_PATH } = require('../helpers/run.js');
 const engine = require(ENGINE_PATH);
 
-// Token mốc: mỗi cái đại diện cho MỘT bộ luật đã chốt.
-const LAW_TOKENS = [
-  'SPEC PACKAGE',
-  'OPERATIONS.md',
-  'TESTING-ACCEPTANCE',
-  'Dual Entry-Point Invariant',
-  'Marker Phiên Bản Khung Não'
-];
+// Token mốc: mỗi cái đại diện cho MỘT bộ luật đã chốt — đọc từ RULE_BLOCKS của
+// engine (Đ8.1: KHÔNG chép tay), trừ 'xay-dung-nao-bo' (token của khối `boot`)
+// vì chuỗi này còn xuất hiện lặp lại ở nơi khác trong cả hai hiến pháp (vd luật
+// Dual Entry-Point Invariant nhắc lại tên skill) nên không thể đòi hỏi ×1.
+// 'OPERATIONS.md'/'TESTING-ACCEPTANCE' là 2 tên file nêu trong thân khối
+// `spec-package` (không phải id riêng trong RULE_BLOCKS) — giữ tĩnh vì không
+// có nguồn máy đọc nào khác biểu diễn chúng.
+const LAW_TOKENS = engine.RULE_BLOCKS
+  .map((blk) => blk.token)
+  .filter((token) => token !== 'xay-dung-nao-bo')
+  .concat(['OPERATIONS.md', 'TESTING-ACCEPTANCE']);
 
 const read = (rel) => fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8');
 const countOf = (text, token) => text.split(token).length - 1;
@@ -69,6 +72,6 @@ test('T-H02d · A8: hub tự tuân luật — AGENTS.md của hub đủ 4 token 
     assert.ok(agents.includes(t), `hub thiếu token ${t} — engine sẽ tự vá chính hub`);
   }
   // Và engine coi AGENTS.md của hub là đã chuẩn (không sinh patch nào).
-  assert.equal(engine.patchAgentsMd(agents, engine.BRAIN_TEMPLATE_VERSION).changed, false,
+  assert.equal(engine.patchAgentsMd(agents).changed, false,
     'engine còn muốn vá AGENTS.md của hub ⇒ hub chưa tuân chính luật mình phát tán');
 });

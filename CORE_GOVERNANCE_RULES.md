@@ -19,11 +19,12 @@ Khi bước vào bất kỳ workspace hoặc phiên làm việc mới nào, Agen
 
 ## 🧠 2. MA TRẬN PHÂN VÙNG NÃO BỘ ĐA TẦNG V5.2 (HOT/COLD MEMORY MATRIX)
 
-Bộ nhớ dự án trong `brain4agent/` được tổ chức theo kiến trúc **Đa tầng** gồm **7 phân vùng chức năng cố định** và **Phân khu Ký ức Nóng (`memory/hot/`)**:
+Bộ nhớ dự án trong `brain4agent/` được tổ chức theo kiến trúc **Đa tầng** gồm **7 phân vùng chức năng cố định**, **Phân khu Ký ức Nóng (`memory/hot/`)** và **Phân khu Ký ức Lạnh (`memory/archive/`)**:
 
 | Tên File / Thư Mục | Vai trò đơn nhất (Single Responsibility) | Khi nào cần đọc / cập nhật? |
 | :--- | :--- | :--- |
 | **`memory/hot/`** (`today.md`, `state.json`) | **Ký ức nóng phiên gần nhất**. Trạng thái máy (JSON) & nhật ký phiên làm việc trong ngày. | Đọc khi cần nắm bắt nhanh bối cảnh phiên trước; Cập nhật vào cuối mỗi phiên làm việc. |
+| **`memory/archive/`** (`YYYY-MM-DD.md`) | **Ký ức lạnh (Cold Memory)**: phân khu chứa các mục nhật ký đã xoay vòng khỏi `memory/hot/today.md`. CHỈ script xoay ký ức được ghi (append); CẤM sửa tay; CẤM coi là nguồn chân lý hiện trạng. | Đọc khi cần tra phiên cũ; luật ghi chi tiết xem `AGENTS.md` (khối `cold-memory`). |
 | **`memory-distill.txt`** | **Kernel hiện trạng** (< 100 dòng). Bản cô đọng cao cấp nhất về tech stack, vai trò và protocol. | Đọc đầu tiên mọi phiên làm việc; Cập nhật khi đổi kiến trúc nền tảng. |
 | **`index.md`** | **Master Index Map & Router**. Chứa Bản đồ Codebase, Luồng giao tiếp, Bảng Entry Points & Router tài liệu. | Đọc ở Bước 2 để định tuyến; Cập nhật khi thêm thư mục/module/entry point mới. |
 | **`project-intro.md`** | **Tổng quan dự án**. Mục tiêu nghiệp vụ, tech stack, triết lý thiết kế. | Đọc khi cần hiểu bối cảnh tổng quan của sản phẩm. |
@@ -121,6 +122,7 @@ Dự án áp dụng chuẩn **SemVer 2.0.0 (`MAJOR.MINOR.PATCH`)**:
   4. **`brain4agent/changelog.md`:** Ghi nhận mục phát hành phiên bản mới theo chuẩn SemVer 2.0.0.
   5. **`brain4agent/memory/hot/` (`today.md`, `state.json`):** Ghi nhận nhật ký phiên và benchmark thực chiến.
   6. **`brain4agent/memory-distill.txt`:** Cập nhật kernel hiện trạng (duy trì $< 100\text{ dòng}$).
+- **Structural Extension:** Kế hoạch nào thêm **THƯ MỤC TOP-LEVEL mới** (vd `app/`, `legacy/`, `.claude/agents/`) hoặc đưa vào **NGÔN NGỮ / KHUNG mới** (vd Rust, Tauri, React, Node ESM) thì BẮT BUỘC rà thêm **2 file ngoài Ma Trận 6 Điểm**: [`brain4agent/project-intro.md`](file:///brain4agent/project-intro.md) (mục tiêu, bản chất repo, tech stack) và [`brain4agent/-data-architecture.md`](file:///brain4agent/-data-architecture.md) (tầng lưu trữ, data flow). Lý do: hai file này KHÔNG thuộc 6 điểm nên dễ mô tả sai repo trong thời gian dài mà mọi kiểm tra tự động vẫn xanh; bản chất repo và tech stack chỉ con người rà được.
 
 ### 📌 LUẬT 3: Quản Lý Tài Liệu Module 1-1 Trong `docs/` (Module Documentation Governance)
 - **Tên tệp chuẩn hóa trùng tên thư mục Module (1-to-1 Match):** Mọi tài liệu kỹ thuật của một module phải được đặt trong thư mục `docs/` với tên tệp trùng khớp $100\%$ với tên thư mục của module (`module-tools/<module_name>/` $\rightarrow$ `docs/<module_name>.md`).
