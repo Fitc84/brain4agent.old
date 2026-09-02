@@ -1,0 +1,7 @@
+<kernel_instructions>
+<agent_startup_protocol>
+0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ não bộ qua skill `.xay-dung-nao-bo`.
+1. Đọc `brain4agent/memory-distill.txt` trước khi sửa code.
+</agent_startup_protocol>
+<project_kernel>Dự án mẫu du-an-mau dùng để kiểm thử engine.</project_kernel>
+</kernel_instructions>
