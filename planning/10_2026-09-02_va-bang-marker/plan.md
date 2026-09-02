@@ -37,8 +37,11 @@
 | 09-02 20:10 | **TQ7** — fixture "đã chuẩn" (F02, `fleet/00-chuan`) chụp lại ở trạng thái **S2** (đã có mốc, thân đúng); thêm **F09** = trạng thái S1 nguyên văn v1.3.0 (oracle migration), **F10** = S4 sửa tay | Đo: fixture hiện tại chỉ có TOKEN, không có thân luật nguyên văn ⇒ dưới thuật toán mới thành BRN-016. Phải chụp lại có chủ đích, không "sửa cho xanh". |
 | 09-02 20:10 | **TQ8** — probe của `boot` là `Bước 0 (Bắt buộc tiên quyết`, KHÔNG phải `xay-dung-nao-bo` | Đo: **10 repo** không hề có phát biểu Bước 0 nhưng engine v1.6.0 vẫn cho qua vì luật J mục 4 chứa `xay-dung-nao-bo` — âm tính giả tiềm ẩn. Probe mới ⇒ 9 repo (1.3.0) nhận Bước 0 qua nhánh `add`. |
 
+| 09-02 22:05 | **Đ11** — mâu thuẫn SPEC-P04 §3 vs 01-CONTRACTS §7 về mã thoát `--check` khi chỉ có finding KHÔNG fixable: **giữ hành vi hiện hành (exit 0)**, 01-CONTRACTS thắng | `--check` trả lời "engine có muốn ghi gì không"; chấm mức nặng nhẹ là việc của doctor (mã thoát phân tầng riêng). Hành vi đang bị 3 test #09 chốt (BRN-005/013); đổi = breaking change ngoài scope. T-C37 (WP4) kỳ vọng `--check` = 0. |
+
 ### Quyết định bị thay thế
 
+- **SPEC-P04 §3 / 01-CONTRACTS §6** câu *"warning không fixable ⇒ `--check` exit 1"* → **THAY BẰNG Đ11** (giữ exit 0; doctor mới là nơi phân mức).
 - **#09 SPEC-P01 / 01-CONTRACTS §8:** *"BRN-002 = thiếu 1 trong 4 token; BRN-003 = mệnh đề luật lặp đếm bằng `RULE_ANCHORS`"* → **THAY BẰNG** *"BRN-002 = khối bắt buộc ở trạng thái `absent`/`legacy`/`stale` (fixable); BRN-003 = probe ngoài khối khi khối đã có, hoặc còn khối planning cũ (không fixable)"* (01-CONTRACTS §6). Đếm chuỗi bị khai tử.
 - **Engine v1.0–v1.6:** *"vá `AGENTS.md` = 4 nhánh `if (!includes(token))` + regex dò `### G.`/`### H.`/`## 📋 3.` + 3 fallback phụ lục"* → **THAY BẰNG** *"một vòng lặp trên `RULE_BLOCKS`: findBlock → findLegacy → probe → add"* (SPEC-P01). **Không giữ đường cũ** (Đ8.2).
 - **Scope brief mục GATE** *"engine sau #10 phải NGẮN hơn 1447 dòng"* → **THAY BẰNG** G1/G2/G3 (Đ5).
