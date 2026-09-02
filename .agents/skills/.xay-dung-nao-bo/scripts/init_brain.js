@@ -47,7 +47,8 @@ function normalizeEol(raw) {
 }
 
 function restoreEol(lf, eol) {
-    return eol === 'crlf' ? lf.replace(/\n/g, () => '\r\n') : lf;
+    // Chap nhan ca dau vao con CRLF: neu chi thay /\n/ thi '\r\n' se thanh '\r\r\n'.
+    return eol === 'crlf' ? lf.replace(/\r\n|\n/g, () => '\r\n') : lf;
 }
 
 function hasUtf8Bom(buf) {
