@@ -7,7 +7,7 @@ const path = require('path');
 const BRAIN_TEMPLATE_VERSION = '1.4.0';
 
 // Phiên bản ENGINE (mã nguồn công cụ) — KHÁC BRAIN_TEMPLATE_VERSION (phiên bản KHUNG não).
-const ENGINE_VERSION = '1.7.0';
+const ENGINE_VERSION = '1.7.1';
 
 const REQUIRED_FILES = [
     'memory-distill.txt',

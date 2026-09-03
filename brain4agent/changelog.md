@@ -2,6 +2,26 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.7.1] - 2026-09-04: Vá File Lệnh Global Trôi Lệch Luật + Hoàn Tất Sync Cascade Của #10
+
+Bản vá `PATCH` sau kiểm chứng độc lập bản phát hành 1.7.0. Không đụng engine.
+
+### Fixed
+- **File lệnh Claude (`~/.claude/commands/xay-dung-nao-bo.md`) vi phạm luật Bước 0 của chính khung 1.4.0**: template (hardcode trong `scripts/deploy_skills.ps1`) vẫn dạy agent chạy thẳng chế độ GHI và chỉ biết 2 kết cục. Nay chạy `--check` trước và phân nhánh theo mã thoát 0/1/2/3, nêu rõ `BRN-016` ⇒ DỪNG, CẤM tự sửa vùng luật giữa hai mốc. Chi tiết: gotcha **#23**.
+- **Cổng deploy có răng**: khối kiểm file lệnh nay đòi đủ mốc `--check` và `BRN-016` (thiếu ⇒ `CMD-BAD` + exit 2, in đúng tên mốc thiếu).
+- **Sync Cascade của #10 bỏ sót 2 file luật Structural Extension** (§5.B.2): `-data-architecture.md` thiếu hoàn toàn phân khu Ký ức Lạnh `memory/archive/` và cơ chế marker; `index.md` Codebase Map thiếu kế hoạch 07–10, thiếu 2 file `docs/`. Đã bổ sung — đúng loại lỗ hổng mà luật này sinh ra để chống.
+- **Kernel nói sai 3 điều cùng lúc** (`memory-distill.txt`): ghi khung não `v1.3.0` (thực tế 1.4.0), ghi "mọi commit LOCAL, CHƯA PUSH" (thực tế đã push, CI xanh), và ghi 237 test (thực tế 240). Kernel là file mọi agent đọc đầu tiên nên sai ở đây lan ra mọi phiên.
+- Version dự án lạc hậu ở `project-intro.md`, `roadmap.md`, `index.md`, kernel (còn ghi `v1.6.0` trong khi `package.json` đã `1.7.0`).
+- `docs/xay-dung-nao-bo.md` thiếu 9 export thật của engine, gồm chính sản phẩm cốt lõi #10 (`RULE_BLOCKS`, `findBlock`, `findLegacy`, `classifyRuleBlocks`, `AGENTS_SKELETON`, …).
+
+### Added
+- **T-H07/b/c** (`tests/hygiene/deploy-command-template.test.js`): khoá template file lệnh vào `npm test` — nơi DUY NHẤT kiểm được nội dung template, vì bước CI `deploy-dry` không ghi file lệnh nên không bao giờ thấy. Kèm bánh cóc so danh sách mốc giữa test và script (bài học allowlist trôi dạt ở #10). Test: 237 → **240**.
+- Gotcha **#23** (văn bản máy sinh phát tán ra ngoài repo phải có test neo vào luật) và **#24** (trùng tên biến đếm trong script dài).
+
+### Ghi chú vận hành
+- Bản **global vẫn là engine 1.6.0 / template 1.3.0**. Tới khi deploy, chạy Bước 0 **chế độ ghi** trong hub sẽ hạ ngược marker và `state.json` về 1.3.0 — chỉ chạy `--check`. Đã ghi cảnh báo vào kernel.
+- Deploy global và rollout 66 repo vẫn **chờ user ra lệnh**.
+
 ## [v1.7.0] - 2026-09-02: Vá Tất Định Bằng Khối Đánh Dấu Ẩn — Khung Não v1.4.0, BRN-016/017, Ký Ức Lạnh
 
 Kế hoạch #10. Engine ngừng *đoán* vị trí luật bằng regex trên văn xuôi tiếng Việt; chuyển sang **6 khối marker** `<!-- brain:rule:<id> -->` do máy tự quản. `BRAIN_TEMPLATE_VERSION` **1.3.0 → 1.4.0** (đợt ghi fleet chờ lệnh user).

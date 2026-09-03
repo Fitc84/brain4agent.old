@@ -21,7 +21,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 | **Lộ trình nâng cấp & Ý tưởng** | [`roadmap.md`](file:///brain4agent/roadmap.md) | Active tasks, Kho Ý Tưởng (Idea Vault) và các mốc đã hoàn thành. |
 | **Lịch sử cập nhật** | [`changelog.md`](file:///brain4agent/changelog.md) | Lịch sử Semantic Releases (vX.Y.Z). |
 | **Tài liệu kỹ thuật module** | [`docs/`](file:///docs) | Tài liệu 1-1 cho từng module: `xay-dung-nao-bo.md`, `compact.md`. |
-| **Kiểm chứng tự động** | [`tests/`](file:///tests) | 237 ca `node:test`, 0 dependency. `npm test` · `npm run test:golden`. |
+| **Kiểm chứng tự động** | [`tests/`](file:///tests) | 240 ca `node:test`, 0 dependency. `npm test` · `npm run test:golden`. |
 | **Đo độ lệch hệ sinh thái** | `brain_doctor.js` | `node .agents/skills/.xay-dung-nao-bo/scripts/brain_doctor.js --root <kho>` — chỉ đọc. |
 
 ---
@@ -49,7 +49,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 ```text
 brain4agent/
-├── package.json                      # [VERSION TRUTH] Phiên bản v1.6.0
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.7.1
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
 ├── brain4agent-v1.4.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
@@ -57,6 +57,7 @@ brain4agent/
 ├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện
 ├── brain4agent/                      # [BỘ NHỚ WORKSPACE] Single Source of Truth của Hub
 │   ├── memory/hot/                   # [HOT MEMORY] Ký ức nóng phiên (today.md, state.json — chứa brain_template_version)
+│   ├── memory/archive/               # [COLD MEMORY] Ký ức lạnh (YYYY-MM-DD.md), CHỈ script xoay ghi — CẤM sửa tay
 │   ├── memory-distill.txt            # [KERNEL] Bản cô đọng tối thượng (< 100 dòng)
 │   ├── index.md                      # [ROUTER] Master Index Map & Codebase Navigation
 │   ├── roadmap.md                    # [ROADMAP] Tiến độ, Active tasks & Idea Vault
@@ -70,7 +71,11 @@ brain4agent/
 │   ├── 03_2026-08-31_brain-version-marker/
 │   ├── 04_2026-08-31_rollout-ecosystem/
 │   ├── 05_2026-08-31_nao-hoa-nhom-c/   # + specs/ (00-ARCHITECTURE, 01-CONTRACTS, SPEC-P01..P06)
-│   └── 06_2026-08-31_dong-bo-67-repo/  # + specs/ (git-init, first-commit, xử bẩn, não hóa, ca đặc biệt)
+│   ├── 06_2026-08-31_dong-bo-67-repo/  # + specs/ (git-init, first-commit, xử bẩn, não hóa, ca đặc biệt)
+│   ├── 07_2026-09-02_rollout-template-v1.3.0/  # PATCH — chỉ plan.md
+│   ├── 08_2026-09-02_hotfix-lenh-va-go-secret/ # PATCH — chỉ plan.md
+│   ├── 09_2026-09-02_engine-kiem-chung/   # + specs/ (01-CONTRACTS mã thoát, BRN-001..013)
+│   └── 10_2026-09-02_va-bang-marker/      # + specs/ (SPEC-P03 luật v1.4.0, SPEC-P04 doctor BRN-016/017)
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
@@ -83,12 +88,14 @@ brain4agent/
 ├── docs/                             # [MODULE DOCS] Tài liệu kỹ thuật chi tiết
 │   ├── UNIVERSAL_AGENT_GUIDE.md      # [A-Z GUIDE] Cẩm nang vận hành toàn diện cho AI Agent
 │   ├── BRAIN_ARCHITECTURE_GUIDE.md
-│   └── MODULE_DOCUMENTATION_SPEC.md
+│   ├── MODULE_DOCUMENTATION_SPEC.md
+│   ├── xay-dung-nao-bo.md            # [MODULE DOCS] Tài liệu 1-1 của init_brain.js + brain_doctor.js
+│   └── compact.md                    # [MODULE DOCS] Tài liệu 1-1 của skill .compact
 ├── scripts/
 │   └── deploy_skills.ps1             # [DEPLOY] pwsh ≥7, fail-closed, đối chiếu SHA-256 nguồn↔đích
-├── tests/                            # [KIỂM CHỨNG] 237 ca `node:test`, 0 dependency
-│   ├── helpers/ (tmp · run · tree · make-golden · diff-scope) · fixtures/ (F01–F10 + fleet/) · golden/manifest.json
-│   ├── unit/ · cli/ · defects/ · invariants/ · doctor/ · hygiene/ · golden.test.js
+├── tests/                            # [KIỂM CHỨNG] 240 ca `node:test`, 0 dependency
+│   ├── helpers/ (tmp · run · tree · make-golden · diff-scope · repo · snapshot · fake-date) · fixtures/ (F01–F10 + fleet/00..03) · golden/manifest.json
+│   ├── unit/ (diagnose · diff · marker · patch-distill · patch-state · plan · purity · text) · cli/ (exit-codes · read-only · marker-migration) · defects/ · invariants/ · doctor/ · hygiene/ (eol-bom · no-abs-path · no-deps · two-constitutions · version-sync · ci-fixture-exists · deploy-command-template) · golden.test.js
 ├── .github/workflows/ci.yml          # [CI] matrix windows × ubuntu, 13 bước, mọi cổng trả mã thoát thật
 └── .gitattributes                    # [EOL] ép LF; `tests/fixtures/** -text` giữ nguyên byte
 ```

@@ -160,3 +160,16 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Cách trị (đã làm ở #10):** `renderFullAgentsMd = patchAgentsMd(AGENTS_SKELETON)` — thân luật chỉ tồn tại MỘT bản trong `RULE_BLOCKS`; thân luật không chứa version (TQ3).
 - **Luật:** mọi văn bản máy quản phải có đúng một nguồn; template chỉ là skeleton + mốc rỗng.
 - **Nguồn:** kế hoạch #10, phát hiện khi viết SPEC-P03, 2026-09-02.
+## 23. File Lệnh Global Nằm NGOÀI Ma Trận Đồng Bộ — Trôi Lệch Luật Mà Không Cổng Nào Bắt
+- **Triệu chứng:** khung não lên v1.4.0 (Bước 0 phải chạy `--check` trước, `exit 2` = cần người), nhưng `~/.claude/commands/xay-dung-nao-bo.md` vẫn dạy agent chạy thẳng **chế độ GHI** và chỉ biết 2 kết cục ⇒ **file lệnh vi phạm chính luật mà bản phát hành đó vừa cài vào repo**.
+- **Nguyên nhân:** file lệnh được sinh từ một template **hardcode trong `scripts/deploy_skills.ps1`**. Template đó không thuộc Ma Trận Đồng Bộ 6 Điểm, cũng không phải tài liệu module ⇒ không luật nào buộc rà khi luật khung đổi. Bước CI `deploy-dry` cũng không thấy được vì dry-run KHÔNG ghi file lệnh.
+- **Cách trị:** (a) template chạy `--check` trước, phân nhánh theo mã thoát 0/1/2/3, nêu rõ gặp `BRN-016` thì DỪNG và CẤM tự sửa vùng luật; (b) cổng deploy đòi file lệnh chứa mốc `--check` + `BRN-016` (thiếu ⇒ `CMD-BAD`, exit 2); (c) test `T-H07` khoá template trong `npm test` — nơi DUY NHẤT kiểm được nội dung template mà không cần ghi ra đĩa.
+- **Luật rút ra:** mọi **văn bản do máy sinh ra rồi phát tán ra ngoài repo** (file lệnh, hook, template deploy) phải có một test trong `npm test` neo nó vào luật hiện hành. Ngoài repo thì Ma Trận 6 Điểm không với tới.
+- **Nguồn:** phát hiện khi kiểm bản deploy sau #10, 2026-09-04. Sửa tại `774da32`.
+
+## 24. Đặt Tên Biến Trùng Biến Đếm Trong Script Dài — Vỡ Ở Chỗ Khác Hẳn
+- **Triệu chứng:** thêm một khối kiểm vào `deploy_skills.ps1`, khối đó chạy đúng (in `CMD-OK`), nhưng script chết ở CUỐI: `[System.Object[]] does not contain a method named 'op_Addition'`.
+- **Nguyên nhân:** biến mới đặt tên `$missing` (mảng) trùng biến đếm file thiếu `$missing = 0` khai báo cách đó ~35 dòng; dòng tổng kết `$diff + $missing` cộng số với mảng.
+- **Cách tìm nhanh:** chạy đối chứng bản gốc (`git stash` → chạy → `git stash pop`) để phân định lỗi mới hay có sẵn, rồi `grep -n '\$tenbien'` xem toàn bộ điểm dùng.
+- **Luật:** trong script > 100 dòng không có scope hàm, `grep` tên biến TRƯỚC khi đặt. PowerShell không cảnh báo khi ghi đè kiểu.
+- **Nguồn:** 2026-09-04, lỗi của chính orchestrator khi sửa gotcha #23.

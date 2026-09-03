@@ -1,6 +1,6 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.7.0",
+  "current_version": "1.7.1",
   "system_status": "healthy_and_runtime_verified | [01/09] v1.5.0: luat SPEC PACKAGE (CAM plan phang) da vao AGENTS.md Hub + CORE_GOVERNANCE_RULES.md + template & patcher init_brain.js (khung nao 1.3.0).",
   "last_verification": {
     "timestamp": "2026-09-02",
@@ -395,5 +395,20 @@
       "Structural Extension §5.B dieu 2"
     ],
     "trang_thai": "engine + hub + luoi test XONG tren nhanh feat/plan-10-marker; CHUA deploy global, CHUA push, CHUA rollout fleet — 3 nut cho user"
+  },
+  "ton_dong_2026-09-04": {
+    "da_sua": [
+      "file lenh global vi pham luat Buoc 0 (gotcha #23)",
+      "cong deploy them rang --check + BRN-016",
+      "T-H07 khoa template trong npm test (237 -> 240)",
+      "kernel noi sai: template 1.3.0 -> 1.4.0, \"chua push\" -> da push, 237 -> 240 test",
+      "sync cascade #10 bo sot -data-architecture.md + index.md (luat Structural Extension)",
+      "docs thieu 9 export that cua engine",
+      "version lac hau v1.6.0 -> v1.7.1"
+    ],
+    "con_treo": [
+      "deploy global (nut cua user) — dang co NGUY CO ha nguoc version neu chay Buoc 0 che do ghi",
+      "rollout 66 repo (nut cua user)"
+    ]
   }
 }

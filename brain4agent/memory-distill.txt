@@ -1,5 +1,5 @@
 <kernel_instructions>
-<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.6.0) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
+<role>Bạn là Senior System Architect & Lead Maintainer của brain4agent (v1.7.1) — Universal Brain Governance Hub. Nhiệm vụ: duy trì chuẩn Não Bộ Đa Tầng và cẩm nang vận hành A-Z cho toàn bộ hệ sinh thái AI Agent.</role>
 
 <agent_startup_protocol>
 0. [BẮT BUỘC TIÊN QUYẾT] Chạy đồng bộ/boot não bộ qua skill `.xay-dung-nao-bo` (`node .agents\skills\.xay-dung-nao-bo\scripts\init_brain.js` hoặc bản global `node C:\Users\hoang\.gemini\config\skills\.xay-dung-nao-bo\scripts\init_brain.js`) để đảm bảo não luôn cập nhật chuẩn mới nhất.
@@ -11,10 +11,11 @@
 </agent_startup_protocol>
 
 <project_foundation>
-- Project: brain4agent (v1.6.0) — khung não template **v1.3.0** (luật SPEC PACKAGE bắt buộc). Não đạt chuẩn v1.3.0: **65/67 repo**. Mọi commit LOCAL, CHƯA PUSH.
+- Project: brain4agent (v1.7.1) — khung não template **v1.4.0** (marker + Ký ức Lạnh). Hub ĐÃ ở 1.4.0 và ĐÃ PUSH (CI xanh 2 OS). **Hệ sinh thái vẫn ở khung 1.3.0** — rollout 66 repo CHỜ USER RA LỆNH.
+- ⚠️ **NGUY CƠ ĐANG MỞ (tới khi deploy):** bản engine GLOBAL vẫn là `1.6.0 / template 1.3.0`, nên chạy Bước 0 **chế độ ghi** trong hub sẽ **HẠ NGƯỢC** marker + `state.json` về 1.3.0. Trước khi deploy: chỉ chạy `--check`, và bỏ qua BRN-006/BRN-010 nếu chúng đòi hạ version.
 - 2 repo chưa đạt, cả hai vì luật cấm chạm chứ không vì kỹ thuật: `aiedu4vn` (luật ⛔ thường trực từ #04) và `brain4agent` (KHÔNG `.old` — cách ly theo #06 mục 5.1, chờ user trả lời 3 câu ở `planning/06_*/specs/SPEC-P05`).
 - **CƠ CHẾ VÁ (từ v1.7.0):** AGENTS.md có 6 khối `<!-- brain:rule:<id> -->` do engine tự quản — vá = thay ruột giữa 2 mốc, fail-closed khi mốc hỏng, KHÔNG ghi đè văn bản người dùng (BRN-016 = cần người). Ngoài mốc là lãnh địa người dùng. Bước 0 khuyến nghị `--check` trước, chế độ ghi nêu tường minh.
-- **CÔNG CỤ (từ v1.6.0):** `npm test` = 237 ca, 0 dependency — **chạy trước khi sửa bất cứ thứ gì**. `init_brain.js` có `--check` (chỉ đọc, lệch thì thoát ≠ 0), `--dry-run`, `--version`. `brain_doctor.js --root <kho>` quét độ lệch toàn hệ sinh thái, CHỈ ĐỌC, ~6 giây. `npm run deploy` dùng `pwsh`, tự đối chiếu SHA-256, fail-closed; `npm run deploy:verify` kiểm bất cứ lúc nào.
+- **CÔNG CỤ (từ v1.7.x):** `npm test` = 240 ca, 0 dependency — **chạy trước khi sửa bất cứ thứ gì**. `init_brain.js` có `--check` (chỉ đọc, lệch thì thoát ≠ 0), `--dry-run`, `--version`. `brain_doctor.js --root <kho>` quét độ lệch toàn hệ sinh thái, CHỈ ĐỌC, ~6 giây. `npm run deploy` dùng `pwsh`, tự đối chiếu SHA-256, fail-closed; `npm run deploy:verify` kiểm bất cứ lúc nào.
 - **BẤT BIẾN VẬN HÀNH SỐ 1 — sau MỌI lần sửa engine phải chạy `scripts/deploy_skills.ps1` và so hash tới khi `diff` RỖNG.** Bước 0 trong mọi `memory-distill.txt` trỏ tới bản engine GLOBAL; bản global kẹt version cũ sẽ **kéo ngược cả hệ sinh thái** về chuẩn cũ mà không báo lỗi (gotcha #12).
 - **Cổng nghiệm thu tuỳ loại bản vá:** vá CHỈ-THÊM → gác "0 dòng xoá"; vá THAY THẾ → gác **"không mất thông tin"** (liệt kê token bắt buộc, kiểm còn đủ sau khi vá). Dùng nhầm cổng gây báo động giả hàng loạt (#07).
 - **Mọi regex chạm nội dung file dùng `\r?\n`, không bao giờ `\n` trần** — file checkout trên Windows là CRLF; regex trượt sẽ im lặng rơi vào nhánh dự phòng (gotcha #11).

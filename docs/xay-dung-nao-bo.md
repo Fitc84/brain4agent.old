@@ -144,9 +144,20 @@ Engine v1.4.0+ quản lý 6 khối luật trong `AGENTS.md` bằng cặp mốc `
 
 **Cấm sửa ruột khối** — nội dung giữa hai mốc là lãnh địa engine, người dùng không được sửa tay. Nếu sửa, engine sẽ phát hiện (`edited = true`) và dừng lại, yêu cầu khôi phục hoặc bọc lại khối. **Di chuyển trọn khối được phép** — có thể cắt-dán toàn bộ cặp mốc + nội dung đến nơi khác trong file, engine vẫn tìm được.
 
-### 5.3. Danh sách hàm được `module.exports`
+### 5.4. Danh sách hàm được `module.exports`
 
-**`init_brain.js`:** `BRAIN_TEMPLATE_VERSION`, `ENGINE_VERSION`, `REQUIRED_FILES`, `stripBom`, `detectEol`, `normalizeEol`, `restoreEol`, `hasUtf8Bom`, `detectEncoding`, `readText`, `writeText`, `renderTemplates`, `renderInitialState`, `renderMarker`, `renderTodayMd`, `renderClaudeShim`, `renderFullAgentsMd`, `patchDistill`, `patchStateJson`, `patchAgentsMd`, `patchClaudeMd`, `BRN`, `collectSnapshot`, `diagnose`, `formatFindings`, `renderDiff`, `planCaseRenames`, `planMarkerOps`, `computePlan`, `applyPlan`, `runBrainEngine`, `exitCodeForDiagnosis`, `usage`, `parseArgs`, `main`.
+**`init_brain.js`:** `BRAIN_TEMPLATE_VERSION`, `ENGINE_VERSION`, `REQUIRED_FILES`, `stripBom`, `detectEol`, `normalizeEol`, `restoreEol`, `hasUtf8Bom`, `detectEncoding`, `readText`, `writeText`, `renderTemplates`, `renderInitialState`, `renderMarker`, `renderTodayMd`, `renderClaudeShim`, `renderFullAgentsMd`, `patchDistill`, `patchStateJson`, `RULE_BLOCKS`, `AGENTS_SKELETON`, `APPENDIX_HEADING`, `OPEN`, `CLOSE`, `findBlock`, `findLegacy`, `classifyRuleBlocks`, `patchAgentsMd`, `patchClaudeMd`, `isArchiveName`, `BRN`, `collectSnapshot`, `diagnose`, `formatFindings`, `renderDiff`, `planCaseRenames`, `planMarkerOps`, `computePlan`, `applyPlan`, `runBrainEngine`, `exitCodeForDiagnosis`, `usage`, `parseArgs`, `main`.
+
+Chín export bổ sung so với trước v1.4.0 — đều thuộc lớp marker (§5.3):
+
+- `RULE_BLOCKS` — skeleton mô tả đầy đủ 6 khối luật (`boot`, `cold-memory`, `spec-package`, `structural-extension`, `root-marker`, `dual-entry`): thân `body`, token `probe`, điều kiện `legacy`.
+- `AGENTS_SKELETON` — toàn văn `AGENTS.md` chuẩn dùng khi sinh mới; `renderFullAgentsMd()` chỉ là `patchAgentsMd(AGENTS_SKELETON).content`.
+- `OPEN(id)` / `CLOSE(id)` — sinh đúng một dòng mốc mở/đóng `<!-- brain:rule:<id> -->` / `<!-- /brain:rule:<id> -->` cho một khối.
+- `APPENDIX_HEADING` — tiêu đề `## 🔒 Luật khung do engine quản lý (tự sinh)`, nơi khối `absent` được chèn thêm vào cuối `AGENTS.md`.
+- `findBlock(lines, id)` — dò cặp mốc trọn dòng của một `id` trong mảng dòng đã tách, trả vị trí + trạng thái `malformed` nếu mốc lỏng lẻo.
+- `findLegacy(text, legacy)` — dò bản luật v1.3.0 cũ (chưa có mốc) theo mô tả `legacy` của từng khối trong `RULE_BLOCKS`.
+- `classifyRuleBlocks(text)` — hàm dò+phân loại chính, trả trạng thái từng khối (`ok`/`stale`/`legacy`/`edited`/`malformed`/`absent`) dùng bởi cả `diagnose` (BRN-002/003/016) lẫn `patchAgentsMd`.
+- `isArchiveName(n)` — kiểm một tên file có khớp mẫu `YYYY-MM-DD.md` của Ký ức Lạnh hay không; dùng cho `BRN-017` và lọc `.gitkeep`.
 
 **`brain_doctor.js`:** `TOOL_NAME`, `SCHEMA_VERSION`, `DOCTOR_BRN`, `DEFAULT_GIT_TIMEOUT`, `padTrim`, `scrub`, `sortViet`, `statusFromFindings`, `gitKind`, `isCandidate`, `mergeBom013`, `findNestedGit`, `probeGit`, `scanRepo`, `scanRoot`, `findingTag`, `renderTable`, `renderQuiet`, `usage`, `parseArgs`, `main`.
 
