@@ -93,19 +93,30 @@ try {
     # đường dẫn máy người dùng vào repo PUBLIC (SPEC-P03 (b) BẮT BUỘC 6).
     $enginePathForCmd = ((Join-Path (Join-Path $GeminiSkillsRoot '.xay-dung-nao-bo') 'scripts/init_brain.js') -replace '\\', '/')
     $cmdTemplate = @'
-# Lệnh Tự Động Khởi Tạo / Nâng Cấp Não Bộ (Universal Brain Engine V5.2)
+# Lệnh Khởi Tạo / Nâng Cấp Não Bộ (Universal Brain Engine)
 
-Khởi tạo mới hoặc Tự động Chẩn đoán & Tái cấu trúc bộ nhớ `brain4agent` Đa Tầng cho dự án hiện tại.
+Chẩn đoán & tái cấu trúc bộ nhớ `brain4agent` Đa Tầng cho dự án hiện tại.
 
 ## Hướng dẫn thực thi:
 1. Đảm bảo đang đứng ở thư mục gốc của dự án hiện tại.
-2. Chạy lệnh chẩn đoán & build não bộ:
+2. **Chẩn đoán trước (CHỈ ĐỌC — không ghi byte nào):**
    ```bash
-   node "__ENGINE_PATH__"
+   node "__ENGINE_PATH__" --check
    ```
-3. Đọc kết quả:
-   - Nếu báo "NÃO ĐÃ OK": Thông báo cho user bộ não đã đạt chuẩn hoàn hảo.
-   - Nếu tạo mới hoặc nâng cấp: Đọc bối cảnh repo và cập nhật thông tin thực tế vào `project-intro.md`, `memory-distill.txt`, `index.md`.
+3. Xử lý theo **mã thoát** của bước 2:
+   - **0** — báo "NÃO ĐÃ OK": não bộ đã đạt chuẩn. Dừng, thông báo cho user, KHÔNG chạy chế độ ghi.
+   - **1** — `CẦN NÂNG CẤP`, mọi lệch đều `[tự sửa]`: nêu tường minh trong phiên rằng sắp chạy chế độ GHI, rồi chạy lại **không cờ**:
+     ```bash
+     node "__ENGINE_PATH__"
+     ```
+     Sau đó đọc bối cảnh repo và cập nhật thông tin thực tế vào `project-intro.md`, `memory-distill.txt`, `index.md`.
+   - **2** — có việc `[cần người]` (vd `BRN-016`: khối marker hỏng, hoặc vùng luật đã bị sửa tay): **DỪNG**. Báo cáo cho user kèm mã `BRN` và tên file. **TUYỆT ĐỐI KHÔNG tự sửa tay vùng luật do engine quản lý** (phần nằm giữa hai mốc `<!-- brain:rule:<id> -->`), KHÔNG xoá mốc, KHÔNG chép luật sang `CLAUDE.md`.
+   - **3 / 64** — lỗi engine hoặc sai tham số: báo nguyên văn stderr cho user.
+
+## Luật bất biến khi dùng lệnh này
+- Ngoài vùng mốc `<!-- brain:rule:... -->` là **lãnh địa của người dùng** — engine không chạm, agent cũng không được chạm nhân danh engine.
+- `CLAUDE.md` là shim ≤10 dòng trỏ `@AGENTS.md`; **CẤM** chép luật vào đó.
+- Version KHUNG NÃO (`brain_template_version`) khác version DỰ ÁN (`current_version`) — tuyệt đối không trộn.
 '@
     $cmdContent = $cmdTemplate.Replace('__ENGINE_PATH__', $enginePathForCmd)
 
@@ -165,12 +176,19 @@ Khởi tạo mới hoặc Tự động Chẩn đoán & Tái cấu trúc bộ nh�
         }
         else {
             $text = [System.Text.Encoding]::UTF8.GetString($bytes)
-            if (($text -notmatch 'NÃO ĐÃ OK') -or ($text -notmatch 'init_brain\.js')) { $cmdState = 'missing-token' }
+            # Bánh cóc file lệnh: ngoài 'NÃO ĐÃ OK' + đường dẫn engine, BẮT BUỘC có
+            # '--check' (Bước 0 chỉ đọc) và 'BRN-016' (nhánh [cần người], exit 2).
+            # Thiếu bất kỳ mốc nào ⇒ file lệnh đã lạc hậu so với luật khung — chính là
+            # cách file lệnh trôi lệch âm thầm suốt v1.4.0 mà không cổng nào bắt được.
+            $requiredCmdTokens = @('NÃO ĐÃ OK', 'init_brain\.js', '--check', 'BRN-016')
+            # KHÔNG đặt tên $missing — trùng biến đếm file thiếu ở dòng 148 (đã cắn một lần).
+            $missingCmdTokens = @($requiredCmdTokens | Where-Object { $text -notmatch $_ })
+            if ($missingCmdTokens.Count -gt 0) { $cmdState = "missing-token: $($missingCmdTokens -join ', ')" }
             else { $cmdState = 'ok' }
         }
     }
     if ($cmdState -eq 'ok') {
-        Write-Row 'CMD-OK' '-' "$cmdName.md" "(no-BOM, no-0x08, has 'NÃO ĐÃ OK')"
+        Write-Row 'CMD-OK' '-' "$cmdName.md" "(no-BOM, no-0x08, has 'NÃO ĐÃ OK' · '--check' · 'BRN-016')"
     }
     else {
         Write-Row 'CMD-BAD' '-' "$cmdName.md" "($cmdState)"
