@@ -200,3 +200,10 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Vì sao nguy hiểm hơn là phiền:** cổng chặn nhầm tạo áp lực **nới cổng** — và người thực thi rất dễ nới sang một tiêu chí lỏng hơn mức cần (vd "miễn không còn ERROR"), làm mất luôn phần bảo vệ thật.
 - **Luật rút ra:** cổng phải đo **đúng đại lượng mà việc này thay đổi**, theo **từng đối tượng**, không đo tổng trạng thái. Ở đây đúng là: mỗi repo trong lô phải có `template_version` = đích, **không còn mã thuộc phạm vi di trú**, và idempotent tại chỗ. Lỗi có sẵn ⇒ **liệt kê cho user quyết**, không tự sửa, không dùng làm lý do chặn.
 - **Nguồn:** 2026-09-04, Sóng 4 của rollout khung 1.4.0. Cổng đã sửa tại `OPERATIONS.md` §5.2.
+
+## 29. Cùng Một Lỗi Cổng Tái Diễn Vì Chỉ Sửa CHỖ Bị Bắt, Không Sửa CẢ HỌ
+- **Triệu chứng:** cổng Sóng 4 vừa được sửa vì đo "số `CLEAN` toàn đội hình" (#28). Vài giờ sau, Exit Gate `X20` trong **cùng bộ SPEC** lộ ra y hệt: *"doctor sau ≥ 63 CLEAN"* — cùng lỗi, cùng kế hoạch, cùng đợt.
+- **Nguyên nhân:** khi #28 được phát hiện, việc sửa dừng lại ở **đúng dòng bị bắt**. Không ai quét xem **còn dòng nào khác trong bộ SPEC mắc cùng khuôn** — mà cổng sai thường được viết hàng loạt trong một lần, bởi cùng một người, cùng một lối nghĩ.
+- **Dấu hiệu nhận biết khuôn:** cổng chứa **một con số tuyệt đối về trạng thái cuối của cả hệ** (`≥ 63 CLEAN`, `diff = 0`, `100% repo đạt`) cho một việc **chỉ đụng tới một phần** của hệ đó. Ghép thêm gotcha #26 (ghim số version vào việc chưa làm) thì đây là cùng một họ: **ghim hằng số vào cổng của việc chưa đo**.
+- **Luật rút ra:** vá xong một lỗi cổng, **quét ngay cả bộ SPEC bằng chính đặc trưng của lỗi đó** trước khi đóng — `grep` các cổng chứa số tuyệt đối và tự hỏi từng cái: *"số này đo phép biến đổi bước này thực hiện, hay đo trạng thái cuối mong muốn của cả hệ?"* Chỉ loại một là đúng.
+- **Nguồn:** 2026-09-04, đóng #10. Sửa tại `TESTING-ACCEPTANCE.md` §6 (`X20`) + §6.1. Xem #26, #28.

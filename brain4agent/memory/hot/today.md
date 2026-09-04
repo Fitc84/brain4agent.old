@@ -11,6 +11,25 @@
 
 ---
 
+## ✅ Phiên 2026-09-04 (chiều) — ĐÓNG #10 TRỌN VẸN: DEPLOY GLOBAL + ROLLOUT SÓNG 0–5
+
+> Trạng thái ⏸ ở mục trên **đã được gỡ**: user ra lệnh deploy + rollout cùng ngày.
+
+- **P06 deploy global:** bản global lên `1.7.2 / template 1.4.0`. `deploy:verify` = `files=4 match=4 diff=0 missing=0 extra=1 cmd=ok exit=0`. Đã backup bản global trước khi ghi (thư mục tạm của máy, ngoài git).
+- **P07 rollout Sóng 0–5:** **56/71 repo di trú trọn vẹn**. Doctor chỉ đọc: `clean=50 warning=6 error=11 blocker=2 skipped=2`. **0 repo vệ tinh bị push.**
+- **Sóng 5** xử tay 3 repo `BRN-016`: `control-syncthing` `72bd49f` · `translate4ide` `e14bdeb` · `wikiultra` `d313fc2`. Điều kiện cho phép đụng vào vùng người dùng: đã chứng minh khối `boot` ở đó là **văn bản luật đời cũ + hỏng ký tự markdown**, không phải tuỳ biến — nên thay bản chuẩn **không mất thông tin**.
+- **15 repo không chạm, đều có lý do:** 3 vùng cấm · 10 repo đang bẩn (§5.1.1) · `coding-orchestrator` bẩn sau khi đã di trú.
+
+### Hai lỗi của chính orchestrator trong phiên này (giá trị hơn phần việc trôi chảy)
+
+1. **Cổng viết quá hẹp.** Tôi ra cổng *"mọi dòng đổi phải nằm trong vùng mục 1"* cho Sóng 5 — đúng với repo đã ở `1.4.0`, **sai** với repo còn `1.3.0` vì chạy engine ở đó là **di trú cả bộ luật**. Worker bắt được và hỏi lại thay vì tự nới. Đã thay bằng cổng A2 (đo bằng **chữ**: không mất nội dung người viết) + A3 (đo bằng **vị trí**: chỉ đổi trong vùng engine quản lý).
+2. **Cùng lỗi cổng tái diễn.** `X20` ghi *"doctor sau ≥ 63 CLEAN"* — y hệt cổng Sóng 4 vừa sửa vài giờ trước, trong **cùng bộ SPEC**. Nguyên nhân: lần sửa trước chỉ sửa đúng dòng bị bắt, không quét cả bộ. ⇒ **gotcha #29**.
+
+### Kiểm chứng độc lập (không tin báo cáo agent con)
+Tự chạy lại doctor + `deploy:verify`; tự kiểm 3 repo Sóng 5: `template_version`, `git status` rỗng, 6/6 cặp mốc, Bước 0 có `--check`, hỏng ký tự đã sạch, và `@{u}..HEAD` xác nhận **không repo nào bị push**.
+
+---
+
 ## 🩹 Phiên 2026-09-04 — Đóng Phần LOCAL Còn Lại Của Kế Hoạch #10 (v1.7.2)
 
 - Sửa README dùng nhầm `v1.4.0` (version khung não) làm version dự án: ba điểm công bố nay đồng bộ `v1.7.2` với `package.json`; dòng marker trong sơ đồ cây nêu riêng `brain4agent-v1.4.0.md`.

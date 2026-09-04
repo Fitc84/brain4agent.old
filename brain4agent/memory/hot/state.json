@@ -1,22 +1,21 @@
 {
   "project_name": "brain4agent",
   "current_version": "1.7.2",
-  "system_status": "healthy_and_runtime_verified | [01/09] v1.5.0: luat SPEC PACKAGE (CAM plan phang) da vao AGENTS.md Hub + CORE_GOVERNANCE_RULES.md + template & patcher init_brain.js (khung nao 1.3.0).",
+  "system_status": "healthy_and_runtime_verified | [04/09] v1.7.2: khung nao 1.4.0 (6 khoi marker, fail-closed) da deploy GLOBAL va rollout 56/71 repo. 0 repo ve tinh bi push.",
   "last_verification": {
     "timestamp": "2026-09-04",
     "scenarios_passed": [
-      "Patch v1.7.2: README project-version ratchet and both version axes verified by npm test 241/241",
-      "Plan #07: brain template v1.3.0 rolled out, standard-compliant repos 2/67 -> 65/67",
-      "Zero repositories left with two contradictory planning-law blocks (was 33)",
-      "No information lost: 9 mandatory tokens still present in every patched AGENTS.md",
-      "Engine idempotent on re-run; hub and already-correct repos untouched",
-      "Engine source vs global deploy: hash diff EMPTY (was stale at 1.2.0)",
-      "8 dirty repos patched by explicit staging; owner work intact 8/8"
+      "Plan #10 closed in full: engine + hub + test grid + CI + global deploy + fleet rollout waves 0-5",
+      "Global deploy hash-verified: files=4 match=4 diff=0 cmd=ok exit=0",
+      "Fleet: 56/71 repos fully migrated to brain template 1.4.0; the other 15 are law-blocked or dirty, not skipped work",
+      "Wave 5 replaced only stale/damaged boot text; 0 lines changed outside the engine-managed region in all 3 repos",
+      "Zero satellite repos pushed; migration commits remain local",
+      "npm test 241/241, 0 fail 0 skip, zero dependencies"
     ],
     "benchmark_accuracy": "100%",
     "grade": "Grade A Runtime Verified"
   },
-  "active_plans_completed": 4,
+  "active_plans_completed": 10,
   "rollout_2026-08-31_plan04": {
     "engine": "init_brain.js v1.2.0 template + v1.2.1 newline hotfix",
     "patched_committed_local": {
@@ -395,14 +394,84 @@
       "Ky uc Lanh memory/archive/ (chi script ghi)",
       "Structural Extension §5.B dieu 2"
     ],
-    "trang_thai": "DA DONG pham vi engine + hub + luoi test + CI; deploy global va rollout fleet HOAN theo lenh user",
+    "trang_thai": "DA DONG TRON VEN 2026-09-04: engine + hub + luoi test + CI + P06 deploy global + P07 rollout Song 0-5",
     "dong_luc": {
-      "closed_at": "2026-09-04T11:51:05+07:00",
-      "deferred": [
-        "P06 deploy global — thao tac ngoai repo, cho lenh user",
-        "P07 rollout fleet — thao tac ngoai repo, cho lenh user"
-      ]
-    }
+      "closed_local_at": "2026-09-04T11:51:05+07:00",
+      "closed_full_at": "2026-09-04T16:42:10+07:00",
+      "deferred": []
+    },
+    "P06_deploy_global": {
+      "ket_qua": "global 1.7.2 / template 1.4.0",
+      "deploy_verify": "files=4 match=4 diff=0 missing=0 extra=1 cmd=ok exit=0",
+      "extra_1": "compact.md.disabled-by-plan07 — duong lui co y giu tu #07, KHONG xoa",
+      "backup": "thu muc tam cua may (ngoai git) — duong dan chi luu tai may, KHONG ghi vao kho cong khai",
+      "su_co": "agent trong repo da chay ban engine GLOBAL CU o che do ghi du da co canh bao => ha nguoc marker + state.json ve 1.3.0; da khoi phuc va kiem chung sach (diff chi con ngay dong bo)"
+    },
+    "P07_rollout_fleet": {
+      "song": "Song 0 (dry-run) -> Song 5 (xu tay BRN-016)",
+      "di_tru_tron_ven": "56/71 repo (template 1.4.0 + het BRN-002/003/006/010/016)",
+      "doctor_sau_cung": "candidates=71 clean=50 warning=6 error=11 blocker=2 scan_error=0 skipped=2 exit=2",
+      "song_5_xu_tay": {
+        "repos": [
+          "control-syncthing 72bd49f",
+          "translate4ide e14bdeb",
+          "wikiultra d313fc2"
+        ],
+        "can_cu": "khoi boot o 3 repo nay la van ban luat DOI CU (thieu --check, thieu nhanh exit 2) kem hong ky tu markdown (\\&, init\\_brain, \\Users) => la van ban BI HU, KHONG phai tuy bien co chu dich => thay bang ban chuan khong mat thong tin",
+        "nghiem_thu": "moi repo: 6/6 cap moc, hash lan 2 = lan 3, exit 0, 0 dong doi ngoai vung engine quan ly, doc AGENTS.md bang mat"
+      },
+      "khong_cham_15_repo": {
+        "vung_cam": [
+          "aiedu4vn (luat ⛔ #04)",
+          "brain4agent (cach ly #06 §5.1, 3 cau cho user)",
+          "test-chatgpt-github (BLOCKER BRN-001)"
+        ],
+        "ban_BRN_016": [
+          "control-claude-code (29 thay doi chua commit)",
+          "router4vn (4)"
+        ],
+        "ban_con_1_3_0": [
+          "control-gpm",
+          "convert-json-to-9router-from-keycrop",
+          "CV",
+          "FITC84-WorkOs-",
+          "GramPilot",
+          "openclaw-pro-studio",
+          "Token-Calcultor",
+          "ViDiaNorm"
+        ],
+        "ban_sau_khi_da_di_tru": [
+          "coding-orchestrator"
+        ],
+        "luat": "§5.1.1 CAM ghi vao repo dang ban; CAM git add/stash/checkout ho de repo sach — bo qua repo do"
+      },
+      "canh_bao_co_san_ngoai_pham_vi_cho_user_quyet": {
+        "BRN-017": [
+          "Agent to Product"
+        ],
+        "BRN-014": [
+          "AI-input",
+          "bi-kip-luyen-agent",
+          "congquyengop.vn",
+          "manage-fitc84"
+        ],
+        "BRN-013": [
+          "control-linux-server"
+        ]
+      },
+      "not_pushed": true,
+      "push_note": "0 repo ve tinh bi push. Commit di tru nam LOCAL; [ahead N] la bang chung lam DUNG, khong phai vi pham."
+    },
+    "gotcha_sinh_ra": [
+      "#19",
+      "#23",
+      "#24",
+      "#25",
+      "#26",
+      "#27",
+      "#28",
+      "#29"
+    ]
   },
   "ton_dong_2026-09-04": {
     "da_sua": [
@@ -412,11 +481,14 @@
       "kernel noi sai: template 1.3.0 -> 1.4.0, \"chua push\" -> da push, 237 -> 240 test",
       "sync cascade #10 bo sot -data-architecture.md + index.md (luat Structural Extension)",
       "docs thieu 9 export that cua engine",
-      "version lac hau v1.6.0 -> v1.7.1"
+      "version lac hau v1.6.0 -> v1.7.1",
+      "deploy global + rollout Song 0-5 (user ra lenh 2026-09-04) — NGUY CO ha nguoc version DA DONG"
     ],
     "con_treo": [
-      "deploy global (hoan theo lenh user) — dang co NGUY CO ha nguoc version neu chay Buoc 0 che do ghi",
-      "rollout 66 repo (hoan theo lenh user)"
+      "10 repo DANG BAN chua di tru — chu repo commit xong thi chay engine MOT lan la hoi tu",
+      "3 repo vung cam (aiedu4vn, brain4agent, test-chatgpt-github)",
+      "canh bao CO SAN ngoai pham vi: BRN-013/014/017 — cho user quyet",
+      "HOAN sang ke hoach rieng: chot engine TU CHOI ha brain_template_version (bai hoc gotcha #12, da co 2 su co that)"
     ]
   }
 }

@@ -144,10 +144,10 @@ A1: T-M17, T-C30, T-C34, sóng rollout 5.1.4 · A2/A3: T-M25, T-C30, sóng 0 · 
 | :-- | :--- | :-: | :-: | :-: | :-: |
 | X01 | 5/5 dạng hỏng có test (T-M03–07) **và** mỗi dạng đã chứng minh "có răng" (§2) | ✅ | ✅ | — | — |
 | X02 | Oracle viết tay T-M24 xanh; F09 sinh từ engine v1.6.0 (`git show dd7967e`) | ✅ | ✅ | — | — |
-| X03 | A1 trên mọi fixture + hub (T-M17, T-C30, T-C34) | ✅ | ✅ | — | ⏸ hoãn rollout theo lệnh user |
-| X04 | A2/A3 = 0 trên F09 (T-M25) | ✅ | ✅ | — | ⏸ hoãn sóng 0 theo lệnh user |
+| X03 | A1 trên mọi fixture + hub (T-M17, T-C30, T-C34) | ✅ | ✅ | — | ✅ A1 tại chỗ trên từng repo được ghi ở Sóng 0–5 |
+| X04 | A2/A3 = 0 trên F09 (T-M25) | ✅ | ✅ | — | ✅ Sóng 0 dry-run + kiểm diff từng repo Sóng 5: 0 dòng đổi ngoài vùng engine |
 | X05 | `renderFullAgentsMd() === patchAgentsMd(AGENTS_SKELETON).content`; 0 cặp mốc rỗng trong output (T-M18) | ✅ | ✅ | — | — |
-| X06 | Hub S2: `changed===false`, 6/6 `inner===body`, `--check .` = 0 (T-H02d, self-check) | ✅ | ✅ | ⏸ hoãn deploy global theo lệnh user | — |
+| X06 | Hub S2: `changed===false`, 6/6 `inner===body`, `--check .` = 0 (T-H02d, self-check) | ✅ | ✅ | ✅ | — |
 | X07 | Hai hiến pháp: 7 token khớp, ×1 (T-H02/b); bánh cóc 6 khối (T-H02e) | ✅ | ✅ | — | — |
 | X08 | Cơ chế cũ đã gỡ: grep 0 ×4 chuỗi; `patch-agents.test.js` không tồn tại; lượt đỏ H2 đã ghi | ✅ | ✅ | — | — |
 | X09 | BRN-002/003/016/017 mỗi mã ≥ 1 test đơn vị + 1 hộp đen; `Object.keys(BRN).length===15` | ✅ | ✅ | — | — |
@@ -156,16 +156,35 @@ A1: T-M17, T-C30, T-C34, sóng rollout 5.1.4 · A2/A3: T-M25, T-C30, sóng 0 · 
 | X12 | Vệ sinh: 0 byte điều khiển (T-M22); 0 regex lớp vá (T-M21); A9 không đường dẫn/tên repo trong file mới (T-H05) | ✅ | ✅ | — | — |
 | X13 | **G1 ≤ 123 · G2 ≤ 1472 · G3 ≤ 20** — số ghi vào `plan.md` §4 | ✅ | — | — | — |
 | X14 | `npm test` 0 fail 0 skip, ≥ 215 ca | ✅ | ✅ (2 OS) | — | — |
-| X15 | Version 3 trục khớp nhau, template `1.4.0`; `--version` đúng | ✅ | ✅ | ⏸ hoãn deploy global theo lệnh user | — |
+| X15 | Version 3 trục khớp nhau, template `1.4.0`; `--version` đúng | ✅ | ✅ | ✅ global `1.7.2` / template `1.4.0` | — |
 | X16 | Allowlist một nguồn (T-H05f); actions v5, 0 cảnh báo Node 20 | ✅ | ✅ | — | — |
-| X17 | Deploy: `deploy:verify` = 0; hash tay khớp; file lệnh không BOM | — | — | ⏸ hoãn deploy global theo lệnh user | — |
-| X18 | Doctor chỉ đọc từ global: 5 BRN-016 đúng dự báo; ≤ 40 s; 0 ghi | — | — | ⏸ hoãn deploy global theo lệnh user | — |
-| X19 | Sóng 0 dry-run: phân bố khớp SPEC-P02 §2; A2/A3 = 0 toàn fleet | — | — | — | ⏸ hoãn rollout theo lệnh user |
-| X20 | Sóng 1–5: mỗi repo A1 tại chỗ; doctor sau ≥ 63 CLEAN; 0 repo bẩn bị ghi | — | — | — | ⏸ hoãn rollout theo lệnh user |
+| X17 | Deploy: `deploy:verify` = 0; hash tay khớp; file lệnh không BOM | — | — | ✅ `files=4 match=4 diff=0 missing=0 extra=1 cmd=ok exit=0` | — |
+| X18 | Doctor chỉ đọc từ global: 5 `BRN-016` đúng dự báo; ≤ 40 s; 0 ghi | — | — | ✅ dự báo đúng 5/5 (3 đã xử ở Sóng 5, 2 giữ lại vì repo bẩn); 6,6 s; 0 ghi | — |
+| X19 | Sóng 0 dry-run: phân bố khớp SPEC-P02 §2; A2/A3 = 0 toàn fleet | — | — | — | ✅ |
+| X20 | Sóng 1–5, đo **theo TỪNG repo được ghi**: `template_version` = `1.4.0`; hết `BRN-002/003/006/010/016`; A1 tại chỗ (hash lần 2 = lần 3, exit 0); 0 repo bẩn bị ghi. **KHÔNG dùng số `CLEAN` toàn đội hình** — xem ghi chú dưới bảng | — | — | — | ✅ 56 repo di trú trọn vẹn; 13 repo còn lại đều nằm trong 3 nhóm đã khoanh (§6.1) |
 | X21 | Sync Cascade 6 điểm + docs + gotchas (OPERATIONS §7) | ✅ | — | — | — |
-| X22 | Không push / không ghi repo ngoài hub-fixture khi user chưa ra lệnh — kiểm `today.md` + `git status` các repo vệ tinh không có commit mới ngoài sóng đã lệnh | ✅ | — | — | ⏸ hoãn rollout theo lệnh user |
+| X22 | Không push / không ghi repo ngoài hub-fixture khi user chưa ra lệnh — kiểm `today.md` + `git status` các repo vệ tinh không có commit mới ngoài sóng đã lệnh | ✅ | — | — | ✅ 0 repo vệ tinh bị push; commit di trú chỉ nằm ở local (`[ahead N]` là bằng chứng làm đúng) |
 
 > Điều kiện gỡ `⏸`: user phải ra lệnh riêng để thực hiện deploy theo `OPERATIONS.md` §4 hoặc rollout theo sóng tại §5; sau đó đo lại từng gate ở đúng môi trường trước khi đổi trạng thái.
+> **Đã gỡ ngày 2026-09-04** — user ra lệnh deploy + rollout; mọi ô `⏸` ở trên được đo lại thật, không suy ra từ báo cáo agent.
+
+### §6.1. Vì sao X20 đóng ✅ khi doctor vẫn còn 13 repo mang mã di trú
+
+`X20` đo **sự hội tụ của đợt di trú này**, không đo sức khoẻ tổng thể của kho. Bản đầu ghi
+*"doctor sau ≥ 63 CLEAN"* — cùng loại sai với cổng Sóng 4 (`OPERATIONS.md` §5): trộn *đã di trú*
+với *sạch hoàn toàn*, và đặt sẵn một con số cứng cho việc chưa làm.
+
+Đo thật (doctor chỉ đọc, `candidates=71`): **56 repo di trú trọn vẹn**. 13 repo còn lại **không phải
+là việc chưa làm**, mà là việc **bị luật cấm làm** hoặc **chờ người khác**:
+
+| Nhóm | Số | Repo | Vì sao không ghi |
+| :--- | :-: | :--- | :--- |
+| Vùng cấm | 3 | `aiedu4vn`, `brain4agent`, `test-chatgpt-github` | Luật đứng: ⛔ kế hoạch #04 · cách ly theo #06 §5.1 · `BLOCKER` BRN-001 |
+| Repo bẩn, `BRN-016` | 2 | `control-claude-code`, `router4vn` | Có thay đổi chưa commit — §5.1.1 CẤM ghi; CẤM `stash`/`add`/`checkout` hộ |
+| Repo bẩn, còn `1.3.0` | 8 | `control-gpm`, `convert-json-to-9router-from-keycrop`, `CV`, `FITC84-WorkOs-`, `GramPilot`, `openclaw-pro-studio`, `Token-Calcultor`, `ViDiaNorm` | Như trên. Chủ repo commit xong thì chạy engine **một lần** là hội tụ |
+
+**Luật rút ra (lần thứ hai trong đợt này):** cổng phải mô tả **phép biến đổi mà bước đó thực hiện**,
+không mô tả **trạng thái cuối cùng mong muốn của cả hệ**. Xem `-known-gotchas.md` #28, #29.
 
 > **Phạm vi bằng chứng của cột `CI` — cách xác minh, không phải số cứng.**
 > Cột `CI` chỉ có hiệu lực khi lần chạy CI xanh **thuộc đúng commit đang xét**. Kiểm bằng một lệnh:

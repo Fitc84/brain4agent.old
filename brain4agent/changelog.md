@@ -2,9 +2,30 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [Vận hành] - 2026-09-04: Deploy Global + Rollout Khung v1.4.0 (P06 + P07 của #10)
+
+Đợt **vận hành**, không đổi mã nguồn ⇒ **không tăng version** (giữ `v1.7.2`). Ghi lại vì đây là mốc
+đưa khung não `1.4.0` ra khỏi repo hub lần đầu, theo lệnh user ngày 2026-09-04.
+
+### Deployed
+- **Bản GLOBAL lên `1.7.2 / template 1.4.0`.** `deploy:verify`: `files=4 match=4 diff=0 missing=0 extra=1 cmd=ok exit=0`. Mục `extra` duy nhất là `compact.md.disabled-by-plan07` — đường lùi cố ý giữ từ #07, không xoá.
+- **Rollout Sóng 0–5:** **56/71 repo di trú trọn vẹn** (`template_version` = `1.4.0`, hết `BRN-002/003/006/010/016`). Doctor chỉ đọc sau cùng: `clean=50 warning=6 error=11 blocker=2 skipped=2`.
+- **Sóng 5** xử tay 3 repo `BRN-016` (`control-syncthing`, `translate4ide`, `wikiultra`). Căn cứ để được phép đụng: khối `boot` ở đó là **văn bản luật đời cũ kèm hỏng ký tự markdown**, không phải tuỳ biến có chủ đích ⇒ thay bằng bản chuẩn không mất thông tin. Mỗi repo: 6/6 cặp mốc, hash lần 2 = lần 3, exit 0, **0 dòng đổi ngoài vùng engine quản lý**.
+- **0 repo vệ tinh bị push.** Commit di trú nằm local; `[ahead N]` là bằng chứng làm ĐÚNG theo `OPERATIONS.md` §5.1.
+
+### Not done — có lý do, không phải bỏ sót
+- **3 repo vùng cấm:** `aiedu4vn` (⛔ #04) · `brain4agent` (cách ly #06 §5.1) · `test-chatgpt-github` (`BLOCKER` BRN-001).
+- **10 repo ĐANG BẨN:** §5.1.1 cấm ghi vào repo có việc chưa commit; cấm `git add`/`stash`/`checkout` hộ. Chủ repo commit xong thì chạy engine một lần là hội tụ.
+- **Cảnh báo CÓ SẴN ngoài phạm vi** (`BRN-013/014/017`) được **liệt kê cho user quyết**, không tự sửa và không dùng làm lý do chặn.
+
+### Fixed (quy trình)
+- **`X20` đo bằng thước hỏng** — ghi *"doctor sau ≥ 63 CLEAN"*, cùng lỗi với cổng Sóng 4 vừa sửa vài giờ trước. Đổi sang đo **theo từng repo được ghi**. Sinh gotcha **#29**: vá xong một lỗi cổng phải quét cả bộ SPEC bằng chính đặc trưng của lỗi đó.
+
+---
+
 ## [v1.7.2] - 2026-09-04: Khóa Trục Version Dự Án Trong README
 
-Bản vá `PATCH` hoàn tất phần nội bộ còn lại của kế hoạch #10; không deploy global và không rollout fleet.
+Bản vá `PATCH` hoàn tất phần nội bộ còn lại của kế hoạch #10. *(Deploy global và rollout fleet diễn ra sau đó cùng ngày — xem mục Vận hành ở trên.)*
 
 ### Fixed
 - **README đã dùng `v1.4.0` (version khung não) như version dự án** ở ba vị trí công bố. Nay cả ba lấy `v1.7.2`, khớp `package.json`; dòng marker trong sơ đồ cây cũng được sửa riêng về `brain4agent-v1.4.0.md`.
