@@ -151,10 +151,12 @@ Log AGENTS.md của `computePlan` (THAY bảng `AGENTS_PATCH_LOGS`): một dòng
 | Trục | Trước | Sau | Nơi |
 | :--- | :-- | :-- | :--- |
 | Khung não | `1.3.0` | **`1.4.0`** | `BRAIN_TEMPLATE_VERSION`; `state.json.brain_template_version` (mọi repo); marker root `brain4agent-v1.4.0.md` |
-| Engine | `1.6.0` | **`1.7.1`** | `ENGINE_VERSION`; `package.json.version`; `state.json.current_version` của hub |
-| Dự án hub | `1.6.0` | **`1.7.1`** | trùng trục engine (hub là dự án của engine) |
+| Engine | `1.6.0` | **`1.7.0`** | `ENGINE_VERSION`; `package.json.version`; `state.json.current_version` của hub |
+| Dự án hub | `1.6.0` | **`1.7.0`** | trùng trục engine (hub là dự án của engine) |
 
-`--version` in `brain-engine 1.7.1 template 1.4.0`. Test `version-sync` giữ 3 nơi khớp. `README.md` đang ghi `v1.4.0` (sót từ #06) — sửa về `v1.7.1` (SPEC-P06).
+`--version` in `brain-engine <trục dự án> template <trục khung não>`. Test `version-sync` giữ 3 nơi khớp. ✅ `README.md` đã sửa (lỗi lẫn hai trục version — README từng lấy version KHUNG NÃO làm version DỰ ÁN) và nay có test bánh cóc canh nó khớp `package.json`.
+
+> **Luật viết cổng:** cổng hướng tới việc CHƯA làm thì **CẤM ghim số version cụ thể** — mỗi bản vá PATCH sẽ làm số đó rỗng nghĩa. Tham chiếu động tới `ENGINE_VERSION` của hub. (Đo thật 2026-09-04: hồ sơ này từng cùng lúc mang 3 số khác nhau — `1.7.0`, `1.7.1` — trong khi thực tế đã là `1.7.2`.)
 
 ## §9. `module.exports` — THAY ĐỔI
 

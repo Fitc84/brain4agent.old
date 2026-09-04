@@ -71,7 +71,7 @@ Thứ tự bắt buộc và lý do: [OPERATIONS.md §1](specs/OPERATIONS.md).
 - [x] **P03 🔴 [WP3]** — theo SPEC-P04. Gate: mỗi mã BRN-002/003/016/017 có ≥1 test đơn vị; `Object.keys(engine.BRN).length === 15` (13 + 2; 014/015 vẫn ở `DOCTOR_BRN`; tổng hệ thống 17 mã).
 - [x] **P04 🔴 [WP4]** — theo SPEC-P05. Gate: fixture chụp lại **bằng tay** (không chạy engine ghi lên fixture); golden chụp lại **từng case**, diff đọc bằng mắt, ghi `engine_commit`; A3 = 0 dòng ngoài vùng mốc trên F09.
 - [x] **P05 🟢 [WP5]** — theo SPEC-P06. Gate: `ci.yml` không còn allowlist nội tuyến; T-H05b xanh với mục engine đo lại; CI 2 OS xanh (remote — sau khi user cho push).
-- [ ] **P06 🔴 [WP6]** — theo OPERATIONS §4, §7. Gate: `npm run deploy:verify` = 0; `node <global>/init_brain.js --version` = `brain-engine 1.7.1 template 1.4.0`; G1/G2/G3 điền số (mục 4). **Người bấm nút deploy.**
+- [ ] **P06 🔴 [WP6]** — theo OPERATIONS §4, §7. Gate: `npm run deploy:verify` = 0; `--version` của bản global **khớp ĐÚNG** `node .agents/skills/.xay-dung-nao-bo/scripts/init_brain.js --version` của hub (template phải là `1.4.0`); G1/G2/G3 điền số (mục 4). **Người bấm nút deploy.** *(Phần bump 3 trục của WP6 đã xong ở #10; chỉ còn thao tác deploy ra ngoài repo.)*
 - [ ] **P07 🔴 [WP7]** — theo OPERATIONS §5, **chỉ khi user ra lệnh**. Gate mỗi sóng: A1–A4 ✅ trước khi sang sóng sau.
 
 > **Ghi chú phạm vi:** Phần LOCAL của #10 đã hoàn tất và đã push; P06/P07 là thao tác ngoài repo, chờ user ra lệnh — không agent nào được tự thực hiện.

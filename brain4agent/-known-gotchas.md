@@ -179,3 +179,10 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Nguyên nhân:** các cổng `version-sync` chỉ canh các nguồn máy đọc của engine và state, không hề đọc README. Vì vậy một file giới thiệu công khai có thể trôi qua nhiều bản vá mà toàn bộ test vẫn xanh.
 - **Cách trị:** T-H03f đọc ba điểm công bố version dự án trong README và buộc từng điểm khớp `package.json`; marker khung não được kiểm riêng, không bị coi nhầm là version dự án.
 - **Nguồn:** vá nội bộ phần còn lại của kế hoạch #10, 2026-09-04.
+
+## 26. Ghim SỐ VERSION Vào Cổng Của Việc CHƯA LÀM — Mỗi Bản Vá Làm Nó Rỗng Nghĩa
+- **Triệu chứng:** hồ sơ kế hoạch #10 cùng lúc mang **ba** số version khác nhau trong các cổng nghiệm thu (`1.7.0` ở `TESTING-ACCEPTANCE.md`, `1.7.1` ở `plan.md`/`OPERATIONS.md`/`01-CONTRACTS.md`) trong khi thực tế đã là `1.7.2` — chỉ sau 2 bản vá PATCH.
+- **Nguyên nhân:** cổng cho việc CHƯA làm (ở đây: deploy global) được viết dạng *"`--version` phải in `brain-engine 1.7.0 template 1.4.0`"*. Mỗi lần bump PATCH là số đó sai, và người sửa lại phải đuổi theo bằng tay ở nhiều file — lần nào cũng sót một file.
+- **Nguy hiểm thật:** agent thực thi deploy sau này đọc cổng thấy số không khớp sẽ (a) báo hỏng giả, hoặc tệ hơn (b) "sửa cho khớp" bằng cách đổi version — đúng loại thao tác đã suýt gây thoái lui version.
+- **Luật rút ra:** cổng hướng tới việc CHƯA làm **CẤM ghim số version cụ thể**; phải tham chiếu ĐỘNG (vd *"khớp đúng output `--version` của hub"*). Chỉ **nhật ký/lịch sử** mới được mang số cứng — và ngược lại, **CẤM sửa số trong dòng lịch sử** (`AGENTS.md` §3 mục 2.3): dòng ghi "#10 bump lên 1.7.0" phải giữ nguyên 1.7.0 dù nay đã 1.7.2.
+- **Nguồn:** 2026-09-04, phát hiện khi soát bản vá v1.7.2.

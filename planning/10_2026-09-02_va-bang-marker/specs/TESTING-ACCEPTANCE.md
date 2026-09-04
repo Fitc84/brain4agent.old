@@ -58,7 +58,7 @@ Quy ước: `BRAIN_NOW=2026-01-15T03:04:05.000Z`. Tên test trong code **bắt b
 | T-C35 | F03 (1.2.0) ghi | `adopt:root-marker` qua lỗ version; ruột không còn `v1.2.0` | Đ7 |
 | T-C36 | F01 ghi | cây có `brain4agent/memory/archive/` (rỗng, không `.gitkeep`) | TQ6, C13 |
 | T-C37 | F02 + file `memory/archive/x.txt` `--check` | exit 1 (warning), BRN-017; ghi ⇒ exit 0, file vẫn còn | BRN-017 |
-| T-C10 (sửa) | `--version` | `brain-engine 1.7.0 template 1.4.0\n` | §8 |
+| T-C10 (sửa) | `--version` | `brain-engine ${ENGINE_VERSION} template ${BRAIN_TEMPLATE_VERSION}\n` — test đọc hằng số từ engine, KHÔNG ghim số | §8 |
 
 ### 1.4 `tests/hygiene/`
 
@@ -70,7 +70,7 @@ Quy ước: `BRAIN_NOW=2026-01-15T03:04:05.000Z`. Tên test trong code **bắt b
 | **T-H02e** | bánh cóc `RULE_BLOCKS.length === 6` (thông điệp: "thêm luật ⇒ sửa CORE + số này + SPEC") |
 | T-H05 / T-H05b / **T-H05f** | allowlist từ JSON; không mục chết; `ci.yml` tham chiếu JSON và không còn `'scripts/deploy_skills.ps1':` |
 | T-H07 (mở rộng) | engine: 0 `PHỤ LỤC TỰ ĐỘNG VÁ`, 0 `RULE_ANCHORS`, 0 `AGENTS_PATCH_LOGS`, 0 `### G\\.`; `tests/unit/patch-agents.test.js` không tồn tại |
-| T-H03 | `1.7.0` ×3 + template `1.4.0` |
+| T-H03 | trục dự án khớp ×3 (`ENGINE_VERSION` · `package.json` · `state.json.current_version`) + template `1.4.0` |
 | T-H09 | `index.md` không còn `brain4agent-v1.3.0.md`; `README.md` không còn `v1.4.0)` ở tiêu đề |
 
 ### 1.5 `tests/doctor/`
@@ -131,7 +131,7 @@ A1: T-M17, T-C30, T-C34, sóng rollout 5.1.4 · A2/A3: T-M25, T-C30, sóng 0 · 
 | Output khi thay `findBlock` bằng bản "mở → EOF" | T-M03 đỏ (dán 2 dòng) | §2 |
 | G1 trước/sau · G2 · G3 | `165/___` · `___` · `___` | §4 |
 | `deploy:verify` trước / sau D5 | `exit 2 …` → `diff=0 missing=0 cmd=ok` | OPERATIONS §4 |
-| `--version` từ global | `brain-engine 1.7.0 template 1.4.0` | D6 |
+| `--version` từ global | khớp ĐÚNG `--version` của hub; template `1.4.0` | D6 |
 | Doctor chỉ đọc sau deploy, trước rollout: candidates/clean/warning/error/blocker/skipped/duration_ms | `70/__/__/__/__/2/____` (kỳ vọng 65 ERROR fixable + 5 có BRN-016) | D7 |
 | Sóng 0 `--dry-run`: S1 / S1' / S4 / vi phạm A2 / A3 | `49/9/5/0/0` kỳ vọng | OPERATIONS §5 |
 | Mỗi sóng 1–5: ghi / bỏ qua bẩn / BRN-016 xử tay / A1 lỗi | `__/__/__/0` | |
@@ -156,7 +156,7 @@ A1: T-M17, T-C30, T-C34, sóng rollout 5.1.4 · A2/A3: T-M25, T-C30, sóng 0 · 
 | X12 | Vệ sinh: 0 byte điều khiển (T-M22); 0 regex lớp vá (T-M21); A9 không đường dẫn/tên repo trong file mới (T-H05) | ⬜ | ⬜ | — | — |
 | X13 | **G1 ≤ 123 · G2 ≤ 1472 · G3 ≤ 20** — số ghi vào `plan.md` §4 | ⬜ | — | — | — |
 | X14 | `npm test` 0 fail 0 skip, ≥ 215 ca | ⬜ | ⬜ (2 OS) | — | — |
-| X15 | Version 3 trục: `1.7.0`×3, template `1.4.0`; `--version` đúng | ⬜ | ⬜ | ⬜ | — |
+| X15 | Version 3 trục khớp nhau, template `1.4.0`; `--version` đúng | ⬜ | ⬜ | ⬜ | — |
 | X16 | Allowlist một nguồn (T-H05f); actions v5, 0 cảnh báo Node 20 | ⬜ | ⬜ | — | — |
 | X17 | Deploy: `deploy:verify` = 0; hash tay khớp; file lệnh không BOM | — | — | ⬜ | — |
 | X18 | Doctor chỉ đọc từ global: 5 BRN-016 đúng dự báo; ≤ 40 s; 0 ghi | — | — | ⬜ | — |

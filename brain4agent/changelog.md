@@ -19,6 +19,10 @@ Bản vá `PATCH` hoàn tất phần nội bộ còn lại của kế hoạch #1
 ### Scope
 - P06 (deploy global) và P07 (rollout fleet) vẫn chờ lệnh riêng của user; không có thao tác ghi ngoài repo hay `git push` trong bản vá này.
 
+### Sửa thêm (cùng đợt, sau soát của orchestrator)
+- **Hồ sơ #10 mang 3 số version khác nhau trong các cổng nghiệm thu** (`1.7.0` ở `TESTING-ACCEPTANCE.md`, `1.7.1` ở `plan.md`/`OPERATIONS.md`/`01-CONTRACTS.md`, trong khi thực tế đã là `1.7.2`). Nguyên nhân: cổng cho việc **CHƯA làm** bị ghim số version cứng ⇒ mỗi bản vá `PATCH` làm nó rỗng nghĩa, và người sửa phải đuổi theo bằng tay ở nhiều file, lần nào cũng sót. Nay mọi cổng hướng tới deploy tham chiếu **động** tới `--version` của hub. Gotcha **#26**.
+- **Khôi phục các dòng LỊCH SỬ về đúng `1.7.0`** (`OPERATIONS.md` bước D1; bảng 3 trục version trong `01-CONTRACTS.md`): đợt #10 thật sự phát hành `1.7.0`, nên sửa các dòng đó thành `1.7.1` là **viết lại lịch sử**, trái `AGENTS.md` §3 mục 2.3. Ranh giới từ nay: nhật ký/lịch sử giữ số cứng và CẤM sửa; cổng cho việc chưa làm CẤM số cứng.
+
 ## [v1.7.1] - 2026-09-04: Vá File Lệnh Global Trôi Lệch Luật + Hoàn Tất Sync Cascade Của #10
 
 Bản vá `PATCH` sau kiểm chứng độc lập bản phát hành 1.7.0. Không đụng engine.
