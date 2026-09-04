@@ -71,10 +71,27 @@ Sau D5, **mọi repo vệ tinh** chạy Bước 0 (bản cũ, chế độ ghi) s
 | **1** | **hub** | diff `AGENTS.md` = 0 ngay lần đầu; `--check` = 0 |
 | **2** | **repo mẫu** (đã có nội dung 1.4.0) | 4 khối `adopt`, `cold-memory` `add`, `structural-extension` BRN-016 ⇒ **xử tay** (thay mục 2 §5.B bằng khối); chạy lại ⇒ 0; diff lần 2 = 0 |
 | **3** | **3 canary** chọn có chủ đích: (a) repo **CRLF** duy nhất; (b) 1 trong 4 repo `boot` sửa tay (đường BRN-016 → xử tay → hội tụ); (c) 1 repo `boot` vắng (đường `add`) | mỗi repo: A1 ✅, A2/A3 = 0, `AGENTS.md` render đúng trên GitHub/VS Code preview (mở bằng mắt) |
-| **4** | phần còn lại của 60 repo tự động (theo lô 10, `dry-run` lại ngay trước ghi vì kho có thể đổi) | sau mỗi lô: doctor chỉ đọc, số CLEAN tăng đúng số lô |
+| **4** | phần còn lại của repo tự động (theo lô 10, `dry-run` lại ngay trước ghi vì kho có thể đổi) | sau mỗi lô, doctor chỉ đọc, kiểm **theo TỪNG repo** trong lô: (a) `template_version` = `1.4.0`; (b) **không còn** mã di trú nào (`BRN-002`, `BRN-003`, `BRN-006`, `BRN-010`, `BRN-016`); (c) idempotent tại chỗ (chạy lần 2 và 3 cho cùng `sha256(AGENTS.md)`, exit 0). **KHÔNG dùng số `CLEAN` toàn đội hình làm cổng** — xem chú thích ngay dưới bảng |
 | **5** | 4 repo BRN-016 còn lại — **xử tay từng cái** | 0 BRN-016 trên fleet (hoặc user quyết định để lại, ghi rõ) |
 
 2 repo ngoại lệ (1.2.0, null): **không chạm** (Đ10).
+
+> **Vì sao cổng Sóng 4 KHÔNG đo bằng số `CLEAN` (sửa 2026-09-04, sau sự cố thật).**
+> Bản đầu của cổng này ghi *"số `CLEAN` tăng đúng số lô"*. Sai: nó **trộn hai khái niệm khác nhau** —
+> *di trú đã hội tụ* (việc của đợt này) và *repo sạch hoàn toàn* (bao gồm cả lỗi CÓ SẴN, ngoài phạm vi).
+> Đo thật: 3 repo di trú **đúng** vẫn ở trạng thái `WARNING` vì mang lỗi có sẵn không liên quan —
+> `BRN-014` (repo lồng nhau, đang chờ user quyết 12 cặp) và `BRN-017` (file lạ trong `memory/archive/`).
+> Cổng cũ vì thế **chặn nhầm một đợt di trú hoàn toàn đúng**, và áp lực gỡ chặn sẽ đẩy người thực thi
+> tới chỗ "nới cổng" — đúng thứ nguy hiểm nhất.
+>
+> **Luật rút ra:** cổng phải đo **đúng thứ việc này thay đổi**, không đo sức khoẻ tổng thể của đối tượng.
+> Lỗi có sẵn ngoài phạm vi thì **liệt kê cho user quyết**, KHÔNG được tự sửa và cũng KHÔNG được dùng
+> làm lý do chặn.
+
+> **Ghi chú về `[ahead N]` ở repo vệ tinh.** §5.1 mục 5 **BẮT BUỘC commit** trong repo vệ tinh và
+> **CẤM push**. Vì vậy repo đã di trú **đương nhiên** hiển thị `[ahead N]` — đó là **bằng chứng làm
+> ĐÚNG**, không phải vi phạm. Cổng cuối cần đọc là: *nhánh remote không bị đổi* (không có lần push nào),
+> kiểm bằng `git -C <repo> log <remote>/<nhánh>..HEAD --oneline` chỉ chứa commit di trú.
 
 ### 5.3 Bằng chứng mỗi sóng (chỉ số đếm vào TESTING-ACCEPTANCE §5)
 số repo ghi / bỏ qua vì bẩn / BRN-016 / A2 vi phạm / A3 vi phạm / thời gian; doctor trước–sau (`clean/warning/error`).

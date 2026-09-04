@@ -193,3 +193,10 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Luật rút ra:** mỗi ô `✅` phải gắn với **số đo tại ĐÚNG commit đang xét**. Nếu bằng chứng thuộc commit khác thì phải ghi rõ commit đó ngay cạnh bảng. Cột đo ở môi trường mà agent không chạm được (CI remote, máy thật, fleet) thì **cấm suy ra** từ mô tả trong prompt.
 - **Cách phát hiện nhanh:** `git rev-list --left-right --count main...origin/main` và `gh run list --limit 1 --json headSha` — nếu `headSha` của run khác HEAD thì mọi ô CI đang là suy diễn.
 - **Nguồn:** 2026-09-04, khi soát lượt đóng kế hoạch #10.
+
+## 28. Cổng Đo "Sức Khoẻ Tổng Thể" Thay Vì "Thứ Việc Này Đổi" — Chặn Nhầm Việc Làm Đúng
+- **Triệu chứng:** cổng của một đợt di trú ghi *"số repo `CLEAN` phải tăng đúng số repo trong lô"*. Lô chạy xong, di trú đúng hoàn toàn, nhưng `CLEAN` chỉ tăng 9/10 ⇒ cổng đỏ, rollout dừng.
+- **Nguyên nhân:** 3 repo di trú **đúng** vẫn ở `WARNING` vì mang lỗi **CÓ SẴN, ngoài phạm vi** (`BRN-014` repo lồng nhau đang chờ user quyết; `BRN-017` file lạ trong `memory/archive/`). Cổng trộn *"việc này đã hội tụ chưa"* với *"đối tượng có hoàn hảo không"*.
+- **Vì sao nguy hiểm hơn là phiền:** cổng chặn nhầm tạo áp lực **nới cổng** — và người thực thi rất dễ nới sang một tiêu chí lỏng hơn mức cần (vd "miễn không còn ERROR"), làm mất luôn phần bảo vệ thật.
+- **Luật rút ra:** cổng phải đo **đúng đại lượng mà việc này thay đổi**, theo **từng đối tượng**, không đo tổng trạng thái. Ở đây đúng là: mỗi repo trong lô phải có `template_version` = đích, **không còn mã thuộc phạm vi di trú**, và idempotent tại chỗ. Lỗi có sẵn ⇒ **liệt kê cho user quyết**, không tự sửa, không dùng làm lý do chặn.
+- **Nguồn:** 2026-09-04, Sóng 4 của rollout khung 1.4.0. Cổng đã sửa tại `OPERATIONS.md` §5.2.
