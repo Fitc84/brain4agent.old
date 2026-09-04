@@ -490,5 +490,50 @@
       "canh bao CO SAN ngoai pham vi: BRN-013/014/017 — cho user quyet",
       "HOAN sang ke hoach rieng: chot engine TU CHOI ha brain_template_version (bai hoc gotcha #12, da co 2 su co that)"
     ]
+  },
+  "don_ton_dong_2026-09-04": {
+    "lenh_user": [
+      "go du lieu (thu muc long)",
+      "push hub",
+      "go luat CAM o aiedu4vn"
+    ],
+    "doctor_sau": "candidates=71 clean=52 warning=5 error=10 blocker=2 skipped=2 | 57/71 di tru tron ven",
+    "da_xong_khong_can_sua": {
+      "control-linux-server": "BRN-013 het; doctor --repo exit 0 CLEAN",
+      "Agent to Product": "engine cu DA o archive/legacy-skills/ tu truoc; session_log.jsonl la kien truc RIENG (5 noi tham chieu song, ke ca brain_doctor.py cua chinh repo) => BRN-017 la AM TINH GIA, khong dung"
+    },
+    "dieu_tra_9_thu_muc_long_BRN_014": {
+      "vo_boc_CAM_GO": [
+        "AI-input/AI-input",
+        "bi-kip-luyen-agent/bi-kip-luyen-agent",
+        "congquyengop.vn/congquyengop.vn"
+      ],
+      "vo_boc_bang_chung": "repo cha chi co 13 file (dung bo file nao); 100% ma nguon nam TRONG thu muc long",
+      "ban_sao_thua_GO_DUOC": [
+        "openclaw-pro-studio/cross_ai_bridge",
+        "openclaw-pro-studio/Token-Calcultor",
+        "Token-Calcultor/wikiultra"
+      ],
+      "ban_sao_bang_chung": "0 file rieng (comm -23) · 0 commit rieng (rev-list --all) · 0 stash · byte-identical voi repo top-level cung ten",
+      "noi_dung_rieng_GIU": [
+        "manage-fitc84/9router (551 file)",
+        "manage-fitc84/Quan ly cong ty FITC84",
+        "FITC84-WorkOs-/Design"
+      ],
+      "gitlink_mo_coi": "openclaw-pro-studio->Token-Calcultor va Token-Calcultor->wikiultra deu la 160000 KHONG co .gitmodules; sinh tu commit gom bang GUI",
+      "loi_ich_kem_theo": "6 thay doi ban cua openclaw-pro-studio CHINH LA 2 ban sao long => go xong repo sach va di tru duoc ngay",
+      "tien_trinh_nhan_ban_DANG_CHAY": "ban long Token-Calcultor/wikiultra mang commit d313fc2 tao o Song 5 cung ngay"
+    },
+    "aiedu4vn": {
+      "luat_cam": "DA GO theo lenh user 2026-09-04",
+      "trang_thai": "khung nao tren dia da 1.4.0 nhung CHUA COMMIT; 195 thay doi viec that cua chu du an",
+      "BRN-016": "khoi dual-entry la TUY BIEN THAT (link docs Claude Code + 32 file tham chieu AGENTS.md + tro toi module-tools/de_restore/tests/test_dual_entry_point.py 7 ca) => CAM thay thang, se mat thong tin",
+      "cach_xu_khong_mat_gi": "dua phan luat ve ban chuan, giu 3 chi tiet rieng thanh ghi chu NGOAI vung moc"
+    },
+    "bi_chan_boi_cong_an_toan": "thao tac xoa thu muc va ghi cheo repo bi classifier chan trong phien nay; can user cho phep hoac tu chay",
+    "gotcha_sinh_ra": [
+      "#30",
+      "#31"
+    ]
   }
 }

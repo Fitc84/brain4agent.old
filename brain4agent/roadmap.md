@@ -7,20 +7,19 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 - [x] ~~**🔒 XOAY KHOÁ (ưu tiên cao nhất)**~~ — **USER QUYẾT 2026-09-02: KHÔNG xoay, bỏ mục này.** Cả 6 repo liên quan đều PRIVATE trên GitHub (kiểm `gh` 2026-09-02). Bảng ánh xạ *repo → đường dẫn → loại khoá* đã được **gỡ khỏi kho công khai này** (kể cả trong lịch sử 9 commit chưa push) và chuyển sang hồ sơ chỉ-lưu-máy `..\.brain4agent-secrets-map.local.md` — nằm ngoài mọi repo, bị `.gitignore` của repo cha chặn. Agent sau KHÔNG nhắc lại việc xoay khoá trừ khi user mở lại.
 - [x] ~~Deploy engine hub ra global (P06 #10)~~ · ~~Rollout khung v1.4.0 theo sóng (P07 #10)~~ — **XONG 2026-09-04 theo lệnh user.** Global `1.7.2 / 1.4.0`; **56/71 repo di trú trọn vẹn**; 0 repo vệ tinh bị push.
 - [ ] **10 repo ĐANG BẨN chưa di trú — chờ CHỦ REPO commit việc đang dở**, rồi chạy engine **một lần** là hội tụ: `control-gpm`, `convert-json-to-9router-from-keycrop`, `CV`, `FITC84-WorkOs-`, `GramPilot`, `openclaw-pro-studio`, `Token-Calcultor`, `ViDiaNorm` (còn `1.3.0`) và `control-claude-code`, `router4vn` (`BRN-016`). Thêm `coding-orchestrator` bẩn sau khi đã di trú. **CẤM `git add`/`stash`/`checkout` hộ để repo sạch.**
-- [ ] **Tìm và tắt tiến trình NHÂN BẢN ngoài git** đang chép repo top-level vào các thư mục lồng (12 cặp) — xem gotcha #9. Nó làm `git status` của `openclaw-pro-studio` gãy `bad object HEAD`.
-- [ ] **Quyết cách xử 12 cặp repo lồng nhau** (hiện đã `.gitignore` để đi tiếp): submodule thật cần URL remote, hay gỡ một tầng thư mục.
-- [ ] **`aiedu4vn`** — nếu gỡ luật ⛔ từ #04 thì đạt chuẩn v1.4.0 chỉ bằng 1 lần chạy engine.
+- [ ] **Tìm và tắt tiến trình NHÂN BẢN ngoài git.** Đã có bằng chứng nó **đang chạy**: bản lồng `Token-Calcultor/wikiultra` mang đúng commit `d313fc2` được tạo trong Sóng 5 cùng ngày, tức nó chép LẠI ngay sau khi repo gốc đổi.
+- [ ] **GỠ 3 bản sao thừa (đã đủ 3 tầng bằng chứng, chỉ chờ thao tác):** `openclaw-pro-studio/cross_ai_bridge`, `openclaw-pro-studio/Token-Calcultor`, `Token-Calcultor/wikiultra`. Mỗi cái: 0 file riêng · 0 commit riêng · 0 stash · nội dung `cmp` byte-identical với repo top-level cùng tên. **Lợi ích kèm theo:** 6 thay đổi "bẩn" của `openclaw-pro-studio` LÀ chính 2 bản sao đó — gỡ xong repo sạch và di trú được ngay. Kèm `git rm --cached` 2 gitlink mồ côi (không có `.gitmodules`, sinh từ commit gom bằng GUI).
+- [ ] **CẤM gỡ 3 "vỏ bọc"** — `AI-input`, `bi-kip-luyen-agent`, `congquyengop.vn`: repo cha chỉ có **13 file não**, toàn bộ dự án nằm TRONG thư mục lồng. Gỡ = xoá sạch dự án. Xem gotcha #30.
+- [ ] **3 thư mục lồng có nội dung RIÊNG, không gỡ được** — `manage-fitc84/9router` (551 file), `manage-fitc84/Quản lý công ty FITC84`, `FITC84-WorkOs-/Design`: không có repo top-level cùng tên. Cần quyết: submodule thật (cần URL remote) hay `.gitignore` tường minh (2/3 đã ignore).
+- [ ] **`aiedu4vn` — luật ⛔ ĐÃ GỠ (user, 2026-09-04).** Khung não trên đĩa đã ở `1.4.0` nhưng **chưa commit**, và repo có **195 thay đổi việc thật** của chủ dự án. Còn `BRN-016` ở khối `dual-entry`: đây là **tuỳ biến THẬT, không phải văn bản hỏng** — nó trích link docs Claude Code, ghi "32 file tham chiếu `AGENTS.md`", và trỏ tới bộ test đang chạy `module-tools/de_restore/tests/test_dual_entry_point.py` (7 ca). **CẤM thay thẳng bằng bản chuẩn — sẽ mất 3 thông tin đó.** Cách xử không mất gì: đưa phần luật về bản chuẩn, giữ 3 chi tiết riêng thành ghi chú NGOÀI vùng mốc.
 - [ ] **`brain4agent` (mới)** — repo còn lại chưa não hóa; 3 câu hỏi ở `planning/06_*/specs/SPEC-P05-ca-dac-biet.md` mục 1.
 - [ ] **`ViDiaNorm`** — gitignore output pipeline (`reports/` 117 + `data/` 105) rồi commit 51 file dev thật.
 - [ ] **`FITC84-WorkOs-`** — `.gitignore` có BOM UTF-8 + một dòng lưu dạng UTF-16 nên `server.pid` không được ignore; repo còn tracked file tên bắt đầu bằng dấu cách (` test.pid`).
 - [ ] **`manage-fitc84`** — cân nhắc gitignore `data/fitc84.db*` (SQLite WAL đang chạy, đã vào lịch sử git kèm dữ liệu khách hàng).
 - [ ] **`CausalAgent`** — dọn root cần sửa `scratch_*.py` cho độc-lập-vị-trí (`Path(__file__).resolve().parents[1]`) trước.
 - [ ] **`openclaw-pro-studio`** — bỏ track `admin_server.log`; cân nhắc gộp `AGENT_GUIDELINES.md` vào `AGENTS.md`.
-- [ ] **`control-linux-server`** — `brain4agent/project-intro.md` có BOM UTF-8 (`BRN-013`). Do `brain-doctor` phát hiện 2026-09-02, chưa ai biết trước đó.
-- [ ] **Nghiệm thu môi trường thật** — mọi Exit Gate của #07 mới đạt ở mức `local`; chưa xác nhận trên máy/tài khoản khác.
 - [ ] **`Audit` (treo từ #05):** `security_platform.db` mồ côi ở root do `db.py` dùng path tương đối theo CWD; `requirements.txt` có dòng cuối mã hoá UTF-16LE. Đã nạp vào não repo đó, CHƯA sửa code.
 - [ ] **`reverse Claude` (treo từ #05):** gate `verify-documentation-integrity.js` FAIL do 2 broken link trỏ `output/target_corpus/` — lỗi có TRƯỚC đợt não hóa, chưa sửa.
-- [ ] **`Agent to Product` (treo từ #04):** còn bản script engine cũ lạc ở `.agents/skills/.brain-build/scripts/init_brain.js` (không nhắc `CLAUDE.md`) — chỉ mới báo cáo, chưa xử.
 
 
 > **Ghi chú chống lỗi thời (2026-09-02):** mục Active cũ đã được gộp vào đây. Các việc trong đó nay

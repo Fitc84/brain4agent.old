@@ -207,3 +207,19 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Dấu hiệu nhận biết khuôn:** cổng chứa **một con số tuyệt đối về trạng thái cuối của cả hệ** (`≥ 63 CLEAN`, `diff = 0`, `100% repo đạt`) cho một việc **chỉ đụng tới một phần** của hệ đó. Ghép thêm gotcha #26 (ghim số version vào việc chưa làm) thì đây là cùng một họ: **ghim hằng số vào cổng của việc chưa đo**.
 - **Luật rút ra:** vá xong một lỗi cổng, **quét ngay cả bộ SPEC bằng chính đặc trưng của lỗi đó** trước khi đóng — `grep` các cổng chứa số tuyệt đối và tự hỏi từng cái: *"số này đo phép biến đổi bước này thực hiện, hay đo trạng thái cuối mong muốn của cả hệ?"* Chỉ loại một là đúng.
 - **Nguồn:** 2026-09-04, đóng #10. Sửa tại `TESTING-ACCEPTANCE.md` §6 (`X20`) + §6.1. Xem #26, #28.
+
+## 30. Thư Mục Lồng Trùng Tên KHÔNG Mặc Nhiên Là Bản Sao Thừa — Có Khi Repo Cha Chỉ Là Cái Vỏ
+- **Triệu chứng:** `brain-doctor` báo `BRN-014` cho `X/X` (repo tự chứa chính nó). Suy luận tự nhiên: *"tiến trình nhân bản (gotcha #9) chép lỗi, gỡ thư mục lồng là xong"*. Suy luận đó **SAI** ở 3/9 trường hợp đo được, và nếu làm theo sẽ **xoá sạch toàn bộ dự án**.
+- **Nguyên nhân:** với `AI-input`, `bi-kip-luyen-agent`, `congquyengop.vn`, repo cha **chỉ chứa 13 file** — đúng bộ file não do `init_brain.js` sinh ra — còn **100% mã nguồn thật nằm trong thư mục lồng**. Repo cha là **cái vỏ** được `git init` cao hơn một tầng; thư mục lồng mới là dự án.
+- **Phép thử quyết định (rẻ, chạy trước mọi thao tác gỡ):** đếm file của repo cha **loại trừ** thư mục lồng.
+  - ra **~13 file** ⇒ cha là VỎ ⇒ **CẤM gỡ thư mục lồng**;
+  - ra hàng nghìn file, và thư mục lồng có **0 file riêng** so với repo top-level cùng tên ⇒ đúng là bản sao thừa.
+- **Ba tầng bằng chứng bắt buộc trước khi gỡ bất kỳ thư mục lồng nào:** (1) tồn tại repo top-level **cùng tên**; (2) `comm -23` danh sách file cho **0 file chỉ-có-ở-bản-lồng**; (3) `rev-list --all` cho **0 commit riêng** và `stash list` = 0. Thiếu một tầng ⇒ không gỡ.
+- **Bẫy phụ:** bản lồng luôn hiện "có thay đổi chưa commit" vì thao tác chép làm đổi `mtime` ⇒ chỉ là nhiễu stat-cache. Phân biệt bằng `git diff --numstat`: `N N` (thêm = xoá) là lệch CRLF, không phải nội dung mới. Kiểm chốt bằng `cmp` với file top-level.
+- **Nguồn:** 2026-09-04, xử `BRN-014` sau #10. 3 vỏ bọc · 3 bản sao thừa thật · 3 nội dung riêng không gỡ được.
+
+## 31. Cảnh Báo Của Doctor Hub Áp Lên Repo Có Kiến Trúc Não RIÊNG Là ÂM TÍNH GIẢ
+- **Triệu chứng:** `Agent to Product` bị báo `BRN-017` (file lạ trong `memory/archive/`) vì có `session_log.jsonl`. Kế hoạch dọn dẹp coi đó là rác, định `git mv` ra chỗ khác.
+- **Sự thật:** repo đó theo diện **cộng sinh** từ kế hoạch #05 — nó có Brain OS riêng, và `session_log.jsonl` được **5 nơi đang sống** tham chiếu: skill `.compact` của chính nó (ghi append vào đó), `-data-architecture.md`, `Context_Index.md`, `README.md`, và **`brain4agent/scripts/brain_doctor.py` — bản doctor RIÊNG của repo đó**. Chuyển file = gãy skill + gãy doctor của họ.
+- **Luật rút ra:** trước khi "dọn" một file ở repo vệ tinh, luôn `grep -rn "<tên file>"` toàn repo. Doctor của hub chỉ biết luật của hub; repo được ghi nhận là **cộng sinh** thì cảnh báo hình thức của hub **không có thẩm quyền** ở đó. Ghi vào diện ngoại lệ, đừng "sửa cho sạch bảng".
+- **Nguồn:** 2026-09-04. Đây chính là cái bẫy đã tự viết ra trong prompt giao việc (*"file trông như rác có thể là input của cổng CI"*) — và suýt tự bước vào.

@@ -25,6 +25,30 @@
 1. **Cổng viết quá hẹp.** Tôi ra cổng *"mọi dòng đổi phải nằm trong vùng mục 1"* cho Sóng 5 — đúng với repo đã ở `1.4.0`, **sai** với repo còn `1.3.0` vì chạy engine ở đó là **di trú cả bộ luật**. Worker bắt được và hỏi lại thay vì tự nới. Đã thay bằng cổng A2 (đo bằng **chữ**: không mất nội dung người viết) + A3 (đo bằng **vị trí**: chỉ đổi trong vùng engine quản lý).
 2. **Cùng lỗi cổng tái diễn.** `X20` ghi *"doctor sau ≥ 63 CLEAN"* — y hệt cổng Sóng 4 vừa sửa vài giờ trước, trong **cùng bộ SPEC**. Nguyên nhân: lần sửa trước chỉ sửa đúng dòng bị bắt, không quét cả bộ. ⇒ **gotcha #29**.
 
+### Dọn tồn đọng sau #10 (user ra lệnh: gỡ dữ liệu · push · gỡ luật ⛔ `aiedu4vn`)
+
+**Đã xong, KHÔNG phải sửa gì:**
+- `control-linux-server` — `BRN-013` đã hết, doctor `--repo` cho **exit 0, CLEAN**.
+- `Agent to Product` — **cả 2 việc treo đều là báo động giả hoặc đã xong**: engine cũ đã nằm ở `archive/legacy-skills/` từ trước; `session_log.jsonl` KHÔNG phải rác mà là kiến trúc riêng của repo đó, **5 nơi đang sống tham chiếu** (kể cả `brain_doctor.py` riêng của họ). Xem gotcha **#31**.
+
+**Điều tra 9 thư mục lồng (`BRN-014`) — kết quả lật ngược giả định của roadmap:**
+
+| Loại | Số | Kết luận |
+| :--- | :-: | :--- |
+| **Vỏ bọc** (`AI-input`, `bi-kip-luyen-agent`, `congquyengop.vn`) | 3 | Repo cha chỉ có **13 file não**; toàn bộ dự án nằm TRONG thư mục lồng. **Gỡ = xoá sạch dự án.** |
+| **Bản sao thừa thật** | 3 | 0 file riêng · 0 commit riêng · 0 stash · byte-identical. **Gỡ được.** |
+| **Nội dung riêng** | 3 | Không có repo top-level cùng tên. **Giữ**, cần quyết submodule hay `.gitignore`. |
+
+Xem gotcha **#30**. Phát hiện kèm: 6 thay đổi "bẩn" của `openclaw-pro-studio` **chính là** 2 bản sao lồng — gỡ xong là repo sạch và di trú được. Hai gitlink `160000` mồ côi (không có `.gitmodules`) sinh từ một commit gom bằng GUI.
+
+**Bằng chứng tiến trình nhân bản ĐANG CHẠY:** bản lồng `Token-Calcultor/wikiultra` mang đúng commit `d313fc2` vừa tạo ở Sóng 5 **cùng ngày** — nó chép lại ngay sau khi repo gốc đổi.
+
+**`aiedu4vn`:** luật ⛔ đã gỡ. Khung não trên đĩa đã `1.4.0` (do tiến trình khác chạy lúc 14:57, **chưa commit**), repo có **195 thay đổi việc thật** của chủ dự án. Còn `BRN-016` ở khối `dual-entry` — khác hẳn 3 ca Sóng 5: đây là **tuỳ biến THẬT** (trích link docs, ghi "32 file tham chiếu", trỏ tới bộ test `test_dual_entry_point.py` 7 ca). **Cấm thay thẳng.**
+
+**Đo lại toàn kho:** `candidates=71 clean=52 warning=5 error=10 blocker=2 skipped=2` · **57/71 repo di trú trọn vẹn**.
+
+---
+
 ### Kiểm chứng độc lập (không tin báo cáo agent con)
 Tự chạy lại doctor + `deploy:verify`; tự kiểm 3 repo Sóng 5: `template_version`, `git status` rỗng, 6/6 cặp mốc, Bước 0 có `--check`, hỏng ký tự đã sạch, và `@{u}..HEAD` xác nhận **không repo nào bị push**.
 
