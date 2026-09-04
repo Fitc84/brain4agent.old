@@ -167,12 +167,18 @@ A1: T-M17, T-C30, T-C34, sóng rollout 5.1.4 · A2/A3: T-M25, T-C30, sóng 0 · 
 
 > Điều kiện gỡ `⏸`: user phải ra lệnh riêng để thực hiện deploy theo `OPERATIONS.md` §4 hoặc rollout theo sóng tại §5; sau đó đo lại từng gate ở đúng môi trường trước khi đổi trạng thái.
 
-> **Phạm vi bằng chứng của cột `CI`.**
-> CI xanh 2 OS (ubuntu + windows, đủ 13 bước) tại commit `9ec2c3c` — **đúng HEAD tại thời điểm
-> đánh dấu**, xác nhận bằng `gh run view --json headSha` khớp `git rev-parse HEAD`.
-> Cột `local` đo trực tiếp trên cùng commit đó (`npm test` 241/241, 0 skip).
+> **Phạm vi bằng chứng của cột `CI` — cách xác minh, không phải số cứng.**
+> Cột `CI` chỉ có hiệu lực khi lần chạy CI xanh **thuộc đúng commit đang xét**. Kiểm bằng một lệnh:
 >
-> Luật giữ lại từ sự cố đã xảy ra: **một ô `✅` phải gắn với số đo tại ĐÚNG commit đang xét.**
-> Trước đó bảng này từng đánh ✅ cột CI trong khi CI mới chạy ở commit cách HEAD 3 commit chưa
-> push — suy ra "CI xanh" từ một lần chạy cũ là **xanh giả**, cùng họ với các lỗi đếm-chuỗi mà
-> kế hoạch này khai tử (gotcha #27). Khi HEAD đi tiếp, ô CI mất hiệu lực tới lần CI kế tiếp.
+> ```bash
+> [ "$(gh run list --limit 1 --json headSha --jq '.[0].headSha')" = "$(git rev-parse HEAD)" ] \
+>   && gh run list --limit 1 --json conclusion --jq '.[0].conclusion'
+> ```
+>
+> Ra `success` ⇒ ô `CI` đúng. Khác `HEAD` ⇒ **ô `CI` đang là suy diễn**, phải push và chờ CI xanh lại.
+> Cột `local` đo bằng `npm test` trên cây làm việc hiện tại.
+>
+> Vì sao viết dạng lệnh thay vì ghi số commit: bảng này từng đánh ✅ cột CI trong khi CI mới chạy ở
+> commit cách HEAD 3 commit chưa push — **xanh giả** (gotcha #27); rồi bản vá đầu tiên lại ghim một
+> số commit cụ thể, và chính commit sửa nó đã làm số đó cũ ngay lập tức (gotcha #26). Cổng nào phụ
+> thuộc trạng thái đổi theo thời gian thì phải nêu **cách đo**, không nêu **kết quả đo**.
