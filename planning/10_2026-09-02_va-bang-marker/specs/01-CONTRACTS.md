@@ -151,10 +151,10 @@ Log AGENTS.md của `computePlan` (THAY bảng `AGENTS_PATCH_LOGS`): một dòng
 | Trục | Trước | Sau | Nơi |
 | :--- | :-- | :-- | :--- |
 | Khung não | `1.3.0` | **`1.4.0`** | `BRAIN_TEMPLATE_VERSION`; `state.json.brain_template_version` (mọi repo); marker root `brain4agent-v1.4.0.md` |
-| Engine | `1.6.0` | **`1.7.0`** | `ENGINE_VERSION`; `package.json.version`; `state.json.current_version` của hub |
-| Dự án hub | `1.6.0` | **`1.7.0`** | trùng trục engine (hub là dự án của engine) |
+| Engine | `1.6.0` | **`1.7.1`** | `ENGINE_VERSION`; `package.json.version`; `state.json.current_version` của hub |
+| Dự án hub | `1.6.0` | **`1.7.1`** | trùng trục engine (hub là dự án của engine) |
 
-`--version` in `brain-engine 1.7.0 template 1.4.0`. Test `version-sync` giữ 3 nơi khớp. `README.md` đang ghi `v1.4.0` (sót từ #06) — sửa về `v1.7.0` (SPEC-P06).
+`--version` in `brain-engine 1.7.1 template 1.4.0`. Test `version-sync` giữ 3 nơi khớp. `README.md` đang ghi `v1.4.0` (sót từ #06) — sửa về `v1.7.1` (SPEC-P06).
 
 ## §9. `module.exports` — THAY ĐỔI
 

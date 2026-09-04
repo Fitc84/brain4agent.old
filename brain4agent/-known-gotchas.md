@@ -173,3 +173,9 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Cách tìm nhanh:** chạy đối chứng bản gốc (`git stash` → chạy → `git stash pop`) để phân định lỗi mới hay có sẵn, rồi `grep -n '\$tenbien'` xem toàn bộ điểm dùng.
 - **Luật:** trong script > 100 dòng không có scope hàm, `grep` tên biến TRƯỚC khi đặt. PowerShell không cảnh báo khi ghi đè kiểu.
 - **Nguồn:** 2026-09-04, lỗi của chính orchestrator khi sửa gotcha #23.
+
+## 25. README Nằm Ngoài Mọi Cổng Kiểm Version — Lẫn Lộn Hai Trục Version Âm Thầm Qua Nhiều Đợt Phát Hành
+- **Triệu chứng:** README công bố `v1.4.0` là version của dự án dù đó là version khung não; `package.json`, `ENGINE_VERSION` và `state.json.current_version` đã ở `1.7.1`.
+- **Nguyên nhân:** các cổng `version-sync` chỉ canh các nguồn máy đọc của engine và state, không hề đọc README. Vì vậy một file giới thiệu công khai có thể trôi qua nhiều bản vá mà toàn bộ test vẫn xanh.
+- **Cách trị:** T-H03f đọc ba điểm công bố version dự án trong README và buộc từng điểm khớp `package.json`; marker khung não được kiểm riêng, không bị coi nhầm là version dự án.
+- **Nguồn:** vá nội bộ phần còn lại của kế hoạch #10, 2026-09-04.

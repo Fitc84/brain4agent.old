@@ -21,7 +21,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 | **Lộ trình nâng cấp & Ý tưởng** | [`roadmap.md`](file:///brain4agent/roadmap.md) | Active tasks, Kho Ý Tưởng (Idea Vault) và các mốc đã hoàn thành. |
 | **Lịch sử cập nhật** | [`changelog.md`](file:///brain4agent/changelog.md) | Lịch sử Semantic Releases (vX.Y.Z). |
 | **Tài liệu kỹ thuật module** | [`docs/`](file:///docs) | Tài liệu 1-1 cho từng module: `xay-dung-nao-bo.md`, `compact.md`. |
-| **Kiểm chứng tự động** | [`tests/`](file:///tests) | 240 ca `node:test`, 0 dependency. `npm test` · `npm run test:golden`. |
+| **Kiểm chứng tự động** | [`tests/`](file:///tests) | 241 ca `node:test`, 0 dependency. `npm test` · `npm run test:golden`. |
 | **Đo độ lệch hệ sinh thái** | `brain_doctor.js` | `node .agents/skills/.xay-dung-nao-bo/scripts/brain_doctor.js --root <kho>` — chỉ đọc. |
 
 ---
@@ -49,7 +49,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 
 ```text
 brain4agent/
-├── package.json                      # [VERSION TRUTH] Phiên bản v1.7.1
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.7.2
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
 ├── brain4agent-v1.4.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
@@ -93,7 +93,7 @@ brain4agent/
 │   └── compact.md                    # [MODULE DOCS] Tài liệu 1-1 của skill .compact
 ├── scripts/
 │   └── deploy_skills.ps1             # [DEPLOY] pwsh ≥7, fail-closed, đối chiếu SHA-256 nguồn↔đích
-├── tests/                            # [KIỂM CHỨNG] 240 ca `node:test`, 0 dependency
+├── tests/                            # [KIỂM CHỨNG] 241 ca `node:test`, 0 dependency
 │   ├── helpers/ (tmp · run · tree · make-golden · diff-scope · repo · snapshot · fake-date) · fixtures/ (F01–F10 + fleet/00..03) · golden/manifest.json
 │   ├── unit/ (diagnose · diff · marker · patch-distill · patch-state · plan · purity · text) · cli/ (exit-codes · read-only · marker-migration) · defects/ · invariants/ · doctor/ · hygiene/ (eol-bom · no-abs-path · no-deps · two-constitutions · version-sync · ci-fixture-exists · deploy-command-template) · golden.test.js
 ├── .github/workflows/ci.yml          # [CI] matrix windows × ubuntu, 13 bước, mọi cổng trả mã thoát thật

@@ -1,6 +1,6 @@
-# 🧠 BRAIN4AGENT (v1.4.0) — TRUNG TÂM QUẢN TRỊ & NÂNG CẤP NÃO BỘ (BRAIN GOVERNANCE HUB)
+# 🧠 BRAIN4AGENT (v1.7.2) — TRUNG TÂM QUẢN TRỊ & NÂNG CẤP NÃO BỘ (BRAIN GOVERNANCE HUB)
 
-Dự án này (**brain4agent v1.4.0**) là **Tổng Hành Dinh Quản Lý & Nâng Cấp Não Bộ (Single Source of Truth for Brain Development & AI Governance)**. Mọi nghiên cứu, tối ưu thuật toán, nâng cấp luật vận hành và phát triển bộ skill lõi (`.xay-dung-nao-bo`, `.compact`) được hoàn thiện tập trung tại kho chuẩn `.agents/skills/` trước khi deploy ra toàn bộ hệ sinh thái.
+Dự án này (**brain4agent v1.7.2**) là **Tổng Hành Dinh Quản Lý & Nâng Cấp Não Bộ (Single Source of Truth for Brain Development & AI Governance)**. Mọi nghiên cứu, tối ưu thuật toán, nâng cấp luật vận hành và phát triển bộ skill lõi (`.xay-dung-nao-bo`, `.compact`) được hoàn thiện tập trung tại kho chuẩn `.agents/skills/` trước khi deploy ra toàn bộ hệ sinh thái.
 
 ---
 
@@ -46,10 +46,10 @@ npm run deploy
 
 ```text
 brain4agent/
-├── package.json                      # [VERSION TRUTH] Phiên bản v1.4.0
+├── package.json                      # [VERSION TRUTH] Phiên bản v1.7.2
 ├── AGENTS.md                         # [QUY TẮC TỐI THƯỢNG] Nguồn chân lý DUY NHẤT (Gemini/Codex đọc trực tiếp)
 ├── CLAUDE.md                         # [SHIM] Điểm nạp tự động của Claude Code — chỉ chứa @AGENTS.md
-├── brain4agent-v1.2.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
+├── brain4agent-v1.4.0.md             # [MARKER] Phiên bản khung não — soi nhanh ở root
 ├── README.md                         # [TỔNG QUAN] Bản đồ trung tâm quản lý và hướng dẫn vận hành
 ├── CORE_GOVERNANCE_RULES.md          # [HIẾN PHÁP CHUẨN] Bộ luật vận hành bất biến toàn diện
 ├── brain4agent/                      # [BỘ NHỚ WORKSPACE] Single Source of Truth của Hub

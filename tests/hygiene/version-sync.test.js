@@ -22,6 +22,7 @@ const engine = require(ENGINE_PATH);
 const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
 const state = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'brain4agent', 'memory', 'hot', 'state.json'), 'utf8'));
+const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
 
 test('T-H03 · G16: ENGINE_VERSION === package.json.version', (t) => {
   assert.match(engine.ENGINE_VERSION, SEMVER_RE);
@@ -72,4 +73,18 @@ test('T-H03e · §10: `--version` in đúng cặp số lấy từ hằng số, k
   const r = runEngine(ENGINE_PATH, ['--version']);
   assert.equal(r.code, 0);
   assert.equal(r.stdout, `brain-engine ${engine.ENGINE_VERSION} template ${engine.BRAIN_TEMPLATE_VERSION}\n`);
+});
+
+test('T-H03f · §5.G.3: README nêu version DỰ ÁN đúng package.json, CẤM lẫn version KHUNG NÃO', () => {
+  const declarations = [
+    { re: /^# .*BRAIN4AGENT \(v(\d+\.\d+\.\d+)\)/m, where: 'tiêu đề' },
+    { re: /\*\*brain4agent v(\d+\.\d+\.\d+)\*\*/, where: 'mô tả dự án' },
+    { re: /\[VERSION TRUTH\] Phiên bản v(\d+\.\d+\.\d+)/, where: 'sơ đồ package.json' }
+  ];
+  for (const { re, where } of declarations) {
+    const match = readme.match(re);
+    assert.ok(match, `README thiếu phiên bản dự án tại ${where}`);
+    assert.equal(match[1], pkg.version,
+      `README ${where}: v${match[1]} phải khớp package.json v${pkg.version}`);
+  }
 });

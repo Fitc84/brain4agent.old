@@ -31,7 +31,7 @@ flowchart LR
 1. `git status` sạch; `git log -3`; `grep BRAIN_TEMPLATE_VERSION init_brain.js` = `1.3.0` (trước WP6) — nếu khác, DỪNG: kế hoạch giả định xuất phát 1.3.0/1.6.0/`dd7967e`.
 2. `node --version` ≥ 24; `pwsh --version` ≥ 7.
 3. `npm test` xanh ở HEAD (hoặc đỏ đúng danh sách đã ghi ở `plan.md` nếu đang giữa WP1–WP4).
-4. `npm run deploy:verify`: trước WP6 kỳ vọng **0** (global = hub v1.6.0); sau WP6 kỳ vọng 0 với bản 1.7.0.
+4. `npm run deploy:verify`: trước WP6 kỳ vọng **0** (global = hub v1.6.0); sau WP6 kỳ vọng 0 với bản 1.7.1.
 
 ## §3. NHÁNH VÀ COMMIT
 
@@ -44,15 +44,15 @@ flowchart LR
 
 | # | Việc | Kiểm | Ai |
 | :-- | :--- | :--- | :-- |
-| D1 | Bump 3 trục: `ENGINE_VERSION=1.7.0`, `package.json=1.7.0`, `BRAIN_TEMPLATE_VERSION=1.4.0`; chạy engine **chế độ ghi trên hub** (được phép: hub) ⇒ `state.json` 1.4.0/1.7.0, marker `brain4agent-v1.4.0.md` | `version-sync` xanh; `--check .` = 0 | agent |
+| D1 | Bump 3 trục: `ENGINE_VERSION=1.7.1`, `package.json=1.7.1`, `BRAIN_TEMPLATE_VERSION=1.4.0`; chạy engine **chế độ ghi trên hub** (được phép: hub) ⇒ `state.json` 1.4.0/1.7.1, marker `brain4agent-v1.4.0.md` | `version-sync` xanh; `--check .` = 0 | agent |
 | D2 | Backup thư mục skill global + thư mục lệnh vào scratchpad (đường dẫn ghi `today.md`, không ghi SPEC) | | agent |
 | D3 | `npm run deploy:verify` ⇒ kỳ vọng exit 2 (`DIFF init_brain.js`, có thể `DIFF brain_doctor.js`, `DIFF SKILL.md`) | dán `SUMMARY` vào TESTING-ACCEPTANCE §5 | agent |
-| D4 | **Xin phép user bằng lời**: "sắp ghi bản engine 1.7.0 / khung 1.4.0 ra global — mọi repo chạy Bước 0 sau đó sẽ thấy `CẦN NÂNG CẤP`" | | **user** |
+| D4 | **Xin phép user bằng lời**: "sắp ghi bản engine 1.7.1 / khung 1.4.0 ra global — mọi repo chạy Bước 0 sau đó sẽ thấy `CẦN NÂNG CẤP`" | | **user** |
 | D5 | `npm run deploy` ⇒ exit 0, `diff=0 missing=0 cmd=ok` | | agent |
-| D6 | Kiểm tay: hash từng file; `node <global>/init_brain.js --version` = `brain-engine 1.7.0 template 1.4.0`; `node <global>/init_brain.js --check <hub>` = 0 | | agent |
+| D6 | Kiểm tay: hash từng file; `node <global>/init_brain.js --version` = `brain-engine 1.7.1 template 1.4.0`; `node <global>/init_brain.js --check <hub>` = 0 | | agent |
 | D7 | Doctor quét kho **chỉ đọc** từ bản global (`--json` vào scratchpad): kỳ vọng 65 repo BRN-002 (template 1.3.0 ≠ 1.4.0, + khối vắng) và **5** BRN-016; ghi số đếm | bảng đếm vào TESTING-ACCEPTANCE §5 | agent (**user cho phép** đọc kho) |
 
-Sau D5, **mọi repo vệ tinh** chạy Bước 0 (bản cũ, chế độ ghi) sẽ được engine 1.7.0 vá ngay — đây chính là lý do rollout phải diễn ra sớm sau deploy và có kiểm soát (§5), và là lý do D4 phải nói rõ với user.
+Sau D5, **mọi repo vệ tinh** chạy Bước 0 (bản cũ, chế độ ghi) sẽ được engine 1.7.1 vá ngay — đây chính là lý do rollout phải diễn ra sớm sau deploy và có kiểm soát (§5), và là lý do D4 phải nói rõ với user.
 
 ## §5. ROLLOUT FLEET (WP7) — CHỜ USER RA LỆNH, theo sóng, mỗi sóng một cổng
 
@@ -108,7 +108,7 @@ Nguyên tắc: **không** `reset --hard` trên nhánh có việc của người 
 | 8 | `plan.md`: `✅ ĐÃ HOÀN THÀNH` + giờ đến giây; G1/G2/G3 điền số; Exit Gates | `planning/10_*/plan.md` |
 | 9 | Đề xuất commit (tiếng Anh) — **không push** | |
 
-Nếu user **hoãn** WP7: ghi vào nhật ký `plan.md` "rollout hoãn theo lệnh user, engine 1.7.0 đã deploy", cột `fleet` của Exit Gates để ⏸ — kế hoạch được đóng ở mức "engine + hub + global" (giống cách #09 để lại H6).
+Nếu user **hoãn** WP7: ghi vào nhật ký `plan.md` "rollout hoãn theo lệnh user, engine 1.7.1 đã deploy", cột `fleet` của Exit Gates để ⏸ — kế hoạch được đóng ở mức "engine + hub + global" (giống cách #09 để lại H6).
 
 ## §8. DANH SÁCH THAO TÁC BẮT BUỘC CÓ NGƯỜI BẤM NÚT
 

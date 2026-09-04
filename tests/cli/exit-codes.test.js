@@ -144,7 +144,7 @@ test('--version: một dòng, không đọc đĩa, exit 0 kể cả rootDir khô
   assert.equal(r.code, 0);
   assert.equal(r.stdout, 'brain-engine ' + engine.ENGINE_VERSION + ' template ' + engine.BRAIN_TEMPLATE_VERSION + '\n');
   assert.equal(r.stderr, '');
-  assert.equal(engine.ENGINE_VERSION, '1.7.1');
+  assert.equal(engine.ENGINE_VERSION, '1.7.2');
   assert.equal(engine.BRAIN_TEMPLATE_VERSION, '1.4.0');
 
   const r2 = runEngine(ENGINE_PATH, [path.join(__dirname, 'khong-ton-tai-tuyet-doi'), '--version']);

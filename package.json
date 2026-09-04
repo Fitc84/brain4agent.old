@@ -1,6 +1,6 @@
 {
   "name": "brain4agent",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "Universal Brain Governance Hub & Multi-Tier AI Agent Memory Engine",
   "main": ".agents/skills/.xay-dung-nao-bo/scripts/init_brain.js",
   "scripts": {

@@ -4,7 +4,7 @@ Bộ khung Não Bộ Đa Tầng sinh ra cấu trúc `brain4agent/` của dự á
 
 - **Phiên bản khung não:** v1.4.0
 - **Nguồn chân lý (máy đọc):** `brain4agent/memory/hot/state.json` → `brain_template_version`
-- **Ngày đồng bộ:** 2026-09-02
+- **Ngày đồng bộ:** 2026-09-04
 - **Luật quản trị:** `AGENTS.md` (nguồn chân lý) · `CLAUDE.md` (shim auto-load Claude Code)
 
 > File này do `init_brain.js` quản lý — tên file mang version để nhìn thấy ngay ở root.

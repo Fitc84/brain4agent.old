@@ -4,6 +4,14 @@
 
 ---
 
+## 🩹 Phiên 2026-09-04 — Đóng Phần LOCAL Còn Lại Của Kế Hoạch #10 (v1.7.2)
+
+- Sửa README dùng nhầm `v1.4.0` (version khung não) làm version dự án: ba điểm công bố nay đồng bộ `v1.7.2` với `package.json`; dòng marker trong sơ đồ cây nêu riêng `brain4agent-v1.4.0.md`.
+- Thêm T-H03f để mọi điểm công bố version dự án trong README phải khớp `package.json`; `npm test` đạt **241/241 pass, 0 fail, 0 skip**. `BRAIN_TEMPLATE_VERSION` giữ `1.4.0`; `ENGINE_VERSION`, `package.json` và `state.json.current_version` là `1.7.2`.
+- Đã cập nhật các kỳ vọng còn treo của P06/WP6 trong hồ sơ #10 về `1.7.1` và ghi rõ P06/P07 là thao tác ngoài repo, chờ user. Không deploy global, không rollout fleet, không push bản vá này.
+
+---
+
 ## 🔒 ĐÓNG PHIÊN 2026-09-02 — BÀN GIAO NGẮN
 
 **Trạng thái chốt:** hub `v1.5.1` (`8cb91f0`) · khung não template `v1.3.0` · **65/67 repo đạt chuẩn** ·

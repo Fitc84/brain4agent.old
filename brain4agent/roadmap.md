@@ -1,6 +1,6 @@
 # Roadmap & Active Tasks
 
-File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.7.1)**.
+File này chứa danh sách các tính năng, mục tiêu sắp tới và tình trạng công việc hiện tại của **brain4agent (v1.7.2)**.
 
 ## 🔴 Active — chờ user (không còn vướng kỹ thuật)
 
@@ -46,6 +46,7 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 - [ ] **Cross-OS Path Normalizer:** Chuẩn hóa đường dẫn tương đối xuyên suốt giữa môi trường Windows PowerShell và Linux Bash.
 
 ## Đã hoàn thành (Done)
+- [x] **Bảo vệ trục version README (v1.7.2, PATCH, 2026-09-04):** sửa README dùng nhầm version khung não làm version dự án; thêm T-H03f buộc cả ba công bố version dự án trong README khớp `package.json`. Đồng bộ `ENGINE_VERSION`, `state.json.current_version`, index, kernel và hồ sơ #10; P06/P07 vẫn chờ user.
 - [x] **Vá tất định bằng marker + khung v1.4.0 (v1.7.0, kế hoạch #10, 2026-09-02):** 6 khối `<!-- brain:rule:<id> -->` fail-closed thay toàn bộ regex dò văn xuôi; 2 luật v1.4.0 (Ký ức Lạnh, Structural Extension) tốn đúng 9 dòng engine; BRN-016/017; test 193 → 237; lõi vá teo 25%; engine 1447 → 1432 dòng. Diệt cả họ lỗi dương tính giả (#17) lẫn âm tính giả (9 repo thiếu Bước 0 mà vẫn được báo sạch). *Trạng thái: engine + hub xong; deploy/push/rollout chờ user.*
 - [x] **Engine có kiểm chứng (v1.6.0, kế hoạch #09, 2026-09-02):** biến hub từ *"tập tài liệu + một script 772 dòng không ai kiểm"* thành công cụ có kiểm chứng. **0 → 192 test** (0 dependency, dùng `node:test`), engine có mã thoát thật + `--check`/`--dry-run`, chẩn đoán **13 mã `BRN`**, deploy **fail-closed** đối chiếu SHA-256, công cụ **`brain-doctor`** quét 70 thư mục trong ~6 giây, CI matrix Windows × Linux, `.gitattributes`. Sửa 7 khiếm khuyết đã đo (deploy nuốt lỗi · `$` trong `replace` · BOM làm `JSON.parse` throw · BOM file lệnh deploy · thiếu `.gitattributes` · chẩn đoán bỏ sót · engine không test được). Engine sau refactor **byte-identical** với bản cũ, kiểm bằng bộ so sánh riêng của orchestrator. Sinh 3 gotcha mới (#16, #17, #18).
 - [x] **Đóng #04 + lập hồ sơ #08 cho 2 bản vá PATCH (v1.6.0, 2026-09-02):** kiểm chứng bằng máy 6 repo treo của #04 đã xong ở #06/#07 → chuyển #04 sang ✅; lập bù `planning/08_*` cho `v1.5.2` (gỡ lệnh chiếm chỗ `/compact`) và `v1.5.3` (gỡ bản đồ vị trí secret khỏi 9 commit chưa push bằng `filter-branch`, rồi push lần đầu của cả chiến dịch). Sinh 3 gotcha mới (#13 lệnh trùng tên built-in, #14 kho public mang bản đồ secret, #15 cổng an toàn không chặn).

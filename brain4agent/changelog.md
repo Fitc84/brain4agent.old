@@ -2,6 +2,23 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.7.2] - 2026-09-04: Khóa Trục Version Dự Án Trong README
+
+Bản vá `PATCH` hoàn tất phần nội bộ còn lại của kế hoạch #10; không deploy global và không rollout fleet.
+
+### Fixed
+- **README đã dùng `v1.4.0` (version khung não) như version dự án** ở ba vị trí công bố. Nay cả ba lấy `v1.7.2`, khớp `package.json`; dòng marker trong sơ đồ cây cũng được sửa riêng về `brain4agent-v1.4.0.md`.
+- Các kỳ vọng còn treo của P06/WP6 trong hồ sơ #10 đã được nâng từ engine `1.7.0` lên `1.7.1`, không sửa các dòng lịch sử/nhật ký quyết định.
+
+### Added
+- **T-H03f**: bánh cóc kiểm cả ba công bố version dự án trong README phải khớp `package.json`, ngăn tái diễn việc trộn `ENGINE_VERSION` với `BRAIN_TEMPLATE_VERSION`. Bộ test: 240 → **241**.
+
+### Changed
+- Đồng bộ version dự án `1.7.1 → 1.7.2` tại `package.json`, `ENGINE_VERSION`, `state.json.current_version`, index, roadmap, project intro và kernel; **`BRAIN_TEMPLATE_VERSION` giữ nguyên `1.4.0`**.
+
+### Scope
+- P06 (deploy global) và P07 (rollout fleet) vẫn chờ lệnh riêng của user; không có thao tác ghi ngoài repo hay `git push` trong bản vá này.
+
 ## [v1.7.1] - 2026-09-04: Vá File Lệnh Global Trôi Lệch Luật + Hoàn Tất Sync Cascade Của #10
 
 Bản vá `PATCH` sau kiểm chứng độc lập bản phát hành 1.7.0. Không đụng engine.
