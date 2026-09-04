@@ -142,25 +142,27 @@ A1: T-M17, T-C30, T-C34, sóng rollout 5.1.4 · A2/A3: T-M25, T-C30, sóng 0 · 
 
 | # | Gate | local | CI | máy thật (global) | fleet |
 | :-- | :--- | :-: | :-: | :-: | :-: |
-| X01 | 5/5 dạng hỏng có test (T-M03–07) **và** mỗi dạng đã chứng minh "có răng" (§2) | ⬜ | ⬜ | — | — |
-| X02 | Oracle viết tay T-M24 xanh; F09 sinh từ engine v1.6.0 (`git show dd7967e`) | ⬜ | ⬜ | — | — |
-| X03 | A1 trên mọi fixture + hub (T-M17, T-C30, T-C34) | ⬜ | ⬜ | — | ⬜ |
-| X04 | A2/A3 = 0 trên F09 (T-M25) | ⬜ | ⬜ | — | ⬜ (sóng 0) |
-| X05 | `renderFullAgentsMd() === patchAgentsMd(AGENTS_SKELETON).content`; 0 cặp mốc rỗng trong output (T-M18) | ⬜ | ⬜ | — | — |
-| X06 | Hub S2: `changed===false`, 6/6 `inner===body`, `--check .` = 0 (T-H02d, self-check) | ⬜ | ⬜ | ⬜ (từ global) | — |
-| X07 | Hai hiến pháp: 7 token khớp, ×1 (T-H02/b); bánh cóc 6 khối (T-H02e) | ⬜ | ⬜ | — | — |
-| X08 | Cơ chế cũ đã gỡ: grep 0 ×4 chuỗi; `patch-agents.test.js` không tồn tại; lượt đỏ H2 đã ghi | ⬜ | ⬜ | — | — |
-| X09 | BRN-002/003/016/017 mỗi mã ≥ 1 test đơn vị + 1 hộp đen; `Object.keys(BRN).length===15` | ⬜ | ⬜ | — | — |
-| X10 | Golden 7 case chụp **sau** X01–X09, từng case, `engine_commit` = HEAD (H3 duyệt) | ⬜ | ⬜ | — | — |
-| X11 | Fixture byte: F05 CRLF thật, F07 BOM thật (T-H06c) | ⬜ | ⬜ | — | — |
-| X12 | Vệ sinh: 0 byte điều khiển (T-M22); 0 regex lớp vá (T-M21); A9 không đường dẫn/tên repo trong file mới (T-H05) | ⬜ | ⬜ | — | — |
-| X13 | **G1 ≤ 123 · G2 ≤ 1472 · G3 ≤ 20** — số ghi vào `plan.md` §4 | ⬜ | — | — | — |
-| X14 | `npm test` 0 fail 0 skip, ≥ 215 ca | ⬜ | ⬜ (2 OS) | — | — |
-| X15 | Version 3 trục khớp nhau, template `1.4.0`; `--version` đúng | ⬜ | ⬜ | ⬜ | — |
-| X16 | Allowlist một nguồn (T-H05f); actions v5, 0 cảnh báo Node 20 | ⬜ | ⬜ | — | — |
-| X17 | Deploy: `deploy:verify` = 0; hash tay khớp; file lệnh không BOM | — | — | ⬜ | — |
-| X18 | Doctor chỉ đọc từ global: 5 BRN-016 đúng dự báo; ≤ 40 s; 0 ghi | — | — | ⬜ | — |
-| X19 | Sóng 0 dry-run: phân bố khớp SPEC-P02 §2; A2/A3 = 0 toàn fleet | — | — | — | ⬜ |
-| X20 | Sóng 1–5: mỗi repo A1 tại chỗ; doctor sau ≥ 63 CLEAN; 0 repo bẩn bị ghi | — | — | — | ⬜ |
-| X21 | Sync Cascade 6 điểm + docs + gotchas (OPERATIONS §7) | ⬜ | — | — | — |
-| X22 | Không push / không ghi repo ngoài hub-fixture khi user chưa ra lệnh — kiểm `today.md` + `git status` các repo vệ tinh không có commit mới ngoài sóng đã lệnh | ⬜ | — | — | ⬜ |
+| X01 | 5/5 dạng hỏng có test (T-M03–07) **và** mỗi dạng đã chứng minh "có răng" (§2) | ✅ | ✅ | — | — |
+| X02 | Oracle viết tay T-M24 xanh; F09 sinh từ engine v1.6.0 (`git show dd7967e`) | ✅ | ✅ | — | — |
+| X03 | A1 trên mọi fixture + hub (T-M17, T-C30, T-C34) | ✅ | ✅ | — | ⏸ hoãn rollout theo lệnh user |
+| X04 | A2/A3 = 0 trên F09 (T-M25) | ✅ | ✅ | — | ⏸ hoãn sóng 0 theo lệnh user |
+| X05 | `renderFullAgentsMd() === patchAgentsMd(AGENTS_SKELETON).content`; 0 cặp mốc rỗng trong output (T-M18) | ✅ | ✅ | — | — |
+| X06 | Hub S2: `changed===false`, 6/6 `inner===body`, `--check .` = 0 (T-H02d, self-check) | ✅ | ✅ | ⏸ hoãn deploy global theo lệnh user | — |
+| X07 | Hai hiến pháp: 7 token khớp, ×1 (T-H02/b); bánh cóc 6 khối (T-H02e) | ✅ | ✅ | — | — |
+| X08 | Cơ chế cũ đã gỡ: grep 0 ×4 chuỗi; `patch-agents.test.js` không tồn tại; lượt đỏ H2 đã ghi | ✅ | ✅ | — | — |
+| X09 | BRN-002/003/016/017 mỗi mã ≥ 1 test đơn vị + 1 hộp đen; `Object.keys(BRN).length===15` | ✅ | ✅ | — | — |
+| X10 | Golden 7 case chụp **sau** X01–X09, từng case, `engine_commit` = HEAD (H3 duyệt) | ✅ | ✅ | — | — |
+| X11 | Fixture byte: F05 CRLF thật, F07 BOM thật (T-H06c) | ✅ | ✅ | — | — |
+| X12 | Vệ sinh: 0 byte điều khiển (T-M22); 0 regex lớp vá (T-M21); A9 không đường dẫn/tên repo trong file mới (T-H05) | ✅ | ✅ | — | — |
+| X13 | **G1 ≤ 123 · G2 ≤ 1472 · G3 ≤ 20** — số ghi vào `plan.md` §4 | ✅ | — | — | — |
+| X14 | `npm test` 0 fail 0 skip, ≥ 215 ca | ✅ | ✅ (2 OS) | — | — |
+| X15 | Version 3 trục khớp nhau, template `1.4.0`; `--version` đúng | ✅ | ✅ | ⏸ hoãn deploy global theo lệnh user | — |
+| X16 | Allowlist một nguồn (T-H05f); actions v5, 0 cảnh báo Node 20 | ✅ | ✅ | — | — |
+| X17 | Deploy: `deploy:verify` = 0; hash tay khớp; file lệnh không BOM | — | — | ⏸ hoãn deploy global theo lệnh user | — |
+| X18 | Doctor chỉ đọc từ global: 5 BRN-016 đúng dự báo; ≤ 40 s; 0 ghi | — | — | ⏸ hoãn deploy global theo lệnh user | — |
+| X19 | Sóng 0 dry-run: phân bố khớp SPEC-P02 §2; A2/A3 = 0 toàn fleet | — | — | — | ⏸ hoãn rollout theo lệnh user |
+| X20 | Sóng 1–5: mỗi repo A1 tại chỗ; doctor sau ≥ 63 CLEAN; 0 repo bẩn bị ghi | — | — | — | ⏸ hoãn rollout theo lệnh user |
+| X21 | Sync Cascade 6 điểm + docs + gotchas (OPERATIONS §7) | ✅ | — | — | — |
+| X22 | Không push / không ghi repo ngoài hub-fixture khi user chưa ra lệnh — kiểm `today.md` + `git status` các repo vệ tinh không có commit mới ngoài sóng đã lệnh | ✅ | — | — | ⏸ hoãn rollout theo lệnh user |
+
+> Điều kiện gỡ `⏸`: user phải ra lệnh riêng để thực hiện deploy theo `OPERATIONS.md` §4 hoặc rollout theo sóng tại §5; sau đó đo lại từng gate ở đúng môi trường trước khi đổi trạng thái.

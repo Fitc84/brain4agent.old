@@ -1,9 +1,9 @@
 # KẾ HOẠCH #10: VÁ TẤT ĐỊNH BẰNG KHỐI ĐÁNH DẤU ẨN + KHUNG NÃO v1.4.0 (#10)
 
 - **STT KẾ HOẠCH:** #10
-- **TRẠNG THÁI:** 🔄 ĐANG THỰC THI
+- **TRẠNG THÁI:** ✅ ĐÃ HOÀN THÀNH (phạm vi: engine + hub + lưới test + CI) · ⏸ deploy global & rollout fleet HOÃN theo lệnh user
 - **THỜI GIAN BẮT ĐẦU:** 2026-09-02 (lập bộ SPEC)
-- **THỜI GIAN HOÀN TẤT:** —
+- **THỜI GIAN HOÀN TẤT:** 2026-09-04 11:51:05 UTC+07:00
 - **PHIÊN BẢN MỤC TIÊU (3 trục, KHÔNG trộn):** `BRAIN_TEMPLATE_VERSION` **1.3.0 → 1.4.0** · `ENGINE_VERSION` **1.6.0 → 1.7.0** · version DỰ ÁN hub **1.6.0 → 1.7.0** (`MINOR`)
 - **LOẠI GÓI:** SPEC PACKAGE đầy đủ theo `AGENTS.md` §3 mục 2 (bắt buộc vì `MINOR` + đụng cơ chế lõi + kéo theo đợt ghi 66 repo)
 - **PHẠM VI MỘT CÂU:** engine ngừng *đoán* vị trí luật bằng regex trên văn xuôi; thay bằng **6 khối marker** `<!-- brain:rule:<id> -->` mà nó tự quản, **fail-closed** khi mốc hỏng, **không ghi đè** văn bản người dùng; đồng thời đưa 2 luật v1.4.0 (Ký ức Lạnh, Structural Extension) vào khung.
@@ -38,6 +38,7 @@
 | 09-02 20:10 | **TQ8** — probe của `boot` là `Bước 0 (Bắt buộc tiên quyết`, KHÔNG phải `xay-dung-nao-bo` | Đo: **10 repo** không hề có phát biểu Bước 0 nhưng engine v1.6.0 vẫn cho qua vì luật J mục 4 chứa `xay-dung-nao-bo` — âm tính giả tiềm ẩn. Probe mới ⇒ 9 repo (1.3.0) nhận Bước 0 qua nhánh `add`. |
 
 | 09-02 22:05 | **Đ11** — mâu thuẫn SPEC-P04 §3 vs 01-CONTRACTS §7 về mã thoát `--check` khi chỉ có finding KHÔNG fixable: **giữ hành vi hiện hành (exit 0)**, 01-CONTRACTS thắng | `--check` trả lời "engine có muốn ghi gì không"; chấm mức nặng nhẹ là việc của doctor (mã thoát phân tầng riêng). Hành vi đang bị 3 test #09 chốt (BRN-005/013); đổi = breaking change ngoài scope. T-C37 (WP4) kỳ vọng `--check` = 0. |
+| 2026-09-04 11:51:05 | **Đ12 — đóng #10 theo phạm vi thu hẹp**: engine + hub + lưới test + CI hoàn tất; P06 deploy global và P07 rollout fleet hoãn theo lệnh user | Hai thao tác còn lại đều ghi ngoài repo hub. Điều kiện hoãn được phép tại TESTING-ACCEPTANCE §6 và runbook vẫn giữ nguyên tại OPERATIONS §4–§5. |
 
 ### Quyết định bị thay thế
 
@@ -72,9 +73,16 @@ Thứ tự bắt buộc và lý do: [OPERATIONS.md §1](specs/OPERATIONS.md).
 - [x] **P04 🔴 [WP4]** — theo SPEC-P05. Gate: fixture chụp lại **bằng tay** (không chạy engine ghi lên fixture); golden chụp lại **từng case**, diff đọc bằng mắt, ghi `engine_commit`; A3 = 0 dòng ngoài vùng mốc trên F09.
 - [x] **P05 🟢 [WP5]** — theo SPEC-P06. Gate: `ci.yml` không còn allowlist nội tuyến; T-H05b xanh với mục engine đo lại; CI 2 OS xanh (remote — sau khi user cho push).
 - [ ] **P06 🔴 [WP6]** — theo OPERATIONS §4, §7. Gate: `npm run deploy:verify` = 0; `--version` của bản global **khớp ĐÚNG** `node .agents/skills/.xay-dung-nao-bo/scripts/init_brain.js --version` của hub (template phải là `1.4.0`); G1/G2/G3 điền số (mục 4). **Người bấm nút deploy.** *(Phần bump 3 trục của WP6 đã xong ở #10; chỉ còn thao tác deploy ra ngoài repo.)*
+  - ⏸ Hoãn theo lệnh user ngày 2026-09-04; đây là thao tác **NGOÀI repo**. Runbook deploy tại `OPERATIONS.md` §4 giữ nguyên hiệu lực.
 - [ ] **P07 🔴 [WP7]** — theo OPERATIONS §5, **chỉ khi user ra lệnh**. Gate mỗi sóng: A1–A4 ✅ trước khi sang sóng sau.
+  - ⏸ Hoãn theo lệnh user ngày 2026-09-04; đây là thao tác **NGOÀI repo**. Runbook rollout theo sóng tại `OPERATIONS.md` §5 giữ nguyên hiệu lực.
 
 > **Ghi chú phạm vi:** Phần LOCAL của #10 đã hoàn tất và đã push; P06/P07 là thao tác ngoài repo, chờ user ra lệnh — không agent nào được tự thực hiện.
+
+## 📌 3.1 Phạm vi đã giao / Phạm vi hoãn
+
+- **Đã giao:** cơ chế marker, khung não `1.4.0`, hub, lưới test, tài liệu và CI của #10; các Exit Gate local/CI được ghi nhận tại `TESTING-ACCEPTANCE.md` §6.
+- **Hoãn:** P06 deploy engine ra global và P07 rollout fleet. Hai runbook vẫn có hiệu lực, nhưng chỉ được gỡ trạng thái hoãn khi user ra lệnh riêng.
 
 ## 🛡️ 4. Ba Gate Chống Overengineering (Đ5) — ô ghi số
 

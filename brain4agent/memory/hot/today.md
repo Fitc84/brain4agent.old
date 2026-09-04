@@ -4,6 +4,13 @@
 
 ---
 
+## ✅ Phiên 2026-09-04 — ĐÓNG KẾ HOẠCH #10 (LOCAL + CI)
+
+- Đóng #10 ở phạm vi engine + hub + lưới test + CI; cập nhật Exit Gates, roadmap, changelog, state và kernel. Số đo chốt: lõi vá **165 → 123** (−25%), engine **1447 → 1432**, hai luật mới **9 dòng**, test **193 → 241**.
+- P06 deploy global và P07 rollout fleet được đánh dấu **⏸ hoãn theo lệnh user**. Không deploy, không rollout, không push; runbook tại `planning/10_2026-09-02_va-bang-marker/specs/OPERATIONS.md` §4–§5 vẫn giữ nguyên.
+
+---
+
 ## 🩹 Phiên 2026-09-04 — Đóng Phần LOCAL Còn Lại Của Kế Hoạch #10 (v1.7.2)
 
 - Sửa README dùng nhầm `v1.4.0` (version khung não) làm version dự án: ba điểm công bố nay đồng bộ `v1.7.2` với `package.json`; dòng marker trong sơ đồ cây nêu riêng `brain4agent-v1.4.0.md`.
