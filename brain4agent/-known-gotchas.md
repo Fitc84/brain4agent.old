@@ -186,3 +186,10 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Nguy hiểm thật:** agent thực thi deploy sau này đọc cổng thấy số không khớp sẽ (a) báo hỏng giả, hoặc tệ hơn (b) "sửa cho khớp" bằng cách đổi version — đúng loại thao tác đã suýt gây thoái lui version.
 - **Luật rút ra:** cổng hướng tới việc CHƯA làm **CẤM ghim số version cụ thể**; phải tham chiếu ĐỘNG (vd *"khớp đúng output `--version` của hub"*). Chỉ **nhật ký/lịch sử** mới được mang số cứng — và ngược lại, **CẤM sửa số trong dòng lịch sử** (`AGENTS.md` §3 mục 2.3): dòng ghi "#10 bump lên 1.7.0" phải giữ nguyên 1.7.0 dù nay đã 1.7.2.
 - **Nguồn:** 2026-09-04, phát hiện khi soát bản vá v1.7.2.
+
+## 27. Đánh ✅ Cho Cột CI Bằng Một Lần Chạy CŨ — Xanh Giả Trong Chính Bảng Nghiệm Thu
+- **Triệu chứng:** bảng Exit Gate của kế hoạch được đánh ✅ toàn bộ cột `CI`, trong khi CI lần cuối chạy ở một commit **cách HEAD 3 commit chưa push** — và một trong 3 commit đó có đổi code (hằng số version + thêm một test).
+- **Nguyên nhân:** agent đóng hồ sơ lấy câu "CI xanh 2 OS" trong phần BỐI CẢNH của nhiệm vụ làm bằng chứng, thay vì đo lại tại đúng commit đang xét. Bối cảnh mô tả quá khứ, không phải số đo hiện tại.
+- **Luật rút ra:** mỗi ô `✅` phải gắn với **số đo tại ĐÚNG commit đang xét**. Nếu bằng chứng thuộc commit khác thì phải ghi rõ commit đó ngay cạnh bảng. Cột đo ở môi trường mà agent không chạm được (CI remote, máy thật, fleet) thì **cấm suy ra** từ mô tả trong prompt.
+- **Cách phát hiện nhanh:** `git rev-list --left-right --count main...origin/main` và `gh run list --limit 1 --json headSha` — nếu `headSha` của run khác HEAD thì mọi ô CI đang là suy diễn.
+- **Nguồn:** 2026-09-04, khi soát lượt đóng kế hoạch #10.
