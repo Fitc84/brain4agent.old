@@ -167,13 +167,12 @@ A1: T-M17, T-C30, T-C34, sóng rollout 5.1.4 · A2/A3: T-M25, T-C30, sóng 0 · 
 
 > Điều kiện gỡ `⏸`: user phải ra lệnh riêng để thực hiện deploy theo `OPERATIONS.md` §4 hoặc rollout theo sóng tại §5; sau đó đo lại từng gate ở đúng môi trường trước khi đổi trạng thái.
 
-> **⚠️ Phạm vi bằng chứng của cột `CI` — đọc trước khi trích dẫn bảng này.**
-> Lần CI xanh 2 OS gần nhất chạy tại commit `5be72cf`. Tại thời điểm đóng hồ sơ, `main` đã đi
-> trước **3 commit chưa push** (`50f51fd`, `7dc4365`, `aace3ea`), trong đó `50f51fd` **có đổi
-> code** (hằng số `ENGINE_VERSION` và thêm một test). Vì vậy các ô `✅` ở cột `CI` phản ánh
-> trạng thái tại `5be72cf`, **chưa phải HEAD** — chúng chỉ trở thành bằng chứng đầy đủ sau lần
-> push kế tiếp và CI xanh lại trên HEAD.
-> Cột `local` thì đã đo trực tiếp trên HEAD (`npm test` 241/241, 0 skip).
+> **Phạm vi bằng chứng của cột `CI`.**
+> CI xanh 2 OS (ubuntu + windows, đủ 13 bước) tại commit `9ec2c3c` — **đúng HEAD tại thời điểm
+> đánh dấu**, xác nhận bằng `gh run view --json headSha` khớp `git rev-parse HEAD`.
+> Cột `local` đo trực tiếp trên cùng commit đó (`npm test` 241/241, 0 skip).
 >
-> Bài học chung: **một ô `✅` phải gắn với số đo tại ĐÚNG commit đang xét.** Suy ra "CI xanh"
-> từ một lần chạy cũ là dạng xanh giả — cùng họ với các lỗi đếm-chuỗi mà kế hoạch này khai tử.
+> Luật giữ lại từ sự cố đã xảy ra: **một ô `✅` phải gắn với số đo tại ĐÚNG commit đang xét.**
+> Trước đó bảng này từng đánh ✅ cột CI trong khi CI mới chạy ở commit cách HEAD 3 commit chưa
+> push — suy ra "CI xanh" từ một lần chạy cũ là **xanh giả**, cùng họ với các lỗi đếm-chuỗi mà
+> kế hoạch này khai tử (gotcha #27). Khi HEAD đi tiếp, ô CI mất hiệu lực tới lần CI kế tiếp.
