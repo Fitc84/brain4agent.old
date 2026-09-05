@@ -39,6 +39,7 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 
 ## 💡 Kho Ý Tưởng & Backlog (Idea Vault)
 *Nơi lưu trữ các ý tưởng hay, kiến trúc mở rộng chưa ưu tiên làm ngay nhưng cần giữ lại để tham khảo.*
+- [ ] **[#12 — ưu tiên cao] Chốt máy cho bản GLOBAL không khớp hub.** `BRN-018` chỉ canh `brain_template_version`; ca 2026-09-06 (gotcha #33) cho thấy engine cùng template nhưng **khác thân luật** vẫn ghi đè cả hệ sinh thái. Ý tưởng: engine nhúng một `LAW_DIGEST` (hash thân của 6 khối luật) vào `state.json`; gặp digest lạ ⇒ mã `BRN-019` cảnh báo có nguồn chân lý thứ hai, thay vì âm thầm ghi đè. Cần cân nhắc: hash phải ổn định qua EOL/BOM, và **không** được biến mọi bản nâng cấp luật hợp lệ thành blocker.
 - [ ] **[#11] Hợp nhất 2 file hiến pháp** — `LAW_TOKENS` đã đọc từ engine (#10) nên phép kiểm tự mở rộng; việc hợp nhất nội dung để đợt riêng.
 - [ ] **[#11+] Cài `supersedes` cho khối luật cũ nguyên văn** — TQ5 đo 0/66 repo cần nên #10 không cài; nếu tương lai có biến thể cũ, mở lại.
 - [ ] **[MAJOR] CLI đổi mặc định sang `--check`** (không cờ = chỉ đọc) — breaking change, cần đợt riêng + thông báo.

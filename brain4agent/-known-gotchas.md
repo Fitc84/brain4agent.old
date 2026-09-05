@@ -96,6 +96,7 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Cách khắc phục:** backup bản global → chạy `scripts/deploy_skills.ps1` → so hash lại. Luật §5.B đã yêu cầu điều này; lỗi xảy ra vì bump version mà bỏ qua bước deploy.
 - **Nguồn:** kế hoạch #07, 2026-09-02.
 → Đã cài thành luật máy ở #11 (`BRN-018`); kỷ luật so hash vẫn giữ, nhưng engine cũ nay tự từ chối ghi.
+→ **GIỚI HẠN (đo được 2026-09-06, xem #33):** `BRN-018` chỉ canh trục `brain_template_version`. Một engine **khác** giữ **nguyên** template `1.4.0` nhưng đổi **thân luật** thì lọt hoàn toàn — bản `1.7.4` lạ đã ghi đè 7 repo đúng như vậy. Nói cho chặt: #12 mới bịt được nửa "engine template cũ"; nửa "engine cùng template, khác thân luật" vẫn hở, và **kỷ luật so hash `deploy:verify` vẫn là thứ duy nhất bắt được nó**.
 
 ## 13. Deploy Sinh File Lệnh Trùng Tên Lệnh BUILT-IN — Chiếm Chỗ `/compact` Của Claude Code
 - **Triệu chứng:** user gõ `/compact` mong nén cửa sổ ngữ cảnh (tính năng built-in của Claude Code) nhưng agent lại chạy nghi thức ghi não vào `brain4agent/memory/hot/`. Không có lỗi, không cảnh báo — chỉ là **làm sai việc**.
