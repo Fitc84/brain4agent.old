@@ -214,7 +214,9 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
 - **Phép thử quyết định (rẻ, chạy trước mọi thao tác gỡ):** đếm file của repo cha **loại trừ** thư mục lồng.
   - ra **~13 file** ⇒ cha là VỎ ⇒ **CẤM gỡ thư mục lồng**;
   - ra hàng nghìn file, và thư mục lồng có **0 file riêng** so với repo top-level cùng tên ⇒ đúng là bản sao thừa.
-- **Ba tầng bằng chứng bắt buộc trước khi gỡ bất kỳ thư mục lồng nào:** (1) tồn tại repo top-level **cùng tên**; (2) `comm -23` danh sách file cho **0 file chỉ-có-ở-bản-lồng**; (3) `rev-list --all` cho **0 commit riêng** và `stash list` = 0. Thiếu một tầng ⇒ không gỡ.
+- **BỐN tầng bằng chứng bắt buộc trước khi gỡ bất kỳ thư mục lồng nào:** (1) tồn tại repo top-level **cùng tên**; (2) `comm -23` danh sách file cho **0 file chỉ-có-ở-bản-lồng**; (3) `rev-list --all` cho **0 commit riêng** và `stash list` = 0; (4) **`git -C <repo-cha> ls-files <thư-mục-lồng>` phải RỖNG**. Thiếu một tầng ⇒ không gỡ.
+- **Tầng 4 sinh ra từ một lần suýt hỏng thật (2026-09-04).** Ba tầng đầu đều đạt cho `openclaw-pro-studio/cross_ai_bridge`, nên đã gỡ — và cuốn theo **4 file mã nguồn mà repo cha ĐANG TRACK** (`ask.py`, `server.py`, `extension/*`). Nguyên nhân: thư mục đó vừa là **thư mục con hợp lệ được track**, vừa bị tiến trình nhân bản **clone đè một repo git vào bên trong**. Ba tầng đầu chỉ so bản lồng với repo top-level — chúng **mù** với quan hệ giữa bản lồng và repo CHA. Cứu được nhờ `git checkout -- <thư mục>` ngay sau đó (4 file khớp `HEAD`, `git diff --quiet HEAD` sạch), nhưng nếu chúng chưa từng được commit thì đã mất hẳn.
+- **Hệ quả vận hành:** sau MỌI thao tác gỡ thư mục lồng, chạy `git status` repo cha và soi các dòng ` D `. Có dòng nào ⇒ khôi phục trước, hỏi sau. Chỉ dòng `D  <tên>` (gitlink 160000 đã staged) mới là kết quả mong muốn.
 - **Bẫy phụ:** bản lồng luôn hiện "có thay đổi chưa commit" vì thao tác chép làm đổi `mtime` ⇒ chỉ là nhiễu stat-cache. Phân biệt bằng `git diff --numstat`: `N N` (thêm = xoá) là lệch CRLF, không phải nội dung mới. Kiểm chốt bằng `cmp` với file top-level.
 - **Nguồn:** 2026-09-04, xử `BRN-014` sau #10. 3 vỏ bọc · 3 bản sao thừa thật · 3 nội dung riêng không gỡ được.
 

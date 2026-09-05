@@ -497,7 +497,7 @@
       "push hub",
       "go luat CAM o aiedu4vn"
     ],
-    "doctor_sau": "candidates=71 clean=52 warning=5 error=10 blocker=2 skipped=2 | 57/71 di tru tron ven",
+    "doctor_sau": "candidates=71 clean=53 warning=5 error=9 blocker=2 skipped=2 | 58/71 di tru tron ven",
     "da_xong_khong_can_sua": {
       "control-linux-server": "BRN-013 het; doctor --repo exit 0 CLEAN",
       "Agent to Product": "engine cu DA o archive/legacy-skills/ tu truoc; session_log.jsonl la kien truc RIENG (5 noi tham chieu song, ke ca brain_doctor.py cua chinh repo) => BRN-017 la AM TINH GIA, khong dung"
@@ -534,6 +534,17 @@
     "gotcha_sinh_ra": [
       "#30",
       "#31"
+    ],
+    "da_go_ban_sao_thua": {
+      "thuc_hien": "user chay tay (cong an toan Claude Code chan agent xoa thu muc)",
+      "openclaw-pro-studio": "6241863 go gitlink mo coi + 8deb836 di tru 1.4.0; tu BAN thanh SACH",
+      "su_co_da_cuu": "lenh go cuon theo 4 file cross_ai_bridge/* ma repo CHA dang track; khoi phuc bang git checkout, khop HEAD; sinh tang bang chung thu 4 cho gotcha #30",
+      "Token-Calcultor": "ban sao long da go, nhung index repo con hong tu truoc (staged-delete + untracked cung duong dan) => chu repo phai don"
+    },
+    "phien_song_song_do_duoc": [
+      "aiedu4vn di tru luc 14:57 boi tien trinh khac",
+      "control-linux-server tu het BOM giua 2 lan do",
+      "ai-news-radar dang sua AGENTS.md, khoi structural-extension thanh stale"
     ]
   }
 }

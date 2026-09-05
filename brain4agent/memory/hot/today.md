@@ -45,7 +45,13 @@ Xem gotcha **#30**. Phát hiện kèm: 6 thay đổi "bẩn" của `openclaw-pro
 
 **`aiedu4vn`:** luật ⛔ đã gỡ. Khung não trên đĩa đã `1.4.0` (do tiến trình khác chạy lúc 14:57, **chưa commit**), repo có **195 thay đổi việc thật** của chủ dự án. Còn `BRN-016` ở khối `dual-entry` — khác hẳn 3 ca Sóng 5: đây là **tuỳ biến THẬT** (trích link docs, ghi "32 file tham chiếu", trỏ tới bộ test `test_dual_entry_point.py` 7 ca). **Cấm thay thẳng.**
 
-**Đo lại toàn kho:** `candidates=71 clean=52 warning=5 error=10 blocker=2 skipped=2` · **57/71 repo di trú trọn vẹn**.
+**Đã GỠ 3 bản sao thừa** (user chạy tay vì cổng an toàn chặn agent) và **`openclaw-pro-studio` từ bẩn thành sạch rồi di trú xong**: `6241863` gỡ gitlink mồ côi, `8deb836` di trú `1.4.0` (idempotent, 2 dòng luật bị thay đều thuộc vùng engine).
+
+**Sai sót của tôi trong bước gỡ — và cách cứu.** Ba tầng bằng chứng ở gotcha #30 đều đạt cho `cross_ai_bridge`, nhưng lệnh gỡ vẫn **cuốn theo 4 file mã nguồn mà repo cha ĐANG TRACK**. Lý do: thư mục đó vừa là thư mục con hợp lệ được track, vừa bị tiến trình nhân bản clone đè một repo git vào trong — ba tầng đầu chỉ so bản lồng với repo top-level nên **mù** với quan hệ bản-lồng ⇄ repo-CHA. Cứu bằng `git checkout -- cross_ai_bridge` ngay (4 file khớp `HEAD`). ⇒ thêm **tầng bằng chứng thứ 4** vào #30: `git -C <repo-cha> ls-files <thư-mục-lồng>` phải RỖNG.
+
+**Đo lại toàn kho sau tất cả:** `candidates=71 clean=53 warning=5 error=9 blocker=2 skipped=2` · **58/71 repo di trú trọn vẹn**.
+
+**Bằng chứng phiên agent song song (gotcha #8) — 3 lần trong một ngày:** `aiedu4vn` bị di trú lúc 14:57 bởi tiến trình không phải tôi · `control-linux-server` tự hết BOM giữa hai lần đo · `ai-news-radar` đang có `M AGENTS.md` chưa commit và khối `structural-extension` chuyển sang `stale`. Cả ba đều bị bỏ qua đúng luật §5.1.1.
 
 ---
 
