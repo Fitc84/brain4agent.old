@@ -543,8 +543,16 @@
     },
     "phien_song_song_do_duoc": [
       "aiedu4vn di tru luc 14:57 boi tien trinh khac",
-      "control-linux-server tu het BOM giua 2 lan do",
       "ai-news-radar dang sua AGENTS.md, khoi structural-extension thanh stale"
-    ]
+    ],
+    "dinh_chinh": "control-linux-server TUNG bi tinh nham la phien song song; that ra chinh worker da go BOM luc 15:25 (213365e) theo dung viec duoc giao. Bai hoc: loai tru het tac nhan MINH cho phep truoc khi goi la bat thuong; git log -1 la du.",
+    "doi_chieu_cheo_worker": {
+      "trung_khop": [
+        "session_log.jsonl co tham chieu song => giu",
+        "engine cu da o archive/legacy-skills/",
+        "3 repo AI-input/bi-kip/congquyengop: cung ket luan KHONG GO qua 2 duong do khac nhau"
+      ],
+      "ca_hai_deu_sot": "cross_ai_bridge: ca worker lan orchestrator deu ket luan \"go duoc\" ma bo lot viec repo CHA dang track 4 file ben trong => bang chung manh rang tang 4 cua gotcha #30 phai viet thanh luat"
+    }
   }
 }

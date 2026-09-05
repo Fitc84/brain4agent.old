@@ -51,7 +51,20 @@ Xem gotcha **#30**. Phát hiện kèm: 6 thay đổi "bẩn" của `openclaw-pro
 
 **Đo lại toàn kho sau tất cả:** `candidates=71 clean=53 warning=5 error=9 blocker=2 skipped=2` · **58/71 repo di trú trọn vẹn**.
 
-**Bằng chứng phiên agent song song (gotcha #8) — 3 lần trong một ngày:** `aiedu4vn` bị di trú lúc 14:57 bởi tiến trình không phải tôi · `control-linux-server` tự hết BOM giữa hai lần đo · `ai-news-radar` đang có `M AGENTS.md` chưa commit và khối `structural-extension` chuyển sang `stale`. Cả ba đều bị bỏ qua đúng luật §5.1.1.
+**Bằng chứng phiên agent song song (gotcha #8) — 2 lần trong một ngày:** `aiedu4vn` bị di trú lúc 14:57 bởi tiến trình không phải tôi · `ai-news-radar` đang có `M AGENTS.md` chưa commit và khối `structural-extension` chuyển sang `stale`. Cả hai đều bị bỏ qua đúng luật §5.1.1.
+
+> **Đính chính (2026-09-05).** Tôi từng tính `control-linux-server` là bằng chứng thứ ba — SAI. Báo cáo của worker cho thấy chính nó đã gỡ BOM lúc 15:25 (`213365e`, kiểm lại: đúng 3 byte `EF BB BF`, 1 dòng đổi), tức là **đúng việc tôi giao**. Tôi thấy repo đã sạch mà không truy ra tác nhân, rồi vội xếp vào diện bất thường. **Bài học:** trước khi gọi một thay đổi là "tác nhân lạ", phải loại trừ hết các tác nhân MÌNH đã cho phép — `git log -1` của chính repo đó đủ để trả lời.
+
+### Đối chiếu chéo với báo cáo worker (2 phân tích độc lập)
+
+| Mục | Worker | Tôi | Kết quả |
+| :--- | :--- | :--- | :--- |
+| `session_log.jsonl` | Có tham chiếu sống ⇒ dừng, không chuyển | Là kiến trúc riêng của repo ⇒ giữ | **Trùng khớp** |
+| Engine cũ `.brain-build` | Đã ở `archive/legacy-skills/` | Như trên | **Trùng khớp** |
+| `AI-input`, `bi-kip-luyen-agent`, `congquyengop.vn` | "CÓ NỘI DUNG RIÊNG — không gỡ" (đếm file **tracked**) | "VỎ BỌC — cấm gỡ" (đếm file **vật lý**: repo cha chỉ 13 file não) | **Cùng kết luận, hai đường đo** |
+| `cross_ai_bridge` | "BẢN SAO THỪA — gỡ được", mục *code/CI cha tham chiếu* = Không | Ba tầng bằng chứng đều đạt | **Cả hai đều SÓT** việc repo cha đang **track 4 file** bên trong |
+
+Ô cuối là điểm đáng giá nhất: **hai phân tích độc lập cùng bỏ lọt một tầng kiểm tra** — bằng chứng mạnh rằng tầng 4 của gotcha #30 (`git -C <repo-cha> ls-files <thư-mục-lồng>` phải rỗng) là thứ không tự nghĩ ra được, phải viết thành luật.
 
 ---
 
