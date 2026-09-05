@@ -25,6 +25,19 @@
 1. **Cổng viết quá hẹp.** Tôi ra cổng *"mọi dòng đổi phải nằm trong vùng mục 1"* cho Sóng 5 — đúng với repo đã ở `1.4.0`, **sai** với repo còn `1.3.0` vì chạy engine ở đó là **di trú cả bộ luật**. Worker bắt được và hỏi lại thay vì tự nới. Đã thay bằng cổng A2 (đo bằng **chữ**: không mất nội dung người viết) + A3 (đo bằng **vị trí**: chỉ đổi trong vùng engine quản lý).
 2. **Cùng lỗi cổng tái diễn.** `X20` ghi *"doctor sau ≥ 63 CLEAN"* — y hệt cổng Sóng 4 vừa sửa vài giờ trước, trong **cùng bộ SPEC**. Nguyên nhân: lần sửa trước chỉ sửa đúng dòng bị bắt, không quét cả bộ. ⇒ **gotcha #29**.
 
+### ✅ Phiên 2026-09-06 — GIÀNH LẠI QUYỀN SỞ HỮU BẢN GLOBAL (gotcha #33)
+
+- **Phát hiện:** `deploy:verify` tụt từ `match=4` xuống `match=3 diff=1`. Bản GLOBAL là **`1.7.4`, 1472 dòng, ghi lúc 21:19:39** — mới hơn và lớn hơn hub `1.7.3` (1448 dòng). **Không có mã nguồn `1.7.4` ở bất kỳ đâu trên ổ D:** — nó được deploy từ nơi khác.
+- **Chẩn đoán trước đó của tôi là SAI.** Tôi từng nói `BRN-002` hàng loạt là do "một markdown formatter bóc `file:///`". Thật ra chính bản `1.7.4` viết lại khối `structural-extension` theo văn bản luật của nó (`](brain4agent/…)` thay vì `](file:///brain4agent/…)`) mỗi khi một repo chạy Bước 0.
+- **Vì sao chữa mãi không hết:** hai dự án cùng deploy vào **một đường dẫn global**, mỗi bên chữa xong thì bên kia phá lại. Bug **quyền sở hữu**, không phải bug engine. `BRN-018` không bắt được vì cả hai đều ở template `1.4.0` — xung đột nằm ở **thân luật**.
+- **User chốt:** hub này là **chủ sở hữu duy nhất**; giữ trạng thái hub làm nguồn chân lý.
+- **Đã xử:** sao lưu bản `1.7.4` (89.979 byte) ra ngoài trước → `npm run deploy` → `deploy:verify` = `files=4 match=4 diff=0 cmd=ok exit=0`, global in `brain-engine 1.7.3 template 1.4.0`.
+- **Dọn hệ quả:** 7 repo lệch đúng khối `structural-extension`. Chạy engine chế độ ghi trên **5 repo sạch** (`agent-mmo4me`, `ai-news-radar`, `coding-orchestrator`, `fitc84.com`, `router4vn`) — mỗi repo **đúng 1 dòng** đổi trong `AGENTS.md`, `--check` sau đó đều `NÃO ĐÃ OK`. Doctor toàn kho: **clean 51 → 56**.
+- **Hai repo cố ý KHÔNG chạm:** `control-claude-code` (có `brain4agent/memory/hot/state.json` đang bẩn — engine sẽ ghi đè đúng file phiên khác đang làm dở) và `aiedu4vn` (user lệnh skip).
+- **Bài học mới vào kernel:** đầu mỗi phiên kiểm `node <engine-global> --version` phải bằng đúng `ENGINE_VERSION` hub. Global cao hơn ⇒ dừng, đừng chữa repo vệ tinh vội.
+
+---
+
 ### ✅ Phiên 2026-09-05 — ĐÓNG KẾ HOẠCH #11 TRỌN VẸN (chốt `BRN-018`)
 
 - **Chốt an toàn đã vào bản GLOBAL.** `deploy:verify` = `files=4 match=4 diff=0 cmd=ok exit=0`; bản global in `brain-engine 1.7.3 template 1.4.0`. Push `d9b6443..fe5e720`; CI run `33971106273` **xanh cả ubuntu + windows**.

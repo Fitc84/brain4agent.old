@@ -234,3 +234,15 @@ Tổng hợp các lỗi khó, các lưu ý dị biệt hoặc cách workaround �
   `git -C <repo> rev-parse --show-toplevel` phải kết thúc bằng **đúng tên thư mục đó**. Khác đi ⇒ repo không có `.git` riêng ⇒ **mọi số đo đều vô nghĩa**, dừng ngay.
 - **Hệ quả kèm theo khi khôi phục:** `git restore .` chỉ trả lại **file được track**. Thư mục **RỖNG** (ở đây là `planning/`, `.agents/skills/`, `docs/`) không nằm trong git nên không về, và repo sẽ báo `BRN-009` dù mọi file đã đủ. Chạy engine chế độ ghi là xong — nó tạo thư mục mà **không đổi file nào**.
 - **Nguồn:** 2026-09-05. `Token-Calcultor` bị xoá sạch (0 file, không `.git`) trong lúc phiên đang chạy; `git -C` leo lên `D:\Data\Repositories` nên báo "0 thay đổi". Orchestrator đã tin và tuyên bố *"repo giờ đã sạch, di trú được"* — sai hoàn toàn. Chỉ lộ ra khi `--check` báo thiếu **cả** `AGENTS.md`, `CLAUDE.md` lẫn `brain4agent/`, một tổ hợp không thể xảy ra với repo từng đạt chuẩn.
+
+## 33. ENGINE LẠ DEPLOY ĐÈ BẢN GLOBAL — Hai Nguồn Chân Lý Đánh Nhau Vĩnh Viễn Qua `BRN-002`
+
+- **Triệu chứng:** một loạt repo vệ tinh (7 repo) đồng loạt báo `BRN-002` ở **đúng một khối luật** (`structural-extension`). Chữa xong, ít lâu sau **tái phát y hệt**. `deploy:verify` chuyển từ `match=4` sang `match=3 diff=1`.
+- **Chẩn đoán SAI mà tôi đã đưa ra:** *"có một markdown formatter nào đó bóc `file:///` khỏi link"*. Sai hoàn toàn — không formatter nào đụng vào đây.
+- **Căn nguyên thật:** một **bản engine LẠ (`1.7.4`, 1472 dòng)** đã được deploy đè lên đúng đường dẫn GLOBAL mà hub sở hữu. Thân luật chuẩn của nó viết `](brain4agent/project-intro.md)` trong khi hub `1.7.3` viết `](file:///brain4agent/project-intro.md)`. Mọi repo chạy **Bước 0** đều gọi bản GLOBAL ⇒ bị viết lại theo bản lạ ⇒ doctor của hub báo lệch.
+- **Vì sao nó tự tái phát:** hai dự án cùng deploy vào **một đường dẫn global duy nhất** với **văn bản luật khác nhau**. Mỗi bên chữa xong thì bên kia chạy Bước 0 và phá lại. Đây không phải bug engine — là **bug quyền sở hữu**.
+- **`BRN-018` KHÔNG cứu được ca này.** Chốt đó chỉ bắt khi `brain_template_version` bị hạ; ở đây cả hai bản đều `1.4.0`. Xung đột nằm ở **thân luật**, không ở version. Đây là lỗ hổng còn lại của chốt.
+- **Phép thử phát hiện sớm (rẻ, nên chạy đầu mỗi phiên):**
+  `node <engine-global> --version` phải in **đúng** `ENGINE_VERSION` của hub. Bản global **cao hơn** hub ⇒ có nguồn chân lý thứ hai ⇒ dừng, đừng chữa repo vệ tinh vội (chữa xong sẽ hỏng lại).
+- **Cách xử (2026-09-06, user chốt):** hub là **chủ sở hữu duy nhất**. Sao lưu bản lạ ra ngoài (nó có thể chứa tính năng thật — bản `1.7.4` có cơ chế nhận diện legacy dạng object mà hub chưa có), `npm run deploy` để đưa global về đúng hub, rồi mới chạy engine chế độ ghi trên các repo lệch. Kết quả: `clean 51 → 56`, mỗi repo đúng **1 dòng** thay đổi trong `AGENTS.md`.
+- **Nguồn:** 2026-09-05/06. Lộ ra nhờ `deploy:verify` — chính bất biến vận hành số 1 (mục #12) là thứ bắt được nó.

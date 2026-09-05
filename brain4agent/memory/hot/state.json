@@ -1,7 +1,7 @@
 {
   "project_name": "brain4agent",
   "current_version": "1.7.3",
-  "system_status": "healthy_and_runtime_verified | [05/09] v1.7.3: chot BRN-018 — engine TU CHOI ha brain_template_version (blocker, exit 2, 0 byte ghi, ca 3 mode). DA deploy global + CI xanh 2 OS. Khung nao giu 1.4.0.",
+  "system_status": "healthy_and_runtime_verified | [06/09] Da gianh lai quyen so huu ban GLOBAL: engine la 1.7.4 tung de len, nay global = hub 1.7.3 (deploy:verify 4/4). Doctor toan kho clean 56/72. Xem gotcha #33.",
   "last_verification": {
     "timestamp": "2026-09-04",
     "scenarios_passed": [
@@ -594,5 +594,20 @@
     "gotcha_sinh_ra": [
       "#32"
     ]
+  },
+  "gianh_lai_global_2026-09-06": {
+    "van_de": "ban engine LA 1.7.4 (1472 dong) deploy de len duong dan GLOBAL ma hub so huu; khong co ma nguon 1.7.4 tren o D",
+    "hau_qua": "7 repo ve tinh bao BRN-002 o dung khoi structural-extension, chua xong lai tai phat — hai nguon chan ly danh nhau",
+    "chan_doan_sai_da_sua": "truoc do toi ket luan \"markdown formatter boc file:///\" — SAI; thu pham la chinh ban 1.7.4",
+    "BRN_018_khong_bat_duoc": "ca hai deu o template 1.4.0; xung dot nam o THAN LUAT chu khong o version",
+    "user_chot": "hub brain4agent.old la CHU SO HUU DUY NHAT cua ban global",
+    "da_xu": "sao luu 1.7.4 (89979 byte) -> npm run deploy -> deploy:verify files=4 match=4 diff=0 cmd=ok exit=0; global = brain-engine 1.7.3 template 1.4.0",
+    "don_he_qua": "5 repo sach chay engine che do ghi, moi repo dung 1 dong doi trong AGENTS.md, --check deu NAO DA OK",
+    "doctor_toan_kho": "clean 51 -> 56 (candidates 72, warning 6, error 6, blocker 2)",
+    "co_y_khong_cham": [
+      "control-claude-code (state.json dang ban — phien khac lam do)",
+      "aiedu4vn (user lenh skip)"
+    ],
+    "phep_thu_moi": "dau phien: node <engine-global> --version phai BANG dung ENGINE_VERSION cua hub"
   }
 }
