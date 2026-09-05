@@ -1,7 +1,7 @@
 {
   "project_name": "brain4agent",
   "current_version": "1.7.3",
-  "system_status": "healthy_and_runtime_verified | [04/09] v1.7.2: khung nao 1.4.0 (6 khoi marker, fail-closed) da deploy GLOBAL va rollout 56/71 repo. 0 repo ve tinh bi push.",
+  "system_status": "healthy_and_runtime_verified | [05/09] v1.7.3: chot BRN-018 — engine TU CHOI ha brain_template_version (blocker, exit 2, 0 byte ghi, ca 3 mode). Khung nao giu 1.4.0. CHUA deploy global: ban GLOBAL van la 1.7.2.",
   "last_verification": {
     "timestamp": "2026-09-04",
     "scenarios_passed": [

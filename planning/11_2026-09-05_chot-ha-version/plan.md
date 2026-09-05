@@ -144,11 +144,11 @@ Không fixture nào "cao hơn engine" ⇒ output 7 ca **không đổi**. Nếu `
 | X03 | T-R22: doctor `BLOCKER` + `BRN-018`, 0 dòng doctor đổi (`git diff --stat` doctor = rỗng) | ✅ T-R22 xanh; `brain_doctor.js` diff rỗng |  |  |
 | X03b | Ca `P04 · --expect-template` xanh với nhãn mới; `git diff` của `fleet.test.js` **chỉ** đổi chuỗi mã ở assertion `alpha` (Đ9) — không đổi tên ca, không bớt assertion | ✅ ca xanh; P02 đã commit, working diff `fleet.test.js` rỗng |  |  |
 | X04 | `npm test` ≥ 248 ca, 0 fail, 0 skip | ✅ tests 248 · pass 248 · fail 0 · skipped 0 |  |  |
-| X05 | G2: `wc -l init_brain.js` ≤ 1472 (ghi số) | ✅ 1279 dòng |  |  |
+| X05 | G2: `wc -l init_brain.js` ≤ 1472 (ghi số) | ✅ **1448** dòng (`wc -l`). *Ô này ban đầu ghi `1279` — đó là số dòng **bỏ dòng trống**, không phải `wc -l` mà cổng yêu cầu; cổng vẫn đạt nhưng thước đã bị ghi sai (gotcha #27).* |  |  |
 | X06 | 3 trục version = `1.7.3`; T-H03/b/f xanh; `--version` in `1.7.3` + template `1.4.0` | ✅ 3 trục 1.7.3; T-H03/b/f xanh; `brain-engine 1.7.3 template 1.4.0` |  |  |
 | X06b | `T-H03f` mở rộng: **7** điểm công bố (README 3 · project-intro 3 · index 1) đều khớp `package.json`; **thử ngược** — sửa tay MỘT chỗ thành `9.9.9` phải làm test ĐỎ, rồi hoàn nguyên (bằng chứng cổng "có răng") | ✅ 7/7; README tiêu đề → 9.9.9: tests 248 · pass 247 · fail 1 · skipped 0; hoàn nguyên: tests 248 · pass 248 · fail 0 · skipped 0 |  |  |
 | X07 | Golden xanh; nếu chụp lại: diff manifest chỉ 2 trường engine | ✅ tests 8 · pass 8 · fail 0; manifest không đổi |  |  |
-| X08 | Hub tự kiểm `--check .` = 0 bằng engine MỚI; doctor toàn kho: **0** `BRN-018` (không repo nào cao hơn 1.4.0 — sanity) | ✅ `--check .`: exit 0, NÃO ĐÃ OK; doctor toàn kho không chạy (cấm chạm repo vệ tinh) |  |  |
+| X08 | Hub tự kiểm `--check .` = 0 bằng engine MỚI; doctor toàn kho: **0** `BRN-018` (không repo nào cao hơn 1.4.0 — sanity) | ✅ `--check .`: exit 0, NÃO ĐÃ OK. Doctor toàn kho **đã chạy** (chỉ đọc ⇒ không phải "chạm"): `candidates=71 clean=50 warning=5 error=12 blocker=2 skipped=2`, **0 repo có `BRN-018`** — đúng kỳ vọng vì không repo nào ở khung cao hơn `1.4.0` |  |  |
 | X09 | Sync cascade 6 điểm + docs + gotcha #12 + roadmap; kernel < 100 dòng | ✅ docs/index/roadmap/changelog/hot memory/kernel cập nhật; kernel 51 dòng |  |  |
 | X10 | `deploy:verify` = 0; hash 4/4; file lệnh `cmd=ok` | — | — | ⬜ user |
 | X11 | Bằng chứng chốt hoạt động THẬT ngoài test: bản global mới chạy `--check` trên một thư mục tạm có `state.json` `9.9.9` ⇒ exit 2, `BRN-018` | — | — | ⬜ user |
