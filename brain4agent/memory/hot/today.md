@@ -25,6 +25,25 @@
 1. **Cổng viết quá hẹp.** Tôi ra cổng *"mọi dòng đổi phải nằm trong vùng mục 1"* cho Sóng 5 — đúng với repo đã ở `1.4.0`, **sai** với repo còn `1.3.0` vì chạy engine ở đó là **di trú cả bộ luật**. Worker bắt được và hỏi lại thay vì tự nới. Đã thay bằng cổng A2 (đo bằng **chữ**: không mất nội dung người viết) + A3 (đo bằng **vị trí**: chỉ đổi trong vùng engine quản lý).
 2. **Cùng lỗi cổng tái diễn.** `X20` ghi *"doctor sau ≥ 63 CLEAN"* — y hệt cổng Sóng 4 vừa sửa vài giờ trước, trong **cùng bộ SPEC**. Nguyên nhân: lần sửa trước chỉ sửa đúng dòng bị bắt, không quét cả bộ. ⇒ **gotcha #29**.
 
+### ✅ Phiên 2026-09-05 — ĐÓNG KẾ HOẠCH #11 TRỌN VẸN (chốt `BRN-018`)
+
+- **Chốt an toàn đã vào bản GLOBAL.** `deploy:verify` = `files=4 match=4 diff=0 cmd=ok exit=0`; bản global in `brain-engine 1.7.3 template 1.4.0`. Push `d9b6443..fe5e720`; CI run `33971106273` **xanh cả ubuntu + windows**.
+- **Bằng chứng chốt hoạt động thật (X11), không phải chỉ trong lưới test:** dựng repo giả từ `F02` ở khung `9.9.9`, chạy bằng **bản GLOBAL** — `--check` / `--dry-run` / **chế độ ghi** đều exit **2**, stderr có `DỪNG`, và **15/15 file byte-identical** trước–sau (so `sha256sum` toàn cây).
+- Doctor toàn kho: **0 repo có `BRN-018`** — đúng kỳ vọng, không repo nào ở khung cao hơn `1.4.0`.
+
+#### Ba lỗi bị bắt trong phiên, đều là lỗi GHI CHÉP chứ không phải lỗi code
+
+1. **Tôi dùng `git add -A`** nên hai commit mang nhãn `docs` lại chứa code engine của worker — đúng thứ tôi vừa cấm worker làm. Chưa push nên đã tách lại thành `3d55e2b` (hồ sơ) + `8e2f41a` (engine + test).
+2. **Ô `X05` ghi `1279 dòng`** trong khi cổng đòi `wc -l` = **1448**; `1279` là số dòng *bỏ dòng trống*. Cổng vẫn đạt nhưng **gọi sai tên phép đo**.
+3. **Ô `X09` ghi kernel `51 dòng`**, thật là **55**. Cùng một kiểu.
+
+⇒ Cả ba thuộc họ *"ghi bằng chứng bằng một thước KHÁC với thước mà cổng yêu cầu"* — gotcha #27 tái diễn. Đã sửa cả ba và để lại vết ngay trong ô.
+
+#### Hai lần worker chặn lại đúng
+Worker **hai lần** dừng để hỏi thay vì tự nới, **cả hai đều đúng**: Đ9 (luật §5 viết quá tuyệt đối) và Đ10 (tôi đếm sai số điểm công bố version trong `project-intro.md`). Lần thứ hai còn lộ ra bài học gotcha #25 mới chỉ được vá cho đúng file bị bắt — đúng cái bẫy #29.
+
+---
+
 ### Dọn tồn đọng sau #10 (user ra lệnh: gỡ dữ liệu · push · gỡ luật ⛔ `aiedu4vn`)
 
 **Đã xong, KHÔNG phải sửa gì:**

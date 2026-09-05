@@ -21,7 +21,7 @@ Khi nhận nhiệm vụ, Agent tra cứu bảng này để đọc **chính xác*
 | **Lộ trình nâng cấp & Ý tưởng** | [`roadmap.md`](file:///brain4agent/roadmap.md) | Active tasks, Kho Ý Tưởng (Idea Vault) và các mốc đã hoàn thành. |
 | **Lịch sử cập nhật** | [`changelog.md`](file:///brain4agent/changelog.md) | Lịch sử Semantic Releases (vX.Y.Z). |
 | **Tài liệu kỹ thuật module** | [`docs/`](file:///docs) | Tài liệu 1-1 cho từng module: `xay-dung-nao-bo.md`, `compact.md`. |
-| **Kiểm chứng tự động** | [`tests/`](file:///tests) | 241 ca `node:test`, 0 dependency. `npm test` · `npm run test:golden`. |
+| **Kiểm chứng tự động** | [`tests/`](file:///tests) | 248 ca `node:test`, 0 dependency. `npm test` · `npm run test:golden`. |
 | **Đo độ lệch hệ sinh thái** | `brain_doctor.js` | `node .agents/skills/.xay-dung-nao-bo/scripts/brain_doctor.js --root <kho>` — chỉ đọc. |
 
 ---
@@ -76,7 +76,7 @@ brain4agent/
 │   ├── 08_2026-09-02_hotfix-lenh-va-go-secret/ # PATCH — chỉ plan.md
 │   ├── 09_2026-09-02_engine-kiem-chung/   # + specs/ (01-CONTRACTS mã thoát, BRN-001..013)
 │   ├── 10_2026-09-02_va-bang-marker/      # + specs/ (ĐÓNG TRỌN VẸN: local + CI + deploy + rollout)
-│   └── 11_2026-09-05_chot-ha-version/     # PATCH — chỉ plan.md (§3 2.5): engine từ chối hạ template (BRN-018)
+│   └── 11_2026-09-05_chot-ha-version/     # PATCH — chỉ plan.md (§3 2.5): ĐÓNG TRỌN VẸN, chốt BRN-018
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
@@ -94,7 +94,7 @@ brain4agent/
 │   └── compact.md                    # [MODULE DOCS] Tài liệu 1-1 của skill .compact
 ├── scripts/
 │   └── deploy_skills.ps1             # [DEPLOY] pwsh ≥7, fail-closed, đối chiếu SHA-256 nguồn↔đích
-├── tests/                            # [KIỂM CHỨNG] 241 ca `node:test`, 0 dependency
+├── tests/                            # [KIỂM CHỨNG] 248 ca `node:test`, 0 dependency
 │   ├── helpers/ (tmp · run · tree · make-golden · diff-scope · repo · snapshot · fake-date) · fixtures/ (F01–F10 + fleet/00..03) · golden/manifest.json
 │   ├── unit/ (diagnose · diff · marker · patch-distill · patch-state · plan · purity · text) · cli/ (exit-codes · read-only · marker-migration) · defects/ · invariants/ · doctor/ · hygiene/ (eol-bom · no-abs-path · no-deps · two-constitutions · version-sync · ci-fixture-exists · deploy-command-template) · golden.test.js
 ├── .github/workflows/ci.yml          # [CI] matrix windows × ubuntu, 13 bước, mọi cổng trả mã thoát thật

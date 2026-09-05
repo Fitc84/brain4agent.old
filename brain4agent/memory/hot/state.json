@@ -1,7 +1,7 @@
 {
   "project_name": "brain4agent",
   "current_version": "1.7.3",
-  "system_status": "healthy_and_runtime_verified | [05/09] v1.7.3: chot BRN-018 — engine TU CHOI ha brain_template_version (blocker, exit 2, 0 byte ghi, ca 3 mode). Khung nao giu 1.4.0. CHUA deploy global: ban GLOBAL van la 1.7.2.",
+  "system_status": "healthy_and_runtime_verified | [05/09] v1.7.3: chot BRN-018 — engine TU CHOI ha brain_template_version (blocker, exit 2, 0 byte ghi, ca 3 mode). DA deploy global + CI xanh 2 OS. Khung nao giu 1.4.0.",
   "last_verification": {
     "timestamp": "2026-09-04",
     "scenarios_passed": [
@@ -554,5 +554,26 @@
       ],
       "ca_hai_deu_sot": "cross_ai_bridge: ca worker lan orchestrator deu ket luan \"go duoc\" ma bo lot viec repo CHA dang track 4 file ben trong => bang chung manh rang tang 4 cua gotcha #30 phai viet thanh luat"
     }
+  },
+  "plan_11_2026-09-05": {
+    "ten": "Chot an toan — engine tu choi ha brain_template_version",
+    "trang_thai": "DA DONG TRON VEN 2026-09-05T17:36:12+07:00 (local + CI 2 OS + deploy global)",
+    "phien_ban": "1.7.2 -> 1.7.3 (PATCH); brain_template GIU 1.4.0 => KHONG cham repo ve tinh, khong rollout",
+    "co_che": "repo co brain_template_version CAO HON engine => BRN-018 (blocker, khong fixable) => runBrainEngine cat TRUOC computePlan => exit 2, 0 byte ghi, ca 3 mode. KHONG co co vuot chot.",
+    "so_do": {
+      "test": "241 -> 248 (248 pass, 0 fail, 0 skip)",
+      "engine_dong": "1432 -> 1448 (tran G2 = 1472)",
+      "ma_BRN": "17 -> 18",
+      "diem_cong_bo_version_duoc_canh": "3 (chi README) -> 7 (README 3 + project-intro 3 + index 1)"
+    },
+    "X11_bang_chung_ngoai_test": "ban GLOBAL tren repo gia khung 9.9.9: --check/--dry-run/ghi deu exit 2, 15/15 file byte-identical",
+    "deploy": "files=4 match=4 diff=0 missing=0 extra=2 cmd=ok exit=0; global = brain-engine 1.7.3 template 1.4.0",
+    "push": "d9b6443..fe5e720; CI run 33971106273 xanh ubuntu + windows",
+    "loi_ghi_chep_da_sua": [
+      "git add -A lam 2 commit docs chua code engine => da tach lai truoc khi push",
+      "X05 ghi 1279 (so dong bo dong trong) thay vi wc -l = 1448",
+      "X09 ghi kernel 51 thay vi 55"
+    ],
+    "worker_chan_dung_2_lan": "D9 (luat §5 qua tuyet doi) va D10 (dem sai so diem cong bo version) — ca hai deu dung"
   }
 }
