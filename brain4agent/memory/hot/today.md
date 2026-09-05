@@ -81,6 +81,14 @@ Tự chạy lại doctor + `deploy:verify`; tự kiểm 3 repo Sóng 5: `templat
 
 ---
 
+## 🩹 Phiên 2026-09-05 — P03 Kế Hoạch #11 (v1.7.3, local)
+
+- Đồng bộ tài liệu cho chốt `BRN-018`: bảng mã có 18 mã, tài liệu export thêm `compareSemver`, và gotcha #12 trỏ tới luật máy #11.
+- Chuyển #11 sang Done trong roadmap, lập release `v1.7.3`; `BRAIN_TEMPLATE_VERSION` giữ `1.4.0`.
+- Không deploy global, không push, không rollout; các nút này vẫn chờ user.
+
+---
+
 ## 🔒 ĐÓNG PHIÊN 2026-09-02 — BÀN GIAO NGẮN
 
 **Trạng thái chốt:** hub `v1.5.1` (`8cb91f0`) · khung não template `v1.3.0` · **65/67 repo đạt chuẩn** ·

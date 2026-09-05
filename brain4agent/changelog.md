@@ -2,6 +2,20 @@
 
 Tất cả các quyết định kiến trúc và lịch sử nâng cấp phiên bản của **brain4agent**.
 
+## [v1.7.3] - 2026-09-05: Chốt Engine Không Cho Hạ Phiên Bản Khung Não
+
+Bản vá `PATCH` của kế hoạch #11. `BRAIN_TEMPLATE_VERSION` giữ nguyên `1.4.0`; không rollout sang repo vệ tinh.
+
+### Fixed
+- Engine nhận diện repo có `brain_template_version` cao hơn bản đang chạy là `BRN-018` mức blocker, dừng với mã thoát 2 trước khi lập kế hoạch/ghi byte. Chốt áp dụng cho chế độ ghi, `--check` và `--dry-run`.
+- Đồng bộ ba trục version của hub lên `1.7.3`; mở rộng bánh cóc T-H03f sang bảy điểm công bố hiện hành trong README, project intro và index.
+
+### Documentation
+- Bảng mã kỹ thuật nay có 18 mã (`BRN-001..BRN-018`); export `compareSemver` được công bố. Gotcha #12 nay trỏ tới chốt máy #11.
+
+### Scope
+- Deploy global, push và CI vẫn là nút của user; không thực hiện trong bản vá local này.
+
 ## [Vận hành] - 2026-09-04: Deploy Global + Rollout Khung v1.4.0 (P06 + P07 của #10)
 
 Đợt **vận hành**, không đổi mã nguồn ⇒ **không tăng version** (giữ `v1.7.2`). Ghi lại vì đây là mốc

@@ -22,7 +22,6 @@ const engine = require(ENGINE_PATH);
 const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
 const state = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'brain4agent', 'memory', 'hot', 'state.json'), 'utf8'));
-const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
 
 test('T-H03 · G16: ENGINE_VERSION === package.json.version', (t) => {
   assert.match(engine.ENGINE_VERSION, SEMVER_RE);
@@ -75,16 +74,39 @@ test('T-H03e · §10: `--version` in đúng cặp số lấy từ hằng số, k
   assert.equal(r.stdout, `brain-engine ${engine.ENGINE_VERSION} template ${engine.BRAIN_TEMPLATE_VERSION}\n`);
 });
 
-test('T-H03f · §5.G.3: README nêu version DỰ ÁN đúng package.json, CẤM lẫn version KHUNG NÃO', () => {
-  const declarations = [
-    { re: /^# .*BRAIN4AGENT \(v(\d+\.\d+\.\d+)\)/m, where: 'tiêu đề' },
-    { re: /\*\*brain4agent v(\d+\.\d+\.\d+)\*\*/, where: 'mô tả dự án' },
-    { re: /\[VERSION TRUTH\] Phiên bản v(\d+\.\d+\.\d+)/, where: 'sơ đồ package.json' }
+test('T-H03f · §5.G.3: 7 điểm công bố version DỰ ÁN đúng package.json, CẤM lẫn version KHUNG NÃO', () => {
+  const files = [
+    { file: 'README.md', spots: 3 },
+    { file: 'brain4agent/project-intro.md', spots: 3 },
+    { file: 'brain4agent/index.md', spots: 1 }
   ];
-  for (const { re, where } of declarations) {
-    const match = readme.match(re);
-    assert.ok(match, `README thiếu phiên bản dự án tại ${where}`);
-    assert.equal(match[1], pkg.version,
-      `README ${where}: v${match[1]} phải khớp package.json v${pkg.version}`);
+  const versionTruth = {
+    re: /^.*package\.json[^\r\n]*\[VERSION TRUTH\] Phiên bản v(\d+\.\d+\.\d+)/gm,
+    where: 'sơ đồ package.json [VERSION TRUTH]'
+  };
+  const declarations = {
+    'README.md': [
+      { re: /^# [^\r\n]*BRAIN4AGENT \(v(\d+\.\d+\.\d+)\)/gm, where: 'tiêu đề' },
+      { re: /^Dự án này \(\*\*brain4agent v(\d+\.\d+\.\d+)\*\*\)/gm, where: 'mô tả dự án' },
+      versionTruth
+    ],
+    'brain4agent/project-intro.md': [
+      { re: /^# Giới Thiệu Dự Án \(brain4agent v(\d+\.\d+\.\d+)\)/gm, where: 'tiêu đề' },
+      { re: /^- \*\*brain4agent \(v(\d+\.\d+\.\d+)\):\*\*/gm, where: 'mô tả dự án' },
+      { re: /^- \*\*Version Control & CI\/CD:\*\*[^\r\n]*\(`v(\d+\.\d+\.\d+)`\)/gm, where: 'Version Control & CI/CD' }
+    ],
+    'brain4agent/index.md': [versionTruth]
+  };
+  for (const { file, spots } of files) {
+    const content = fs.readFileSync(path.join(REPO_ROOT, file), 'utf8');
+    let found = 0;
+    for (const { re, where } of declarations[file]) {
+      const matches = [...content.matchAll(re)];
+      assert.equal(matches.length, 1, `${file} tại ${where}: phải có đúng 1 điểm công bố phiên bản`);
+      assert.equal(matches[0][1], pkg.version,
+        `${file} tại ${where}: v${matches[0][1]} phải khớp package.json v${pkg.version}`);
+      found += matches.length;
+    }
+    assert.equal(found, spots, `${file} tại các vị trí công bố: phải có đúng ${spots} điểm`);
   }
 });

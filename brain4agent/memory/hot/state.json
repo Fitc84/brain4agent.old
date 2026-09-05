@@ -1,6 +1,6 @@
 {
   "project_name": "brain4agent",
-  "current_version": "1.7.2",
+  "current_version": "1.7.3",
   "system_status": "healthy_and_runtime_verified | [04/09] v1.7.2: khung nao 1.4.0 (6 khoi marker, fail-closed) da deploy GLOBAL va rollout 56/71 repo. 0 repo ve tinh bi push.",
   "last_verification": {
     "timestamp": "2026-09-04",

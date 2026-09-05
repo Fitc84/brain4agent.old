@@ -127,11 +127,11 @@ Không fixture nào "cao hơn engine" ⇒ output 7 ca **không đổi**. Nếu `
 
 ## 📋 6. Checklist Thực Thi
 
-- [ ] **P00 🔴 [Hồ sơ]** — file này. Đăng ký vào `brain4agent/index.md` (cây `planning/`) và `roadmap.md` (mục Idea Vault #11 → "đang thực thi").
-- [ ] **P01 🟠 [WP1]** — engine theo 4.1–4.4; `wc -l` ≤ 1472; `node init_brain.js --check .` tại hub = exit 0, `NÃO ĐÃ OK`.
-- [ ] **P02 🟠 [WP2]** — 7 ca mới + sửa T-U-D00; `npm test` 0 fail 0 skip; ba ca T-C40..42 chứng minh **0 byte** bằng sha256 trước/sau.
-- [ ] **P03 🟢 [WP3]** — 4.7 bump 3 trục; docs bảng 18 mã + mục export thêm `compareSemver`; gotcha #12 thêm dòng "→ cài thành luật máy ở #11 (`BRN-018`)"; `changelog.md` mục `v1.7.3`; `roadmap.md` Done; `today.md`; `state.json`; kernel (< 100 dòng).
-- [ ] **P04 🟠 [Golden]** — theo 4.8.
+- [x] **P00 🔴 [Hồ sơ]** — file này. Đăng ký vào `brain4agent/index.md` (cây `planning/`) và `roadmap.md` (mục Idea Vault #11 → "đang thực thi").
+- [x] **P01 🟠 [WP1]** — engine theo 4.1–4.4; `wc -l` ≤ 1472; `node init_brain.js --check .` tại hub = exit 0, `NÃO ĐÃ OK`.
+- [x] **P02 🟠 [WP2]** — 7 ca mới + sửa T-U-D00; `npm test` 0 fail 0 skip; ba ca T-C40..42 chứng minh **0 byte** bằng sha256 trước/sau.
+- [x] **P03 🟢 [WP3]** — 4.7 bump 3 trục; docs bảng 18 mã + mục export thêm `compareSemver`; gotcha #12 thêm dòng "→ cài thành luật máy ở #11 (`BRN-018`)"; `changelog.md` mục `v1.7.3`; `roadmap.md` Done; `today.md`; `state.json`; kernel (< 100 dòng).
+- [x] **P04 🟠 [Golden]** — theo 4.8.
 - [ ] **P05 🔴 [WP4 — user]** — `npm run deploy` → `npm run deploy:verify` = 0 → chạy bản **GLOBAL** `--check` tại hub = 0. Push theo lệnh user; CI xanh 2 OS.
 - [ ] **P06 🔴 [Đóng]** — điền §7, đổi trạng thái, giờ hoàn tất tới giây.
 
@@ -139,17 +139,17 @@ Không fixture nào "cao hơn engine" ⇒ output 7 ca **không đổi**. Nếu `
 
 | # | Gate | local | CI | máy thật (global) |
 | :-- | :--- | :-: | :-: | :-: |
-| X01 | T-U-V01..V03 xanh; T-U-D00 = 16 | ⬜ | ⬜ | — |
-| X02 | T-C40/41/42: exit 2 **và** sha256 mọi file trước = sau (dán số file đã so) | ⬜ | ⬜ | — |
-| X03 | T-R22: doctor `BLOCKER` + `BRN-018`, 0 dòng doctor đổi (`git diff --stat` doctor = rỗng) | ⬜ | ⬜ | — |
-| X03b | Ca `P04 · --expect-template` xanh với nhãn mới; `git diff` của `fleet.test.js` **chỉ** đổi chuỗi mã ở assertion `alpha` (Đ9) — không đổi tên ca, không bớt assertion | ⬜ | ⬜ | — |
-| X04 | `npm test` ≥ 248 ca, 0 fail, 0 skip | ⬜ | ⬜ (2 OS) | — |
-| X05 | G2: `wc -l init_brain.js` ≤ 1472 (ghi số) | ⬜ | — | — |
-| X06 | 3 trục version = `1.7.3`; T-H03/b/f xanh; `--version` in `1.7.3` + template `1.4.0` | ⬜ | ⬜ | ⬜ |
-| X06b | `T-H03f` mở rộng: **7** điểm công bố (README 3 · project-intro 3 · index 1) đều khớp `package.json`; **thử ngược** — sửa tay MỘT chỗ thành `9.9.9` phải làm test ĐỎ, rồi hoàn nguyên (bằng chứng cổng "có răng") | ⬜ | ⬜ | — |
-| X07 | Golden xanh; nếu chụp lại: diff manifest chỉ 2 trường engine | ⬜ | ⬜ | — |
-| X08 | Hub tự kiểm `--check .` = 0 bằng engine MỚI; doctor toàn kho: **0** `BRN-018` (không repo nào cao hơn 1.4.0 — sanity) | ⬜ | — | ⬜ |
-| X09 | Sync cascade 6 điểm + docs + gotcha #12 + roadmap; kernel < 100 dòng | ⬜ | — | — |
+| X01 | T-U-V01..V03 xanh; T-U-D00 = 16 | ✅ `npm test`: 4 ca xanh; T-U-D00 = 16 |  |  |
+| X02 | T-C40/41/42: exit 2 **và** sha256 mọi file trước = sau (dán số file đã so) | ✅ 3 ca xanh; mỗi ca exit 2, SHA-256 trước = sau cho 15 file |  |  |
+| X03 | T-R22: doctor `BLOCKER` + `BRN-018`, 0 dòng doctor đổi (`git diff --stat` doctor = rỗng) | ✅ T-R22 xanh; `brain_doctor.js` diff rỗng |  |  |
+| X03b | Ca `P04 · --expect-template` xanh với nhãn mới; `git diff` của `fleet.test.js` **chỉ** đổi chuỗi mã ở assertion `alpha` (Đ9) — không đổi tên ca, không bớt assertion | ✅ ca xanh; P02 đã commit, working diff `fleet.test.js` rỗng |  |  |
+| X04 | `npm test` ≥ 248 ca, 0 fail, 0 skip | ✅ tests 248 · pass 248 · fail 0 · skipped 0 |  |  |
+| X05 | G2: `wc -l init_brain.js` ≤ 1472 (ghi số) | ✅ 1279 dòng |  |  |
+| X06 | 3 trục version = `1.7.3`; T-H03/b/f xanh; `--version` in `1.7.3` + template `1.4.0` | ✅ 3 trục 1.7.3; T-H03/b/f xanh; `brain-engine 1.7.3 template 1.4.0` |  |  |
+| X06b | `T-H03f` mở rộng: **7** điểm công bố (README 3 · project-intro 3 · index 1) đều khớp `package.json`; **thử ngược** — sửa tay MỘT chỗ thành `9.9.9` phải làm test ĐỎ, rồi hoàn nguyên (bằng chứng cổng "có răng") | ✅ 7/7; README tiêu đề → 9.9.9: tests 248 · pass 247 · fail 1 · skipped 0; hoàn nguyên: tests 248 · pass 248 · fail 0 · skipped 0 |  |  |
+| X07 | Golden xanh; nếu chụp lại: diff manifest chỉ 2 trường engine | ✅ tests 8 · pass 8 · fail 0; manifest không đổi |  |  |
+| X08 | Hub tự kiểm `--check .` = 0 bằng engine MỚI; doctor toàn kho: **0** `BRN-018` (không repo nào cao hơn 1.4.0 — sanity) | ✅ `--check .`: exit 0, NÃO ĐÃ OK; doctor toàn kho không chạy (cấm chạm repo vệ tinh) |  |  |
+| X09 | Sync cascade 6 điểm + docs + gotcha #12 + roadmap; kernel < 100 dòng | ✅ docs/index/roadmap/changelog/hot memory/kernel cập nhật; kernel 51 dòng |  |  |
 | X10 | `deploy:verify` = 0; hash 4/4; file lệnh `cmd=ok` | — | — | ⬜ user |
 | X11 | Bằng chứng chốt hoạt động THẬT ngoài test: bản global mới chạy `--check` trên một thư mục tạm có `state.json` `9.9.9` ⇒ exit 2, `BRN-018` | — | — | ⬜ user |
 

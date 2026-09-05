@@ -80,7 +80,7 @@ Luật tuyệt đối (giữ nguyên trong mã thật): mã **3** chỉ phát si
 
 ---
 
-## 4. Bảng 17 mã kiểm tra `BRN-001..BRN-017`
+## 4. Bảng 18 mã kiểm tra `BRN-001..BRN-018`
 
 Cột **Ai kiểm**: E = `diagnose()` của engine (chạy trong cả `--check` lẫn chế độ ghi); D = doctor (`brain_doctor.js`, chỉ BRN-014/BRN-015). Cột **Tự sửa** = ✔ nghĩa là chế độ ghi của engine tự vá được (tính vào "lệch" khi chạy `--check`).
 
@@ -103,6 +103,7 @@ Cột **Ai kiểm**: E = `diagnose()` của engine (chạy trong cả `--check` 
 | BRN-015 | Warning | D | ✘ | Git bất thường: `.git` là **file** (worktree/gitdir liên kết), HEAD unborn (chưa có commit), ref hỏng (`for-each-ref` lỗi), hoặc timeout lệnh git. | **Không được suy ra "repo hỏng"** từ mã này — soi tay `.git/refs` khi cần. |
 | BRN-016 | Error | E, D | ✘ | Khối marker hỏng: cặp mốc không trọn (mở mà không đóng, hoặc ≥2 mốc cùng `id` cùng tồn tại); **hoặc** vùng luật đã bị sửa tay (nội dung bên trong khối khác body mong muốn). Engine **fail-closed** — không ghi byte nào cho khối đó, báo `BRN-016` để người sửa tay mốc/khối. | Soi tay `AGENTS.md`: kiểm cặp mốc `<!-- brain:rule:id -->` và `<!-- /brain:rule:id -->` (mỗi mốc phải trọn một dòng, đúng 1 mở + 1 đóng), sửa hoặc xoá dòng vừa sửa tay, rồi chạy lại engine. |
 | BRN-017 | Warning | E, D | ✘ | `memory/archive/` chứa file không theo mẫu tên `YYYY-MM-DD.md` (ký ức lạnh chỉ được ghi bởi script xoay, không cho sửa tay). File `.gitkeep` được bỏ qua. | Chuyển file lạ ra khỏi `memory/archive/` hoặc đổi tên đúng mẫu `YYYY-MM-DD.md`. |
+| BRN-018 | Blocker | E, D | ✘ | Repo ở khung não **CAO HƠN** engine đang chạy — engine cũ, CẤM hạ version. | Cập nhật bản engine (chạy deploy từ hub, so hash tới khi diff rỗng) rồi chạy lại. TUYỆT ĐỐI không hạ `brain_template_version` của repo. |
 
 Ngoài 15 mã: trạng thái repo `SCAN_ERROR` (không phải mã kiểm) khi doctor **không đọc được** root repo đó (ví dụ `EACCES`, đường dẫn lỗi, symlink chết) — mức tương đương Error, kèm chuỗi `scan_error`; quét vẫn tiếp tục sang repo khác.
 
@@ -146,7 +147,7 @@ Engine v1.4.0+ quản lý 6 khối luật trong `AGENTS.md` bằng cặp mốc `
 
 ### 5.4. Danh sách hàm được `module.exports`
 
-**`init_brain.js`:** `BRAIN_TEMPLATE_VERSION`, `ENGINE_VERSION`, `REQUIRED_FILES`, `stripBom`, `detectEol`, `normalizeEol`, `restoreEol`, `hasUtf8Bom`, `detectEncoding`, `readText`, `writeText`, `renderTemplates`, `renderInitialState`, `renderMarker`, `renderTodayMd`, `renderClaudeShim`, `renderFullAgentsMd`, `patchDistill`, `patchStateJson`, `RULE_BLOCKS`, `AGENTS_SKELETON`, `APPENDIX_HEADING`, `OPEN`, `CLOSE`, `findBlock`, `findLegacy`, `classifyRuleBlocks`, `patchAgentsMd`, `patchClaudeMd`, `isArchiveName`, `BRN`, `collectSnapshot`, `diagnose`, `formatFindings`, `renderDiff`, `planCaseRenames`, `planMarkerOps`, `computePlan`, `applyPlan`, `runBrainEngine`, `exitCodeForDiagnosis`, `usage`, `parseArgs`, `main`.
+**`init_brain.js`:** `BRAIN_TEMPLATE_VERSION`, `ENGINE_VERSION`, `REQUIRED_FILES`, `compareSemver`, `stripBom`, `detectEol`, `normalizeEol`, `restoreEol`, `hasUtf8Bom`, `detectEncoding`, `readText`, `writeText`, `renderTemplates`, `renderInitialState`, `renderMarker`, `renderTodayMd`, `renderClaudeShim`, `renderFullAgentsMd`, `patchDistill`, `patchStateJson`, `RULE_BLOCKS`, `AGENTS_SKELETON`, `APPENDIX_HEADING`, `OPEN`, `CLOSE`, `findBlock`, `findLegacy`, `classifyRuleBlocks`, `patchAgentsMd`, `patchClaudeMd`, `isArchiveName`, `BRN`, `collectSnapshot`, `diagnose`, `formatFindings`, `renderDiff`, `planCaseRenames`, `planMarkerOps`, `computePlan`, `applyPlan`, `runBrainEngine`, `exitCodeForDiagnosis`, `usage`, `parseArgs`, `main`.
 
 Chín export bổ sung so với trước v1.4.0 — đều thuộc lớp marker (§5.3):
 
@@ -158,6 +159,7 @@ Chín export bổ sung so với trước v1.4.0 — đều thuộc lớp marker 
 - `findLegacy(text, legacy)` — dò bản luật v1.3.0 cũ (chưa có mốc) theo mô tả `legacy` của từng khối trong `RULE_BLOCKS`.
 - `classifyRuleBlocks(text)` — hàm dò+phân loại chính, trả trạng thái từng khối (`ok`/`stale`/`legacy`/`edited`/`malformed`/`absent`) dùng bởi cả `diagnose` (BRN-002/003/016) lẫn `patchAgentsMd`.
 - `isArchiveName(n)` — kiểm một tên file có khớp mẫu `YYYY-MM-DD.md` của Ký ức Lạnh hay không; dùng cho `BRN-017` và lọc `.gitkeep`.
+- `compareSemver(a, b)` — so hai SemVer `x.y.z`, trả `-1`/`0`/`1`; trả `null` nếu một trong hai không đúng dạng.
 
 **`brain_doctor.js`:** `TOOL_NAME`, `SCHEMA_VERSION`, `DOCTOR_BRN`, `DEFAULT_GIT_TIMEOUT`, `padTrim`, `scrub`, `sortViet`, `statusFromFindings`, `gitKind`, `isCandidate`, `mergeBom013`, `findNestedGit`, `probeGit`, `scanRepo`, `scanRoot`, `findingTag`, `renderTable`, `renderQuiet`, `usage`, `parseArgs`, `main`.
 
