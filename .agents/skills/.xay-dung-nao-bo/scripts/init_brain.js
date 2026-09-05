@@ -7,7 +7,7 @@ const path = require('path');
 const BRAIN_TEMPLATE_VERSION = '1.4.0';
 
 // Phiên bản ENGINE (mã nguồn công cụ) — KHÁC BRAIN_TEMPLATE_VERSION (phiên bản KHUNG não).
-const ENGINE_VERSION = '1.7.2';
+const ENGINE_VERSION = '1.7.3';
 
 const REQUIRED_FILES = [
     'memory-distill.txt',
@@ -634,10 +634,16 @@ const BRN = {
     'BRN-012': { level: 'error', title: 'memory-distill.txt thiếu Bước 0, hoặc root còn latest_memory.md', fix: 'Chạy engine chế độ ghi' },
     'BRN-013': { level: 'warning', title: 'File có BOM UTF-8 / không phải UTF-8 hợp lệ', fix: 'Lưu lại file dạng UTF-8 không BOM' },
     'BRN-016': { level: 'error', title: 'AGENTS.md: khối marker hỏng hoặc vùng luật đã bị sửa tay', fix: 'Soi tay AGENTS.md: sửa cặp mốc (đúng 1 mở + 1 đóng, mỗi mốc trọn một dòng) hoặc xoá/bọc lại đoạn luật đã sửa, rồi chạy lại engine' },
-    'BRN-017': { level: 'warning', title: 'memory/archive/ có file không theo mẫu YYYY-MM-DD.md', fix: 'Chuyển file lạ ra khỏi memory/archive/ hoặc đổi tên đúng mẫu' }
+    'BRN-017': { level: 'warning', title: 'memory/archive/ có file không theo mẫu YYYY-MM-DD.md', fix: 'Chuyển file lạ ra khỏi memory/archive/ hoặc đổi tên đúng mẫu' },
+    'BRN-018': { level: 'blocker', title: 'Repo ở khung não CAO HƠN engine đang chạy — engine cũ, CẤM hạ version', fix: 'Cập nhật bản engine (chạy deploy từ hub, so hash tới khi diff rỗng) rồi chạy lại. TUYỆT ĐỐI không hạ brain_template_version của repo' }
 };
 
 const BRAIN_MARKER_REGEX = /^brain4agent-v(\d+\.\d+\.\d+)\.md$/;
+function compareSemver(a, b) {
+    if (typeof a !== 'string' || typeof b !== 'string' || !/^\d+\.\d+\.\d+$/.test(a) || !/^\d+\.\d+\.\d+$/.test(b)) return null;
+    for (let i = 0, x = a.split('.'), y = b.split('.'); i < 3; i++) if (+x[i] !== +y[i]) return +x[i] > +y[i] ? 1 : -1;
+    return 0;
+}
 
 const SNAPSHOT_FILES = {
     agentsMd: 'AGENTS.md', claudeMd: 'CLAUDE.md', legacyLatest: 'latest_memory.md',
@@ -773,7 +779,11 @@ function diagnose(s, templateVersion) {
         } else {
             const actual = (stateObj && typeof stateObj === 'object' && !Array.isArray(stateObj))
                 ? stateObj.brain_template_version : undefined;
-            if (actual !== templateVersion) {
+            const cmp = compareSemver(actual, templateVersion);
+            if (cmp === 1) {
+                add('BRN-018', 'state.json.brain_template_version = ' + actual + ' CAO HƠN engine ' + templateVersion + ' — engine đang chạy CŨ hơn repo',
+                    { actual, expected: templateVersion }, { fixable: false });
+            } else if (actual !== templateVersion) {
                 add('BRN-010',
                     'state.json.brain_template_version = ' + (actual === undefined ? '(thiếu)' : actual) + ', kỳ vọng ' + templateVersion,
                     { actual: actual === undefined ? null : actual, expected: templateVersion });
@@ -1202,6 +1212,11 @@ function runBrainEngine(opts) {
         }
         return { exitCode: 2, diagnosis, plan: null, applied: 0, diagnosisAfter: null };
     }
+    if (diagnosis.findings.some((f) => f.code === 'BRN-018')) {
+        emitFindings(diagnosis);
+        errorLogger('[brain-engine] DỪNG: repo ở khung não cao hơn engine. Không ghi byte nào. Cập nhật bản engine rồi chạy lại.');
+        return { exitCode: 2, diagnosis, plan: null, applied: 0, diagnosisAfter: null };
+    }
 
     logger("\n===========================================================");
     logger("🧠 UNIVERSAL BRAIN GOVERNANCE ENGINE — CHUẨN ĐA TẦNG V5.2");
@@ -1380,6 +1395,7 @@ function main(argv, env, io) {
 module.exports = {
     BRAIN_TEMPLATE_VERSION,
     ENGINE_VERSION,
+    compareSemver,
     REQUIRED_FILES,
     stripBom,
     detectEol,

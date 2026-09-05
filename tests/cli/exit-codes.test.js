@@ -17,6 +17,7 @@ const { runEngine, ENGINE_PATH } = require('../helpers/run.js');
 
 const engine = require(ENGINE_PATH);
 const STATE_REL = 'brain4agent/memory/hot/state.json';
+const { snapshotTree, hashesOnly } = require('../helpers/tree.js');
 
 function withFixture(name, fn) {
   const tmp = mkTmpRoot(name);
@@ -90,6 +91,45 @@ test('exit 2 — file dự án là UTF-16: báo lỗi ra stderr, không ghi gì'
   });
 });
 
+function withHigherTemplate(fn) {
+  withFixture('F02-standard-lf', (dir) => {
+    const statePath = path.join(dir, ...STATE_REL.split('/'));
+    const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    state.brain_template_version = '9.9.9';
+    fs.writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
+    fs.renameSync(path.join(dir, 'brain4agent-v1.4.0.md'), path.join(dir, 'brain4agent-v9.9.9.md'));
+    fn(dir, hashesOnly(snapshotTree(dir)));
+  });
+}
+
+test('T-C40 · --check gặp template cao hơn ⇒ exit 2, BRN-018, cây không đổi byte', () => {
+  withHigherTemplate((dir, before) => {
+    const r = runEngine(ENGINE_PATH, ['--check', dir]);
+    assert.equal(r.code, 2, r.stderr);
+    assert.ok(r.stdout.includes('BRN-018'));
+    assert.deepEqual(hashesOnly(snapshotTree(dir)), before);
+  });
+});
+
+test('T-C41 · chế độ ghi gặp template cao hơn ⇒ DỪNG, exit 2, cây không đổi byte', () => {
+  withHigherTemplate((dir, before) => {
+    const r = runEngine(ENGINE_PATH, [dir]);
+    assert.equal(r.code, 2, r.stderr);
+    assert.ok(r.stderr.includes('DỪNG'));
+    assert.deepEqual(hashesOnly(snapshotTree(dir)), before);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(dir, ...STATE_REL.split('/')), 'utf8')).brain_template_version, '9.9.9');
+    assert.ok(fs.existsSync(path.join(dir, 'brain4agent-v9.9.9.md')));
+  });
+});
+
+test('T-C42 · --dry-run gặp template cao hơn ⇒ exit 2, cây không đổi byte', () => {
+  withHigherTemplate((dir, before) => {
+    const r = runEngine(ENGINE_PATH, ['--dry-run', dir]);
+    assert.equal(r.code, 2, r.stderr);
+    assert.deepEqual(hashesOnly(snapshotTree(dir)), before);
+  });
+});
+
 test('exit 3 — CHỈ khi engine tự lỗi (mkdirSync ném EACCES)', () => {
   withFixture('F01-blank', (dir) => {
     const out = [];
@@ -144,7 +184,7 @@ test('--version: một dòng, không đọc đĩa, exit 0 kể cả rootDir khô
   assert.equal(r.code, 0);
   assert.equal(r.stdout, 'brain-engine ' + engine.ENGINE_VERSION + ' template ' + engine.BRAIN_TEMPLATE_VERSION + '\n');
   assert.equal(r.stderr, '');
-  assert.equal(engine.ENGINE_VERSION, '1.7.2');
+  assert.equal(engine.ENGINE_VERSION, '1.7.3');
   assert.equal(engine.BRAIN_TEMPLATE_VERSION, '1.4.0');
 
   const r2 = runEngine(ENGINE_PATH, [path.join(__dirname, 'khong-ton-tai-tuyet-doi'), '--version']);

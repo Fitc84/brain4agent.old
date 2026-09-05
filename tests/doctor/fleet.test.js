@@ -216,7 +216,7 @@ test('P04 · --expect-template đổi chuẩn kỳ vọng (chuẩn đến từ C
     const bravo = report.repos.find((x) => x.name === 'repo-bravo');
     assert.ok(!bravo.findings.some((x) => x.code === 'BRN-010'), 'kỳ vọng 1.2.0 ⇒ state 1.2.0 hết lệch');
     const alpha = report.repos.find((x) => x.name === 'repo-alpha');
-    assert.ok(alpha.findings.some((x) => x.code === 'BRN-010'), 'ngược lại repo 1.3.0 trở thành lệch');
+    assert.ok(alpha.findings.some((x) => x.code === 'BRN-018'), 'repo 1.3.0 cao hơn kỳ vọng 1.2.0 ⇒ BRN-018');
   } finally { f.cleanup(); }
 });
 
@@ -262,6 +262,18 @@ test('T-R21 · fleet fixture: detail của BRN-016/003 đi nguyên vẹn ra --fo
     assert.ok(table.includes('BRN-016'));
     assert.ok(table.includes('BRN-003'));
   });
+});
+
+test('T-R22 · --expect-template thấp hơn repo ⇒ BLOCKER BRN-018', () => {
+  const tmp = mkTmpRoot('F02-standard-lf');
+  try {
+    const r = runDoctor(['--repo', tmp.dir, '--expect-template', '1.3.0', '--format', 'json']);
+    assert.equal(r.code, 2, r.stderr);
+    const repo = JSON.parse(r.stdout).repos[0];
+    assert.equal(repo.status, 'BLOCKER');
+    const finding = repo.findings.find((f) => f.code === 'BRN-018');
+    assert.equal(finding.detail.actual, '1.4.0');
+  } finally { tmp.cleanup(); }
 });
 
 test('P04 · --version / --help: mã thoát 0, không đọc kho nào', () => {

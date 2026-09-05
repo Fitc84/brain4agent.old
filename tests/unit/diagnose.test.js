@@ -183,10 +183,10 @@ test('T-U23c · BRN-002: AGENTS.md không có luật nào ⇒ liệt kê đủ 6
   assert.deepEqual(findingsOf(d, 'BRN-016'), [], 'không dấu vết luật nào ⇒ không phải BRN-016');
 });
 
-test('T-U-D00 · bánh cóc bảng BRN: engine giữ ĐÚNG 15 mã (13 cũ + 016/017), 014/015 là của doctor', () => {
+test('T-U-D00 · bánh cóc bảng BRN: engine giữ ĐÚNG 16 mã (13 cũ + 016/017/018), 014/015 là của doctor', () => {
   // Thêm mã mới ⇒ phải sửa 01-CONTRACTS §6 + SPEC trước, không lặng lẽ nhét vào bảng.
   const codes = Object.keys(e.BRN);
-  assert.equal(codes.length, 15, 'CẤM thêm mã ngoài BRN-016/BRN-017 (01-CONTRACTS §6)');
+  assert.equal(codes.length, 16, 'CẤM thêm mã ngoài BRN-016/BRN-017/BRN-018 (01-CONTRACTS §6)');
   assert.ok(codes.includes('BRN-016') && codes.includes('BRN-017'));
   assert.ok(!codes.includes('BRN-014') && !codes.includes('BRN-015'), 'hai mã này là việc của doctor');
   assert.equal(e.BRN['BRN-016'].level, 'error');
@@ -194,6 +194,34 @@ test('T-U-D00 · bánh cóc bảng BRN: engine giữ ĐÚNG 15 mã (13 cũ + 016
   assert.equal(e.BRN['BRN-017'].level, 'warning');
   assert.equal(e.BRN['BRN-017'].title, 'memory/archive/ có file không theo mẫu YYYY-MM-DD.md');
   assert.equal(e.BRN['BRN-017'].fix, 'Chuyển file lạ ra khỏi memory/archive/ hoặc đổi tên đúng mẫu');
+  assert.equal(e.BRN['BRN-018'].level, 'blocker');
+});
+
+test('T-U-V01 · repo có template cao hơn engine ⇒ BRN-018 blocker, không BRN-010', () => {
+  const d = dx({ files: { stateJson: tf(JSON.stringify({ brain_template_version: '9.9.9' }) + '\n') } });
+  const f = findingsOf(d, 'BRN-018');
+  assert.equal(f.length, 1);
+  assert.equal(f[0].level, 'blocker');
+  assert.equal(f[0].fixable, false);
+  assert.equal(f[0].detail.actual, '9.9.9');
+  assert.deepEqual(findingsOf(d, 'BRN-010'), []);
+  assert.equal(d.isStandard, false);
+});
+
+test('T-U-V02 · template thấp hơn hoặc không phải SemVer vẫn là BRN-010', () => {
+  for (const actual of ['1.2.0', 'abc']) {
+    const d = dx({ files: { stateJson: tf(JSON.stringify({ brain_template_version: actual }) + '\n') } });
+    assert.equal(findingsOf(d, 'BRN-010').length, 1, actual);
+    assert.deepEqual(findingsOf(d, 'BRN-018'), [], actual);
+  }
+});
+
+test('T-U-V03 · compareSemver so số từng thành phần và từ chối input không hợp lệ', () => {
+  assert.equal(e.compareSemver('1.10.0', '1.9.0'), 1);
+  assert.equal(e.compareSemver('1.4.0', '1.4.0'), 0);
+  assert.equal(e.compareSemver('1.3.9', '1.4.0'), -1);
+  assert.equal(e.compareSemver('x', '1.0.0'), null);
+  assert.equal(e.compareSemver(undefined, '1.0.0'), null);
 });
 
 // ── T-U-D01..D04 · bốn mã của WP3 (SPEC-P04 §5) ──────────────────────────────
