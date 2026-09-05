@@ -75,7 +75,8 @@ brain4agent/
 │   ├── 07_2026-09-02_rollout-template-v1.3.0/  # PATCH — chỉ plan.md
 │   ├── 08_2026-09-02_hotfix-lenh-va-go-secret/ # PATCH — chỉ plan.md
 │   ├── 09_2026-09-02_engine-kiem-chung/   # + specs/ (01-CONTRACTS mã thoát, BRN-001..013)
-│   └── 10_2026-09-02_va-bang-marker/      # + specs/ (ĐÓNG TRỌN VẸN: local + CI + deploy + rollout)
+│   ├── 10_2026-09-02_va-bang-marker/      # + specs/ (ĐÓNG TRỌN VẸN: local + CI + deploy + rollout)
+│   └── 11_2026-09-05_chot-ha-version/     # PATCH — chỉ plan.md (§3 2.5): engine từ chối hạ template (BRN-018)
 ├── .agents/skills/                   # [SINGLE SKILL VAULT] Kho kỹ năng chuẩn hóa 100%
 │   ├── .xay-dung-nao-bo/             # Universal Brain Engine
 │   │   ├── SKILL.md
