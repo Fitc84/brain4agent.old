@@ -4,7 +4,7 @@ File này chứa danh sách các tính năng, mục tiêu sắp tới và tình 
 
 ## 🔴 Active — chờ user (không còn vướng kỹ thuật)
 
-- [ ] ⚠️ **`wikiultra` — 97 file tracked bị xoá khỏi thư mục làm việc, CỨU ĐƯỢC NGAY.** Chúng còn nguyên trong `HEAD` (`d313fc2`, 111 file); chỉ là xoá **chưa commit**. `git restore .` trong repo đó là khôi phục hết. Chưa làm vì không rõ đây có phải thao tác dọn dẹp cố ý hay không — **chờ user xác nhận**. Không có rủi ro mất thêm: dữ liệu nằm an toàn trong git.
+- [x] ~~`wikiultra` mất 97 file tracked~~ — **ĐÃ KHÔI PHỤC 2026-09-05** (user chạy `git restore .`): 111/111 file về đủ, cây sạch. Sau đó chạy engine để dựng lại **3 thư mục RỖNG** mà `git restore` không thể trả lại (`planning/`, `.agents/skills/`, `docs/` — git không track thư mục trống) ⇒ hết `BRN-009`, repo hội tụ `1.4.0`, **0 file bị đổi**.
 - [ ] ⚠️ **`Token-Calcultor` — thư mục RỖNG, mất cả `.git`.** Không còn bản local nào. Nguồn còn lại: GitHub `Token-Calcultor` (private, lần push cuối **2025-12-23**). Mọi commit local sau mốc đó — gồm bản vá khung não và các sửa đổi mã nguồn **chưa commit** — không còn trên đĩa. **Cần user quyết** có clone lại từ remote hay không. Xem gotcha #32 về việc phép đo từng báo nhầm repo này là "sạch".
 
 - [x] ~~**🔒 XOAY KHOÁ (ưu tiên cao nhất)**~~ — **USER QUYẾT 2026-09-02: KHÔNG xoay, bỏ mục này.** Cả 6 repo liên quan đều PRIVATE trên GitHub (kiểm `gh` 2026-09-02). Bảng ánh xạ *repo → đường dẫn → loại khoá* đã được **gỡ khỏi kho công khai này** (kể cả trong lịch sử 9 commit chưa push) và chuyển sang hồ sơ chỉ-lưu-máy `..\.brain4agent-secrets-map.local.md` — nằm ngoài mọi repo, bị `.gitignore` của repo cha chặn. Agent sau KHÔNG nhắc lại việc xoay khoá trừ khi user mở lại.

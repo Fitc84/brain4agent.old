@@ -575,5 +575,24 @@
       "X09 ghi kernel 51 thay vi 55"
     ],
     "worker_chan_dung_2_lan": "D9 (luat §5 qua tuyet doi) va D10 (dem sai so diem cong bo version) — ca hai deu dung"
+  },
+  "don_repo_ban_2026-09-05": {
+    "di_tru_them": {
+      "FITC84-WorkOs-": "0f8bec6 — kem e242aac sua .gitignore hong (BOM + 12 byte NUL, luat server.pid luu dang UTF-16) va d61d188 doi server.pid -> *.pid",
+      "convert-json-to-9router-from-keycrop": "77c40fa — repo ban 9 thay doi, GIU NGUYEN 9",
+      "ViDiaNorm": "ec24ac7 — repo ban 294 thay doi, GIU NGUYEN 294",
+      "wikiultra": "khoi phuc 111 file + engine dung lai 3 thu muc rong => hoi tu, 0 file doi"
+    },
+    "phep_thu_cho_repo_BAN": "engine chi cham 4 duong dan (AGENTS.md, CLAUDE.md, marker root, state.json). Neu 4 duong dan do KHONG nam trong viec dang do => chay duoc an toan, commit tuong minh tung path. Do bang: git status --porcelain | grep -E \"AGENTS|CLAUDE|brain4agent\"",
+    "khong_dung_co_ly_do": {
+      "GramPilot": "7 duong dan nao dang bi sua do => engine se de len",
+      "CV": "AGENTS.md la file moi chua track, agent.md dang bi xoa — co phien khac dang di tru giua chung"
+    },
+    "Token-Calcultor": "THU MUC RONG, mat ca .git. Nguon con lai: GitHub private, push cuoi 2025-12-23. Commit local sau moc do da mat. Xem gotcha #32.",
+    "canh_bao_tien_trinh_khac": "6 repo o 1.4.0 bong co BRN-002 (cong cu nao do boc file:/// trong link, tu lanh); 2 repo bi xoa sach. .RepoAtlas dang chay thao tac tren kho.",
+    "doctor_cuoi": "candidates=71 clean=50 warning=6 error=9 blocker=2 skipped=4 | 56/71 di tru tron ven",
+    "gotcha_sinh_ra": [
+      "#32"
+    ]
   }
 }
